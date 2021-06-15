@@ -19,6 +19,8 @@ id = 0;
 games = {}
 clients = {}
 
+
+
 function generateId() {
     return ++id;
 }
@@ -29,37 +31,61 @@ wsServer.on('request', req => {
     // ??
     const connection = req.accept(null,req.origin)
 
+
+
     connection.on('open',() => console.log("connect"))
     connection.on('close', () => console.log("closed! "))
 
     connection.on("message",message => {
 
-        const result = JSON.parse(message.utf8Data)
+        const body = JSON.parse(message.utf8Data)
 
         let payLoad = {}
         
         
-        switch(result.method)
+        switch(body.method)
         {
             case event.CREATE:
                 
             console.log("CREATE")
             
             const gameId = generateId();
-           
+            const clientId  = body.clientId
+            const name = body.name;
 
-            // games[gameId] = []
-            // games[gameId].push(userId)
+            clients[clientId]['name'] = name; 
+            clients[clientId]['gameId'] = gameId
 
-              /*
-              {
-                  game_id: int
-                  user_id: int
-              }
-              */
+            // first creation of the game
+            // initialze the dict
+            games[gameId] = {}
+            games[gameId]['clients'] = []
+
+
+            games[gameId]['clients'].push(clientId)
+            games[gameId]['currWord'] = ''
+            games[gameId]['canvasEvents'] = []
+
+            payLoad = {
+                'method':event.CREATE,
+                'game':gameId
+            }
+
+            connection.send(JSON.stringify(payLoad))
+
                 break;
 
             case event.JOIN:
+
+                const gameId = body.gameId
+                const clientId  = body.clientId
+            
+                payload = {
+                    'method': event.JOIN,
+                    'name' : clients[clientId]['name']
+                }
+
+                broadCast(clientId,gameId,payload)
 
                 console.log("JOIN")
 
@@ -67,15 +93,59 @@ wsServer.on('request', req => {
 
             case event.DRAW:
 
+                const gameId = body.gameId
+                const clientId  = body.clientId
+                const canvas = body.canvas
+
+                game[gameId]['canvasEvents'].push(canvas)
+
                 console.log("DRAW")
+
+                broadCast(clientId,gameId,payload)
 
                 break;
 
-            case event.GUESS:
+            case event.GUESS: 
+
+                const gameId = body.gameId
+                const clientId  = body.clientId
+                const guessWord =  body.guessWord
+
+                let match = false
+
+                if(guessWord ==  games[gameId]['currWord'])
+                {
+                    match = true
+                }
+
+                payload = {
+                    'word':guessWord,
+                    'isCorrect':true
+                }
+                
+                broadeCast(clientId,gameId,payload)
 
                 console.log("GUESS")
 
                 break;
+            
+            case event.WORD_SELECT:
+                
+                const gameId = body.gameId
+                const clientId  = body.clientId
+                const word = body.word 
+                games[gameId]['currWord'] = word
+
+                hint =  "_".repeat(len(word))
+
+                payload = {
+                    'method':'wordselect',
+                    'hint':hint
+                }
+
+                broadeCast(clientId,gameId,payload)
+
+            case 
         }
 
         // connection.send(JSON.stringify(payLoad))
@@ -87,9 +157,11 @@ wsServer.on('request', req => {
 
     const clientId = generateId()
 
-    clients[clientId] = {
-        'connection':connection
-    }
+    // first creation of client
+    clients[clientId] = {}
+
+    clients[clientId]['connection'] = connection
+ 
 
     const payLoad = {
         "method": "connect",
