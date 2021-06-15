@@ -2,7 +2,7 @@ const event = require('./constants')
 
 const websocketServer = require("websocket").server
 
-  
+
 const http = require("http");
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log("Listening.. on 9090"))
@@ -10,7 +10,7 @@ httpServer.listen(9090, () => console.log("Listening.. on 9090"))
 
 const wsServer = new websocketServer(
     {
-    "httpServer": httpServer
+        "httpServer": httpServer
     }
 )
 
@@ -25,67 +25,90 @@ function generateId() {
     return ++id;
 }
 
+broadCast = (clientId, gameId, payload) => {
+    games[gameId][clients].forEach((client) => {
+        if (client !== clientId) {
+            clients[client]['connection'].send(JSON.stringify(payload))
+        }
+    })
+}
 
 wsServer.on('request', req => {
-  
+
     // ??
-    const connection = req.accept(null,req.origin)
+    const connection = req.accept(null, req.origin)
 
 
 
-    connection.on('open',() => console.log("connect"))
+    connection.on('open', () => console.log("connect"))
     connection.on('close', () => console.log("closed! "))
 
-    connection.on("message",message => {
+    connection.on("message", message => {
 
         const body = JSON.parse(message.utf8Data)
 
         let payLoad = {}
-        
-        
-        switch(body.method)
-        {
-            case event.CREATE:
-                
-            console.log("CREATE")
-            
-            const gameId = generateId();
-            const clientId  = body.clientId
-            const name = body.name;
-
-            clients[clientId]['name'] = name; 
-            clients[clientId]['gameId'] = gameId
-
-            // first creation of the game
-            // initialze the dict
-            games[gameId] = {}
-            games[gameId]['clients'] = []
 
 
-            games[gameId]['clients'].push(clientId)
-            games[gameId]['currWord'] = ''
-            games[gameId]['canvasEvents'] = []
+        switch (body.method) {
+            case event.CREATE_USER:
+                const clientId = generateId()
 
-            payLoad = {
-                'method':event.CREATE,
-                'game':gameId
-            }
+                // first creation of client
+                clients[clientId] = {}
 
-            connection.send(JSON.stringify(payLoad))
+                clients[clientId]['connection'] = connection
+
+
+                const payLoad = {
+                    "method": "connect",
+                    "clientId": clientId
+                }
+
+                connection.send(JSON.stringify(payLoad))
+                break;
+
+            case event.CREATE_GAME:
+
+                console.log("CREATE")
+
+                let gameId = generateId();
+                clientId = body.clientId
+                let name = body.name;
+
+                clients[clientId]['name'] = name;
+                clients[clientId]['gameId'] = gameId
+
+                // first creation of the game
+                // initialze the dict
+                games[gameId] = {}
+                games[gameId]['clients'] = []
+
+
+                games[gameId]['clients'].push(clientId)
+                games[gameId]['currWord'] = ''
+                games[gameId]['canvasEvents'] = []
+
+                payLoad = {
+                    'method': event.CREATE,
+                    'game': gameId
+                }
+
+                connection.send(JSON.stringify(payLoad))
 
                 break;
 
-            case event.JOIN:
+            case event.JOIN_GAME:
 
-                const gameId = body.gameId
-                const clientId  = body.clientId
-            
+                gameId = body.gameId
+                clientId = body.clientId
+
                 payload = {
                     'method': event.JOIN,
-                    'name' : clients[clientId]['name']
+                    'name': clients[clientId]['name']
                 }
 
-                broadCast(clientId,gameId,payload)
+                broadCast(clientId, gameId, payload)
 
                 console.log("JOIN")
 
@@ -93,59 +116,62 @@ wsServer.on('request', req => {
 
             case event.DRAW:
 
-                const gameId = body.gameId
-                const clientId  = body.clientId
-                const canvas = body.canvas
+                gameId = body.gameId
+                clientId = body.clientId
+                let canvasEvent = body.canvasEvent
 
-                game[gameId]['canvasEvents'].push(canvas)
+                game[gameId]['canvasEvents'].push(canvasEvent)
 
                 console.log("DRAW")
+                payload = {
+                    'method': event.DRAW,
+                    'canvasEvent': canvasEvent
+                }
 
-                broadCast(clientId,gameId,payload)
+                broadCast(clientId, gameId, payload)
 
                 break;
 
-            case event.GUESS: 
+            case event.GUESS:
 
-                const gameId = body.gameId
-                const clientId  = body.clientId
-                const guessWord =  body.guessWord
+                gameId = body.gameId
+                clientId = body.clientId
+                let guessWord = body.guessWord
 
                 let match = false
 
-                if(guessWord ==  games[gameId]['currWord'])
-                {
+                if (guessWord == games[gameId]['currWord']) {
                     match = true
                 }
 
                 payload = {
-                    'word':guessWord,
-                    'isCorrect':true
+                    'method': event.GUESS,
+                    'word': guessWord,
+                    'isCorrect': true
                 }
-                
-                broadeCast(clientId,gameId,payload)
+
+                broadeCast(clientId, gameId, payload)
 
                 console.log("GUESS")
 
                 break;
-            
+
             case event.WORD_SELECT:
-                
-                const gameId = body.gameId
-                const clientId  = body.clientId
-                const word = body.word 
+
+                gameId = body.gameId
+                clientId = body.clientId
+                let word = body.word
                 games[gameId]['currWord'] = word
 
-                hint =  "_".repeat(len(word))
+                hint = "_".repeat(len(word))
 
                 payload = {
-                    'method':'wordselect',
-                    'hint':hint
+                    'method': 'wordselect',
+                    'hint': hint
                 }
 
-                broadeCast(clientId,gameId,payload)
+                broadeCast(clientId, gameId, payload)
 
-            case 
         }
 
         // connection.send(JSON.stringify(payLoad))
@@ -155,19 +181,6 @@ wsServer.on('request', req => {
 
 
 
-    const clientId = generateId()
 
-    // first creation of client
-    clients[clientId] = {}
-
-    clients[clientId]['connection'] = connection
- 
-
-    const payLoad = {
-        "method": "connect",
-        "clientId": clientId
-    }
-
-    connection.send(JSON.stringify(payLoad))
 
 })
