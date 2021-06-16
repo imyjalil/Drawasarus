@@ -1,11 +1,11 @@
-import logo from './logo.svg';
 import './App.css';
 import LandingPage from './components/landingPage';
+import GamePage from './components/gamePage';
 
 function App() {
   return (
     <div className="App">
-      <LandingPage />
+      <GamePage />
     </div>
   );
 }

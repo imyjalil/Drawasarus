@@ -51,22 +51,6 @@ wsServer.on('request', req => {
 
 
         switch (body.method) {
-            case event.CREATE_USER:
-                const clientId = generateId()
-
-                // first creation of client
-                clients[clientId] = {}
-
-                clients[clientId]['connection'] = connection
-
-
-                const payLoad = {
-                    "method": "connect",
-                    "clientId": clientId
-                }
-
-                connection.send(JSON.stringify(payLoad))
-                break;
 
             case event.CREATE_GAME:
 
@@ -174,10 +158,20 @@ wsServer.on('request', req => {
 
         }
 
-        // connection.send(JSON.stringify(payLoad))
+
 
     })
+    const clientId = generateId()
 
+    // first creation of client
+    clients[clientId] = {}
+    clients[clientId]['connection'] = connection
+
+    payLoad = {
+        "method": "connect",
+        "clientId": clientId
+    }
+    connection.send(JSON.stringify(payLoad))
 
 
 

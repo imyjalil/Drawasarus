@@ -1,0 +1,14 @@
+.leaderBoard{
+    background-color:aqua;
+    overflow:auto;
+}
+
+.canvas{
+    background-color: white;
+}
+
+.chat{
+    background-color:red;
+    overflow: auto;
+}
+

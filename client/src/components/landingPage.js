@@ -7,27 +7,26 @@ class LandingPage extends Component {
         super(props);
         this.state = {};
     }
-    createButtonHandler = () => {
+    createButtonHandler = async () => {
+        console.log('button clicked')
         let ws = new WebSocket('ws://localhost:9090/')
-        ws.addEventListener('message', (event) => {
-            eventHandler(event);
-        })
-        ws.onopen = (event) => {
-            console.log(event)
-            let payload = {
-                "method": "user"
+        ws.addEventListener('open', event => {
+            console.log('open recived')
+            ws.onmessage = (event) => {
+                eventHandler(event);
             }
-            ws.send(JSON.stringify(payload));
-            // let req = JSON.parse(event.data);
-            // if (req.method === 'connect') {
-            //     let clientId = req.clientId;
-            //     this.setState({ clientId: clientId });
-            //     console.log('clientid:' + this.state.clientId);
-            // }
+        })
+
+        await new Promise(r => setTimeout(r, 500));
+
+        if (!this.state.clientId) {
+            this.setState({ clientId: sessionStorage.getItem('clientId') })
         }
-        // ws.onmessage = (event) => {
-        //     eventHandler(event);
-        // }
+        let createPayload = {
+            'method': 'create',
+            'clientId': this.state.clientId
+        }
+        ws.send(createPayload)
     }
 
     joinButtonHandler = () => {
