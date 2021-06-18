@@ -6,12 +6,12 @@ const Canvas = (props) => {
     const contextRef = useRef(null);
     useEffect(() => {
         const canvas = canvasRef.current;
-        canvas.width = props.width * 2;
-        canvas.height = window.innerHeight * 2;
-        canvas.style.width = `${props.width}px`;
-        canvas.style.height = `${window.innerHeight}px`;
+        canvas.width = parseInt(getComputedStyle(document.querySelector('#canvasElement')).getPropertyValue('width'))
+        canvas.height = window.innerHeight;
+        canvas.style.width = `100%`;
+        canvas.style.height = `100%`;
         const context = canvas.getContext("2d");
-        context.scale(2, 2);
+        //context.scale(2, 2);
         context.lineCap = "round";
         context.strokeStyle = "black";
         context.lineWidth = 3;
@@ -22,6 +22,7 @@ const Canvas = (props) => {
         const { offsetX, offsetY } = nativeEvent;
         contextRef.current.beginPath();
         contextRef.current.moveTo(offsetX, offsetY);
+        console.log('moved to ' + offsetX + ", " + offsetY)
         setIsDrawing(true);
     };
 
@@ -36,15 +37,21 @@ const Canvas = (props) => {
         }
         const { offsetX, offsetY } = nativeEvent;
         contextRef.current.lineTo(offsetX, offsetY);
+        console.log('line to ' + offsetX + ", " + offsetY)
         contextRef.current.stroke();
     };
 
+    let canvasStyle = {
+        width: `100%`
+    }
     return (
         <canvas
             onMouseDown={startDrawing}
             onMouseUp={finishDrawing}
             onMouseMove={draw}
             ref={canvasRef}
+            id="canvasElement"
+            style={canvasStyle}
         />
     );
 }
