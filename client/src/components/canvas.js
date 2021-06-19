@@ -18,10 +18,20 @@ const Canvas = (props) => {
         contextRef.current = context;
     }, []);
 
+
+    //https://stackoverflow.com/questions/43955925/html5-responsive-canvas-mouse-position-and-resize
+    const getMouesPosition = (e) => {
+        const canvas = canvasRef.current;
+        var mouseX = e.offsetX * canvas.width / canvas.clientWidth | 0;
+        var mouseY = e.offsetY * canvas.height / canvas.clientHeight | 0;
+        return { x: mouseX, y: mouseY };
+    }
+
     const startDrawing = ({ nativeEvent }) => {
         const { offsetX, offsetY } = nativeEvent;
         contextRef.current.beginPath();
-        contextRef.current.moveTo(offsetX, offsetY);
+
+        contextRef.current.moveTo(getMouesPosition(nativeEvent).x, getMouesPosition(nativeEvent).y);
         console.log('moved to ' + offsetX + ", " + offsetY)
         setIsDrawing(true);
     };
@@ -36,7 +46,7 @@ const Canvas = (props) => {
             return;
         }
         const { offsetX, offsetY } = nativeEvent;
-        contextRef.current.lineTo(offsetX, offsetY);
+        contextRef.current.lineTo(getMouesPosition(nativeEvent).x, getMouesPosition(nativeEvent).y);
         console.log('line to ' + offsetX + ", " + offsetY)
         contextRef.current.stroke();
     };
