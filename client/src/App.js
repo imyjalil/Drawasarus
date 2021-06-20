@@ -22,8 +22,8 @@ class App extends Component {
       <div className="App" >
         <BrowserRouter>
 
-          <Route path="/" exact component={LandingPage} />
-          <Route path="/game/" component={GamePage} />
+          <Route path="/" exact render={() => <LandingPage addPlayer={this.addPlayer} addPoints={this.addPoints} />} />
+          <Route path="/game/" render={() => <GamePage state={this.state} addPlayer={this.addPlayer} addPoints={this.points} />} />
         </BrowserRouter>
       </div>
     );
