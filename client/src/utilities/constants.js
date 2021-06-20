@@ -1,6 +1,6 @@
 module.exports = {
     JOIN: 'join',
-    CREATE: 'create',
+    CREATE_GAME: 'create',
     DRAW: 'draw',
     GUESS: 'guess',
     WORD_SELECT: 'wordselect',
