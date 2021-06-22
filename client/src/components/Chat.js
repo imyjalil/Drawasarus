@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 class Chat extends Component {
     render() {
-        return (<div>LeaderBoard</div>)
+        return (<div>Chat</div>)
     }
 }
 export default Chat

@@ -7,7 +7,8 @@ import React, { Component } from 'react';
 class App extends Component {
   constructor(props) {
     super(props)
-    let state = {
+    this.state = {
+      created: false
     }
   }
   addPlayer = (clientId, name) => {
@@ -16,14 +17,17 @@ class App extends Component {
   addPoints = (clientId, points) => {
     this.setState({ clientId: { 'points': this.state[clientId]['points'] + points } })
   }
+  updateCreated = () => {
+    this.setState({ created: true })
+  }
   render() {
 
     return (
       <div className="App" >
         <BrowserRouter>
 
-          <Route path="/" exact render={() => <LandingPage addPlayer={this.addPlayer} addPoints={this.addPoints} />} />
-          <Route path="/game/" render={() => <GamePage state={this.state} addPlayer={this.addPlayer} addPoints={this.points} />} />
+          <Route path="/" exact render={() => <LandingPage addPlayer={this.addPlayer} addPoints={this.addPoints} updateCreated={this.updateCreated} />} />
+          <Route path="/game/" render={() => <GamePage state={this.state} addPlayer={this.addPlayer} addPoints={this.addPoints} />} />
         </BrowserRouter>
       </div>
     );

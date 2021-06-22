@@ -8,6 +8,7 @@ class LandingPage extends Component {
     constructor(props) {
         super(props);
         this.state = {};
+        props.updateCreated()
     }
 
     initiateWebsocket = async () => {
@@ -68,18 +69,10 @@ class LandingPage extends Component {
         this.joinGame(this.state.gameId, this.state.clientId, name, ws)
     }
 
-    joinButtonHandler = async () => {
-        //console.log('join button clicked')
-        let name = document.getElementById('name').value
-        let ws = await this.initiateWebsocket()
-        this.joinGame(this.state.gameId, this.state.clientId, name, ws)
-    }
-
     render() {
         return (
             <div className="LandingPage">
                 <input type="text" id="name" defaultValue="name" />
-                <input type="button" value="Join" onClick={this.joinButtonHandler} />
                 <input type="button" value="Create" onClick={this.createButtonHandler} />
             </div>
         )
