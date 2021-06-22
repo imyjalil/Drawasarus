@@ -1,13 +1,10 @@
-const event = require('./constants')
-
-const websocketServer = require("websocket").server
-
+const events = require('./constants')
 
 const http = require("http");
 const httpServer = http.createServer();
 httpServer.listen(9090, () => console.log("Listening.. on 9090"))
 
-
+const websocketServer = require("websocket").server
 const wsServer = new websocketServer(
     {
         "httpServer": httpServer
@@ -15,7 +12,6 @@ const wsServer = new websocketServer(
 )
 
 id = 0;
-
 games = {}
 clients = {}
 
@@ -25,40 +21,41 @@ function generateId() {
     return ++id;
 }
 
-broadCast = (clientId, gameId, payload) => {
-    games[gameId][clients].forEach((client) => {
+let broadcastExceptSelf = (clientId, gameId, payload) => {
+    games[gameId]['clients'].forEach((client) => {
         if (client !== clientId) {
             clients[client]['connection'].send(JSON.stringify(payload))
         }
     })
 }
 
+let broadcastAll = (clientId, gameId, payload) => {
+    games[gameId]['clients'].forEach((client) => {
+        clients[client]['connection'].send(JSON.stringify(payload))
+    })
+}
+
 wsServer.on('request', req => {
 
-    // ??
     const connection = req.accept(null, req.origin)
-
-
 
     connection.on('open', () => console.log("connect"))
     connection.on('close', () => console.log("closed! "))
-
     connection.on("message", message => {
-
+        console.log('message received ')
         const body = JSON.parse(message.utf8Data)
-
         let payLoad = {}
-
+        let gameId, name, clientId;
 
         switch (body.method) {
 
-            case event.CREATE_GAME:
+            case events.CREATE_GAME:
 
                 console.log("CREATE")
 
-                let gameId = generateId();
+                gameId = generateId();
                 clientId = body.clientId
-                let name = body.name;
+                name = body.name;
 
                 clients[clientId]['name'] = name;
                 clients[clientId]['gameId'] = gameId
@@ -74,50 +71,51 @@ wsServer.on('request', req => {
                 games[gameId]['canvasEvents'] = []
 
                 payLoad = {
-                    'method': event.CREATE,
-                    'game': gameId
+                    'method': events.CREATE_GAME,
+                    'gameId': gameId
                 }
-
                 connection.send(JSON.stringify(payLoad))
-
                 break;
 
-            case event.JOIN_GAME:
+            case events.JOIN_GAME:
+                console.log("JOIN")
 
-                gameId = body.gameId
                 clientId = body.clientId
+                name = body.name
+                gameId = body.gameId
+
+                clients[clientId]['name'] = name;
+                clients[clientId]['gameId'] = gameId
+
+                games[gameId]['clients'].push(clientId)
 
                 payload = {
-                    'method': event.JOIN,
+                    'method': events.JOIN,
                     'name': clients[clientId]['name']
                 }
 
-                broadCast(clientId, gameId, payload)
-
-                console.log("JOIN")
-
+                broadcastExceptSelf(clientId, gameId, payload)
                 break;
 
-            case event.DRAW:
-
+            case events.DRAW:
+                console.log('DRAW')
                 gameId = body.gameId
                 clientId = body.clientId
                 let canvasEvent = body.canvasEvent
 
                 game[gameId]['canvasEvents'].push(canvasEvent)
 
-                console.log("DRAW")
                 payload = {
-                    'method': event.DRAW,
+                    'method': events.DRAW,
                     'canvasEvent': canvasEvent
                 }
 
-                broadCast(clientId, gameId, payload)
+                broadcastExceptSelf(clientId, gameId, payload)
 
                 break;
 
-            case event.GUESS:
-
+            case events.GUESS:
+                console.log('GUESS')
                 gameId = body.gameId
                 clientId = body.clientId
                 let guessWord = body.guessWord
@@ -129,18 +127,17 @@ wsServer.on('request', req => {
                 }
 
                 payload = {
-                    'method': event.GUESS,
+                    'method': events.GUESS,
                     'word': guessWord,
                     'isCorrect': true
                 }
 
-                broadeCast(clientId, gameId, payload)
+                broadcastExceptSelf(clientId, gameId, payload)
 
-                console.log("GUESS")
 
                 break;
 
-            case event.WORD_SELECT:
+            case events.WORD_SELECT:
 
                 gameId = body.gameId
                 clientId = body.clientId
@@ -154,12 +151,8 @@ wsServer.on('request', req => {
                     'hint': hint
                 }
 
-                broadeCast(clientId, gameId, payload)
-
+                broadcastExceptSelf(clientId, gameId, payload)
         }
-
-
-
     })
     const clientId = generateId()
 
@@ -172,9 +165,4 @@ wsServer.on('request', req => {
         "clientId": clientId
     }
     connection.send(JSON.stringify(payLoad))
-
-
-
-
-
 })
