@@ -26,6 +26,10 @@ class LandingPage extends Component {
     }
 
     joinGame = async (gameId, clientId, name, ws) => {
+
+        this.props.updateSocket(ws)
+
+        this.props.updateGameId(gameId)
         let payload = {
             'method': events.JOIN,
             'gameId': gameId,
@@ -35,11 +39,38 @@ class LandingPage extends Component {
         ws.send(JSON.stringify(payload))
         await new Promise(r => setTimeout(r, 500));
         //console.log('game joined....redirecting to game page')
+
         this.props.history.push({
             pathname: "/game/" + gameId,
             state: {}
         })
     }
+
+
+    joinButtonHandler = async () => {
+
+        let ws = await this.initiateWebsocket()
+         
+
+        let name = document.getElementById('name').value
+        let gameId = document.getElementById('gameId').value
+
+
+        this.setState({
+            gameId:gameId
+        })
+        
+
+        if (!this.state.clientId) {
+            this.setState({ clientId: sessionStorage.getItem('clientId') })
+        }
+
+        await new Promise(r => setTimeout(r, 500));
+
+      
+        this.joinGame(this.state.gameId, this.state.clientId, name, ws)
+
+    } 
 
     createButtonHandler = async () => {
         //console.log('create button clicked')
@@ -69,11 +100,17 @@ class LandingPage extends Component {
         this.joinGame(this.state.gameId, this.state.clientId, name, ws)
     }
 
+
+
+
+
     render() {
         return (
             <div className="LandingPage">
-                <input type="text" id="name" defaultValue="name" />
-                <input type="button" value="Create" onClick={this.createButtonHandler} />
+                <input type="text" id="name" defaultValue="name" /><br></br>
+                <input type="button" value="Create" onClick={this.createButtonHandler} /><br></br>
+                <input type="button" value="join" onClick={this.joinButtonHandler} />
+                <input type="text" id="gameId" defaultValue="4"/>
             </div>
         )
     }

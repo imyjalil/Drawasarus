@@ -13,9 +13,9 @@ class GamePage extends Component {
     }
 
     componentDidMount() {
-        if (this.props.state.created === false) {
-            this.setState({ showModal: true })
-        }
+        // if (this.props.state.created === false) {
+        //     this.setState({ showModal: true })
+        // }
     }
 
     hideModal = async () => {
@@ -34,7 +34,10 @@ class GamePage extends Component {
                     <LeaderBoard players={this.props} />
                 </div>
                 <div className="col-sm-8 canvas">
-                    <Canvas />
+                    <Canvas 
+                    gameId = {this.props.state.gameId}
+                    clientId = {this.props.state['id']}
+                    ws = {this.props.state.ws}/>
                 </div>
                 <div className="col-sm-2 chat" >
                     <Chat />

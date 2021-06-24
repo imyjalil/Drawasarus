@@ -1,11 +1,11 @@
 import events from './constants';
 
 let eventHandler = (event, { addPlayer, addPoints }) => {
-    //console.log('event received:')
+    console.log('event received:')
     if (event && event.data) {
         let data = JSON.parse(event.data)
         if (data && data.method) {
-            //console.log('event type:' + data.method)
+            console.log('event type:' + data.method)
             switch (data.method) {
 
                 case events.CONNECT:
@@ -22,6 +22,11 @@ let eventHandler = (event, { addPlayer, addPoints }) => {
                     let gameId = data.gameId
                     sessionStorage.setItem('gameId', gameId)
                     //console.log('game id:' + gameId)
+                    break;
+
+                case events.JOIN:
+                    let otherUser = data.name
+                    console.log(otherUser,"Joined")
                     break;
 
                 default:

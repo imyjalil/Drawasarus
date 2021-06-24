@@ -22,8 +22,11 @@ function generateId() {
 }
 
 let broadcastExceptSelf = (clientId, gameId, payload) => {
+
     games[gameId]['clients'].forEach((client) => {
         if (client !== clientId) {
+            console.log("-----------------",clients[client]['name'])
+            console.log(payload)
             clients[client]['connection'].send(JSON.stringify(payload))
         }
     })
@@ -65,8 +68,6 @@ wsServer.on('request', req => {
                 games[gameId] = {}
                 games[gameId]['clients'] = []
 
-
-                games[gameId]['clients'].push(clientId)
                 games[gameId]['currWord'] = ''
                 games[gameId]['canvasEvents'] = []
 
@@ -90,10 +91,9 @@ wsServer.on('request', req => {
                 games[gameId]['clients'].push(clientId)
 
                 payload = {
-                    'method': events.JOIN,
+                    'method': events.JOIN_GAME,
                     'name': clients[clientId]['name']
                 }
-
                 broadcastExceptSelf(clientId, gameId, payload)
                 break;
 
@@ -103,12 +103,16 @@ wsServer.on('request', req => {
                 clientId = body.clientId
                 let canvasEvent = body.canvasEvent
 
-                game[gameId]['canvasEvents'].push(canvasEvent)
+                console.log(canvasEvent)
+
+                // game[gameId]['canvasEvents'].push(canvasEvent)
 
                 payload = {
                     'method': events.DRAW,
                     'canvasEvent': canvasEvent
                 }
+                
+
 
                 broadcastExceptSelf(clientId, gameId, payload)
 
