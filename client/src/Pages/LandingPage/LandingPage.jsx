@@ -21,10 +21,10 @@ function LandingPage() {
 
         // problem we dont have client id
 
-        // let createPayload = {
-        //     'method': events.CREATE_GAME,
-        //     'clientId': state.clientId
-        // }
+        let createPayload = {
+            'method': events.CREATE_GAME,
+            'clientId': 10
+        }
 
         // console.log(state)
 
