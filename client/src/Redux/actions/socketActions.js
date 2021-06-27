@@ -1,4 +1,4 @@
-import { WS_CONNECT, WS_DISCONNECT } from "../../utilities/constants"
+import { WS_CONNECT, WS_DISCONNECT, WS_SEND_MESSAGE } from "../../utilities/constants"
 
 
 export const wsConnect = (host) => {
@@ -15,3 +15,10 @@ export const wsDisconnect = (host) => {
     }
 }
 
+export const wsSendMessage = (payload) => {
+    console.log('dispatchinf sendmessage')
+    return {
+        type: WS_SEND_MESSAGE,
+        payload: payload
+    }
+}

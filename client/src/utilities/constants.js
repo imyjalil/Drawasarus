@@ -11,5 +11,7 @@ module.exports = {
     NAME: 'name',
     WS_CONNECT: 'ws_connect',
     WS_DISCONNECT: 'ws_disconnect',
-    WS_SEND_MESSAGE : 'ws_message'
+    WS_SEND_MESSAGE: 'ws_message',
+    CLIENT_CREATE: 'client_create',
+    GAME_CREATE: 'game_create'
 }

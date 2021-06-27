@@ -5,12 +5,12 @@ import LandingPage from './Pages/LandingPage/LandingPage'
 
 
 
-function Playground() {
+function Playground(props) {
 
     return (
         <Switch>
             <Route exact path="/">
-                <LandingPage />
+                <LandingPage props={props} />
             </Route>
             <Route path="/game/:code">
                 <GamePage />

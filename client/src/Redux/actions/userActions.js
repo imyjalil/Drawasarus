@@ -1,4 +1,4 @@
-import { CLIENT_ID, CONNECT, CREATE_GAME, GAME_ID, JOIN, NAME, SOCKET } from '../../utilities/constants';
+import { CLIENT_ID, CONNECT, CREATE_GAME, GAME_ID, JOIN, NAME, SOCKET, CLIENT_CREATE, GAME_CREATE } from '../../utilities/constants';
 
 
 
@@ -47,10 +47,29 @@ export const storeGameId = (gameId) => {
 }
 
 export const storeName = (name) => {
+    console.log('dispatching storename')
     return {
         type: NAME,
         payload: {
-            'name':name
+            'name': name
+        }
+    }
+}
+
+export const setClientCreation = (flag) => {
+    return {
+        type: CLIENT_CREATE,
+        payload: {
+            'isClientCreated': flag
+        }
+    }
+}
+
+export const setGameCreation = (flag) => {
+    return {
+        type: GAME_CREATE,
+        payload: {
+            'isGameCreated': flag
         }
     }
 }

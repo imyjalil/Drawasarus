@@ -11,7 +11,7 @@ import Playground from './Playground';
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <Playground />
+      <Playground props={store} />
     </Router>
   </Provider>
   ,

@@ -25,7 +25,7 @@ let broadcastExceptSelf = (clientId, gameId, payload) => {
 
     games[gameId]['clients'].forEach((client) => {
         if (client !== clientId) {
-            console.log("-----------------",clients[client]['name'])
+            console.log("-----------------", clients[client]['name'])
             console.log(payload)
             clients[client]['connection'].send(JSON.stringify(payload))
         }
@@ -55,7 +55,7 @@ wsServer.on('request', req => {
             case events.CREATE_GAME:
 
                 console.log("CREATE")
-
+                console.log(body)
                 gameId = generateId();
                 clientId = body.clientId
                 name = body.name;
@@ -111,7 +111,7 @@ wsServer.on('request', req => {
                     'method': events.DRAW,
                     'canvasEvent': canvasEvent
                 }
-                
+
 
 
                 broadcastExceptSelf(clientId, gameId, payload)

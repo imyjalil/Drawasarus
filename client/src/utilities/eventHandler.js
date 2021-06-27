@@ -1,4 +1,4 @@
-import { storeClientId, storeGameId } from '../Redux/actions/userActions';
+import { storeClientId, storeGameId, setClientCreation, setGameCreation } from '../Redux/actions/userActions';
 import events from './constants';
 
 const eventHandler = (event, dispatch) => {
@@ -16,6 +16,7 @@ const eventHandler = (event, dispatch) => {
                     let clientId = data.clientId;
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
+                    dispatch(setClientCreation(true))
                     // sessionStorage.setItem('clientId', clientId);
                     //console.log('client id:' + clientId);
 
@@ -26,6 +27,7 @@ const eventHandler = (event, dispatch) => {
                     //console.log(data)
                     let gameId = data.gameId
                     dispatch(storeGameId(gameId))
+                    dispatch(setGameCreation(true))
                     //console.log('game id:' + gameId)
                     break;
 
