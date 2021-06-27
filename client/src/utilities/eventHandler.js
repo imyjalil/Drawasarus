@@ -1,6 +1,7 @@
+import { storeClientId, storeGameId } from '../Redux/actions/userActions';
 import events from './constants';
 
-let eventHandler = (event, { addPlayer, addPoints }) => {
+const eventHandler = (event,dispatch) => {
     console.log('event received:')
     if (event && event.data) {
         let data = JSON.parse(event.data)
@@ -11,22 +12,24 @@ let eventHandler = (event, { addPlayer, addPoints }) => {
                 case events.CONNECT:
                     //console.log('connect event');
                     let clientId = data.clientId;
-                    sessionStorage.setItem('clientId', clientId);
+                    console.log("dispatch client id")
+                    dispatch(storeClientId(clientId))
+                    // sessionStorage.setItem('clientId', clientId);
                     //console.log('client id:' + clientId);
 
                     break;
                 case events.CREATE_GAME:
-                    //store game id
+                    //store game idsend clien t
                     //console.log('create event');
                     //console.log(data)
                     let gameId = data.gameId
-                    sessionStorage.setItem('gameId', gameId)
+                    dispatch(storeGameId(gameId))
                     //console.log('game id:' + gameId)
                     break;
 
                 case events.JOIN:
                     let otherUser = data.name
-                    console.log(otherUser,"Joined")
+                    console.log(otherUser, "Joined")
                     break;
 
                 default:
