@@ -1,5 +1,8 @@
+import eventHandler from "../../utilities/eventHandler"
+
 const { WS_CONNECT, WS_DISCONNECT, WS_SEND_MESSAGE } = require("../../utilities/constants")
 const { wsConnect, wsDisconnect } = require("../actions/socketActions")
+
 
 const socketMiddleware = () => {
 
@@ -12,7 +15,8 @@ const socketMiddleware = () => {
 
     const onMessage = (store) => (event) => {
         console.log("on message")
-        console.log(event)
+        eventHandler(event, store.dispatch)
+
     }
 
     const onOpen = (store) => (event) => {

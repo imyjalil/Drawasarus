@@ -9,7 +9,7 @@ function Playground() {
 
     return (
         <Switch>
-            <Route excat path="/">
+            <Route exact path="/">
                 <LandingPage />
             </Route>
             <Route path="/game/:code">

@@ -3,7 +3,6 @@ import { CLIENT_ID, GAME_ID, NAME, SOCKET } from "../../utilities/constants";
 
 
 const initalState = {
-    ws: null,
     gameId: '',
     name: '',
     clientId: ''
@@ -16,7 +15,7 @@ export default function userReducer(state = initalState, action) {
 
     switch (action.type) {
 
-      
+
         case SOCKET:
             console.log("update socket", action)
             return {

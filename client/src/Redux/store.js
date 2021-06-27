@@ -1,4 +1,4 @@
-import { createStore, combineReducers, applyMiddleware } from "redux"
+import { createStore, combineReducers, applyMiddleware, compose } from "redux"
 import userReducer from "./reducers/userReducer"
 import reduxThunk from 'redux-thunk'
 import socketMiddleware from "./middleware/middleware"
@@ -16,7 +16,11 @@ const middleware = [
 ]
 
 const store = createStore(rootReducer,
-    applyMiddleware(...middleware)
+    compose(
+        applyMiddleware(...middleware),
+        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    )
+
 )
 
 console.log("in store", store.getState())

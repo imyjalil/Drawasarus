@@ -1,10 +1,12 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
 import events from './constants';
 
-const eventHandler = (event,dispatch) => {
+const eventHandler = (event, dispatch) => {
     console.log('event received:')
     if (event && event.data) {
         let data = JSON.parse(event.data)
+
+        console.log(data)
         if (data && data.method) {
             console.log('event type:' + data.method)
             switch (data.method) {
