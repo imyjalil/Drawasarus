@@ -1,38 +1,46 @@
-import React, { Component } from 'react';
-import { useDispatch, useSelector, connect } from 'react-redux'
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
 import { wsConnect, wsSendMessage } from '../../Redux/actions/socketActions';
 import { storeName } from '../../Redux/actions/userActions';
 import events from '../../utilities/constants'
 
 
-class LandingPage extends Component {
+function LandingPage() {
 
-    constructor(props) {
-        super(props)
-        console.log("render landing")
-        // this.state = props
-        // console.log(this.state)
-        // console.log(this.state.clientId)
-        this.propObj = { ...props }
-    }
 
-    componentDidUpdate() {
-        console.log("compoent updated Landing Page")
-    }
+    console.log("render landing")
 
-    createButtonHandler = async () => {
+
+    const dispatch = useDispatch()
+    const history = useHistory()
+
+    let state = useSelector(state => {
+
+        console.log("selector", state)
+
+        return {
+            clientId: state.user.clientId,
+            gameId: state.user.gameId,
+            name: state.user.name,
+            isClientCreated: state.user.isClientCreated,
+            isGameCreated: state.user.isGameCreated
+        }
+    })
+
+
+    const createButtonHandler = async () => {
 
         let name = document.getElementById('name').value
 
-        storeName(name)
+        dispatch(storeName(name))
 
         console.log("create button handler")
 
-        wsConnect('ws://localhost:9090/')
+        dispatch(wsConnect('ws://localhost:9090/'))
 
         console.log("after dispatch")
-        console.log(this.props)
+
         //console.log(state)
 
         //load spinner
@@ -44,7 +52,7 @@ class LandingPage extends Component {
 
             await new Promise(r => setTimeout(r, 500))
             attempts = attempts - 1
-            if (this.props.isClientCreated === true) {
+            if (state.isClientCreated === true) {
                 console.log('client id created')
                 break
             }
@@ -53,17 +61,16 @@ class LandingPage extends Component {
         if (attempts === 0) {
             //display error andd return
             console.log('timeout')
-            return
         }
         console.log('ctreatepayload state: ')
-        console.log(this.props)
+        console.log(state)
         let createPayload = {
             'method': events.CREATE_GAME,
-            'clientId': this.propObj.user.clientId,
-            'name': this.propObj.user.name
+            'clientId': state.clientId,
+            'name': state.name
         }
 
-        wsSendMessage(createPayload)
+        dispatch(wsSendMessage(createPayload))
 
         // console.log(state)
 
@@ -72,7 +79,7 @@ class LandingPage extends Component {
 
             await new Promise(r => setTimeout(r, 500))
             attempts = attempts - 1
-            if (this.propObj.user.isGameCreated === true) {
+            if (state.isGameCreated === true) {
                 console.log('game id created')
                 break
             }
@@ -81,50 +88,27 @@ class LandingPage extends Component {
         if (attempts === 0) {
             //display error andd return
             console.log('timeout')
-            return
         }
         console.log('joinpayload state: ')
-        console.log(this.propObj)
+        console.log(state)
         let joinPayload = {
             'method': events.JOIN,
-            'gameId': this.propObj.user.gameId,
-            'clientId': this.propObj.user.clientId,
-            'name': this.propObj.user.name
+            'gameId': state.gameId,
+            'clientId': state.clientId,
+            'name': state.name
         }
 
-        wsSendMessage(joinPayload)
+        dispatch(wsSendMessage(joinPayload))
 
-        //history.push("/game/" + this.state.gameId)
+        history.push("/game/" + state.gameId)
     }
 
-    render() {
-        return (
-            <div className="LandingPage" >
-                <input type="text" id="name" defaultValue="karun" /><br></br>
-                <input type="button" value="Create" onClick={this.createButtonHandler} /><br></br>
-            </div >
-        )
-    }
+    return (
+        <div className="LandingPage" >
+            <input type="text" id="name" defaultValue="karun" /><br></br>
+            <input type="button" value="Create" onClick={createButtonHandler} /><br></br>
+        </div >
+    )
 }
 
-const mapStateToProps = (state) => {
-    let newState = { ...state }
-    let user = { ...newState.user }
-    return {
-        clientId: user.clientId,
-        gameId: user.gameId,
-        name: user.name,
-        isClientCreated: user.isClientCreated,
-        isGameCreated: user.isGameCreated
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        storeName: (name) => dispatch(storeName(name)),
-        wsSendMessage: (msg) => dispatch(wsSendMessage(msg))
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(LandingPage)
-
+export default LandingPage
