@@ -11,7 +11,9 @@ import Playground from './Playground';
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <Playground props={store} />
+      <div className="playGroundContainer">
+        <Playground props={store} />
+      </div>
     </Router>
   </Provider>
   ,

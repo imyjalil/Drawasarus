@@ -1,7 +1,7 @@
 import React from 'react'
 import LeaderBoard from '../../components/LeaderBoard'
 import Canvas from '../../components/canvas'
-import Chat from '../../components/Chat'
+import Chat from '../../components/Chat/Chat'
 import Modal from '../../components/modal'
 import './gamePage.css'
 function GamePage() {
