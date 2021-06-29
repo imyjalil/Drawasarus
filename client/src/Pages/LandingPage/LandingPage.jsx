@@ -17,8 +17,6 @@ function LandingPage() {
 
     let state = useSelector(state => {
 
-        console.log("selector", state)
-
         return {
             clientId: state.user.clientId,
             gameId: state.user.gameId,
@@ -32,7 +30,7 @@ function LandingPage() {
     const createButtonHandler = async () => {
 
         let name = document.getElementById('name').value
-
+        let clientId, gameId;
         dispatch(storeName(name))
 
         console.log("create button handler")
@@ -52,8 +50,8 @@ function LandingPage() {
 
             await new Promise(r => setTimeout(r, 500))
             attempts = attempts - 1
-            if (state.isClientCreated === true) {
-                console.log('client id created')
+            if (sessionStorage.getItem('clientId') !== null) {
+                clientId = sessionStorage.getItem('clientId');
                 break
             }
         }
@@ -61,13 +59,14 @@ function LandingPage() {
         if (attempts === 0) {
             //display error andd return
             console.log('timeout')
+            return
         }
         console.log('ctreatepayload state: ')
         console.log(state)
         let createPayload = {
             'method': events.CREATE_GAME,
-            'clientId': state.clientId,
-            'name': state.name
+            'clientId': clientId,
+            'name': name
         }
 
         dispatch(wsSendMessage(createPayload))
@@ -79,8 +78,8 @@ function LandingPage() {
 
             await new Promise(r => setTimeout(r, 500))
             attempts = attempts - 1
-            if (state.isGameCreated === true) {
-                console.log('game id created')
+            if (sessionStorage.getItem('gameId') !== null) {
+                gameId = sessionStorage.getItem('gameId')
                 break
             }
         }
@@ -88,19 +87,18 @@ function LandingPage() {
         if (attempts === 0) {
             //display error andd return
             console.log('timeout')
+            return
         }
-        console.log('joinpayload state: ')
-        console.log(state)
         let joinPayload = {
             'method': events.JOIN,
-            'gameId': state.gameId,
-            'clientId': state.clientId,
-            'name': state.name
+            'gameId': gameId,
+            'clientId': clientId,
+            'name': name
         }
 
         dispatch(wsSendMessage(joinPayload))
 
-        history.push("/game/" + state.gameId)
+        history.push("/game/" + gameId)
     }
 
     return (

@@ -17,7 +17,7 @@ const eventHandler = (event, dispatch) => {
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
                     dispatch(setClientCreation(true))
-                    // sessionStorage.setItem('clientId', clientId);
+                    sessionStorage.setItem('clientId', clientId);
                     //console.log('client id:' + clientId);
 
                     break;
@@ -28,7 +28,7 @@ const eventHandler = (event, dispatch) => {
                     let gameId = data.gameId
                     dispatch(storeGameId(gameId))
                     dispatch(setGameCreation(true))
-                    //console.log('game id:' + gameId)
+                    sessionStorage.setItem('gameId', gameId);
                     break;
 
                 case events.JOIN:
