@@ -6,7 +6,7 @@ import Modal from '../../components/modal'
 import './gamePage.css'
 function GamePage() {
     return (
-        <div>
+        <div className='gamePageContainer'>
             <div className="col-sm-2 leaderBoard" >
                 <LeaderBoard />
             </div>

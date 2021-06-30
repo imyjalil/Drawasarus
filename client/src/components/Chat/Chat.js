@@ -5,17 +5,25 @@ import './Chat.css'
 
 const Chat = () => {
     const sendMessage = (message) => {
+        if (message === null) {
+            message = document.getElementsByClassName('textContainer')[0].value
+        }
         console.log(message)
     }
     return (
         <div className="outerContainer">
-            <Message sender="abc" body="xyz" />
+            <div className="chatMessages">
+                {/*<Message sender="abc" body="xyz" />*/}
+            </div>
             <footer>
-                <div className="container">
-                    <input
-                        placeholder={'Enter message to send'}
+                <div className="footerContainer">
+                    <input className="textContainer"
+                        id="textInputContainer"
+                        placeholder={'Type a message...'}
                         onKeyPress={(event) => event.key === 'Enter' ? sendMessage(event.target.value) : null}
                     />
+                    <i className="material-icons sendButton"
+                        onClick={() => sendMessage(null)}>send</i>
                 </div>
             </footer>
         </div>

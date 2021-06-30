@@ -1,0 +1,41 @@
+.outerContainer{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    overflow-y: auto;
+    overflow-x:hidden;
+    height:100%
+}
+
+.chatContainer .footer{
+    display:flex;
+    flex-shrink:0px;
+}
+
+.textContainer{
+    flex:1;
+    border-radius:18px;
+    padding:8px;
+}
+
+.footerContainer{
+    display:flex;
+    flex-direction: row;
+    margin:5px;
+}
+
+.sendButton{
+    background-color:transparent;
+    color:rgb(3,107,252);
+    padding:2px;
+    margin:5px;
+    align-items: center;
+}
+
+.sendButton:hover{
+    cursor: pointer;
+}
+
+.chatMessages{
+    flex:1;
+}
