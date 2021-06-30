@@ -109,20 +109,23 @@ wsServer.on('request', req => {
                 gameId = body.gameId
                 clientId = body.clientId
                 let guessWord = body.guessWord
+                name = body.name
 
-                let match = false
-
-                if (guessWord == games[gameId]['currWord']) {
-                    match = true
-                }
+                //validation
+                // let match = false
+                // console.log(games)
+                // if (guessWord == games[gameId]['currWord']) {
+                //     match = true
+                // }
 
                 payload = {
                     'method': events.GUESS,
                     'word': guessWord,
-                    'isCorrect': true
+                    'clientId': clientId,
+                    'name': name
                 }
 
-                broadcastExceptSelf(clientId, gameId, payload)
+                broadcastAll(clientId, gameId, payload)
 
 
                 break;
