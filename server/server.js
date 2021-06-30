@@ -1,10 +1,21 @@
 const events = require('./constants')
 
-const http = require("http");
-const httpServer = http.createServer();
-httpServer.listen(9090, () => console.log("Listening.. on 9090"))
+const http = require("http")
+const express = require('express')
+const { v4: uuid4 } = require('uuid')
+const cors = require('cors')
 
-const websocketServer = require("websocket").server
+const app = express()
+app.use(cors())
+
+
+const httpServer = http.createServer()
+httpServer.listen(9091, () => console.log("Listening.. on 9091"))
+
+
+
+const websocketServer = require("websocket").server;
+const { groupEnd } = require('console');
 const wsServer = new websocketServer(
     {
         "httpServer": httpServer
@@ -52,33 +63,8 @@ wsServer.on('request', req => {
 
         switch (body.method) {
 
-            case events.CREATE_GAME:
-
-                console.log("CREATE")
-                console.log(body)
-                gameId = generateId();
-                clientId = body.clientId
-                name = body.name;
-
-                clients[clientId]['name'] = name;
-                clients[clientId]['gameId'] = gameId
-
-                // first creation of the game
-                // initialze the dict
-                games[gameId] = {}
-                games[gameId]['clients'] = []
-
-                games[gameId]['currWord'] = ''
-                games[gameId]['canvasEvents'] = []
-
-                payLoad = {
-                    'method': events.CREATE_GAME,
-                    'gameId': gameId
-                }
-                connection.send(JSON.stringify(payLoad))
-                break;
-
             case events.JOIN_GAME:
+
                 console.log("JOIN")
 
                 clientId = body.clientId
@@ -140,7 +126,6 @@ wsServer.on('request', req => {
 
 
                 break;
-
             case events.WORD_SELECT:
 
                 gameId = body.gameId
@@ -156,8 +141,12 @@ wsServer.on('request', req => {
                 }
 
                 broadcastExceptSelf(clientId, gameId, payload)
+                break
         }
+
     })
+
+
     const clientId = generateId()
 
     // first creation of client
@@ -169,4 +158,27 @@ wsServer.on('request', req => {
         "clientId": clientId
     }
     connection.send(JSON.stringify(payLoad))
+
 })
+
+
+app.post("/create-game", (req, res) => {
+
+    const newId = uuid4()
+
+    payload = {
+        'gameId': generateId()
+    }
+    res.send(payload)
+    console.log("--------")
+
+    games[gameId] = {}
+    games[gameId]['clients'] = []
+
+    games[gameId]['currWord'] = ''
+    games[gameId]['canvasEvents'] = []
+
+
+});
+
+app.listen(9000)

@@ -1,12 +1,25 @@
 import { CLIENT_ID, CONNECT, CREATE_GAME, GAME_ID, JOIN, NAME, SOCKET, CLIENT_CREATE, GAME_CREATE } from '../../utilities/constants';
+import axios from 'axios'
 
 
+export const createGame = (roomName) => (dispatch) => {
+    return axios.post("http://localhost:9000/create-game")
+        .then(response => {
+            console.log(response.data)
+            response = response.data
+            dispatch(storeGameId(response.gameId))
+            return `game/${response.gameId}`
+        })
+        .catch(error => {
+            return ''
+            // need to dispatch game create failed action
+        })
 
-export const createGame = () => {
-    return {
-        type: CREATE_GAME
-    }
 }
+
+
+
+
 
 export const joinGame = () => {
     return {
