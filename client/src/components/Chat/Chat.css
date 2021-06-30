@@ -2,7 +2,7 @@
     flex:1;
     display:flex;
     flex-direction:column;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x:hidden;
     height:100%
 }
@@ -36,6 +36,40 @@
     cursor: pointer;
 }
 
-.chatMessages{
+.chatContainer{
     flex:1;
+}
+
+.textContainer{
+    outline:none;
+}
+
+.chatMessages .message{
+    padding-bottom:2px;
+    list-style:none;
+    align-items:flex-end;
+    flex-shrink:0;
+    --webkit-flex:0;
+}
+
+.chatMessages .message .messageBody{
+    background-color:white;
+    padding:6px 12px;
+    border-radius:18px;
+    font-size:14px;
+}
+
+.chatMessages .message .messageContainer{
+    display:flex;
+    flex-direction:column;
+    max-width:55%;
+}
+
+.chatMessages .message.mine{
+    display:flex;
+    flex-direction:row-reverse;
+}
+
+.chatMessages .message.mine .messageBody{
+    background-color:#1FA2F1;
 }

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Message from '../Messages/Message';
 import './Chat.css'
 
 
@@ -8,12 +7,44 @@ const Chat = () => {
         if (message === null) {
             message = document.getElementsByClassName('textContainer')[0].value
         }
-        console.log(message)
+        message = {
+            body: message.trim(),
+            sender: 'their'
+        }
+        addChatMessage(message)
+        //console.log(message)
     }
+    let messages = []
+
+    const addChatMessage = (message) => {
+        if (!message) {
+            alert("Invalid message")
+            return
+        }
+        var messageDiv = createMessage(message)
+        document.getElementById("chatMessages").innerHTML += messageDiv
+        let containerElement = document.getElementById('outerContainer')
+        containerElement.scrollTop = containerElement.scrollHeight
+    }
+
+    const createMessage = (message) => {
+        var isMine = message.sender === 'self'//need to change this to id later
+        var liClassName = isMine ? "mine" : "their"
+        // liClassName = "message ".concat(liClassName)
+        return (`<li class='message ${liClassName}'>
+        <div class='messageContainer'>
+            <span class='messageBody'>
+                ${message.body}
+            </span>
+        </div>
+    </li>`)
+    }
+
     return (
-        <div className="outerContainer">
-            <div className="chatMessages">
-                {/*<Message sender="abc" body="xyz" />*/}
+        <div className="outerContainer" id="outerContainer">
+            <div className="chatContainer">
+                <div id="chatMessages" className="chatMessages">
+                </div>
             </div>
             <footer>
                 <div className="footerContainer">
