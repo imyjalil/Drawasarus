@@ -1,20 +1,40 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { wsSendMessage } from '../../Redux/actions/socketActions'
+import events from '../../utilities/constants'
 import './Chat.css'
 
 
 const Chat = () => {
+    let [mic, flipMic] = useState(false);
+
+    let dispatch = useDispatch()
+    let state = useSelector(state => {
+        return {
+            clientId: state.user.clientId,
+            name: state.user.name
+        }
+    })
+
     const sendMessage = (message) => {
         if (message === null) {
             message = document.getElementsByClassName('textContainer')[0].value
         }
+
+        message = message.trim()
+        if (message === '') return
+
         message = {
-            body: message.trim(),
-            sender: 'their'
+            method: events.GUESS,
+            body: message,
+            clientId: state.clientId,
+            name: state.name
         }
-        addChatMessage(message)
-        //console.log(message)
+
+        dispatch(wsSendMessage(message))
+        // addChatMessage(message)
+        // document.getElementsByClassName('textContainer')[0].value = ''
     }
-    let messages = []
 
     const addChatMessage = (message) => {
         if (!message) {
@@ -30,15 +50,30 @@ const Chat = () => {
     const createMessage = (message) => {
         var isMine = message.sender === 'self'//need to change this to id later
         var liClassName = isMine ? "mine" : "their"
-        // liClassName = "message ".concat(liClassName)
+        let nameElement = '';
+        if (!isMine) {
+            nameElement = `<span class='senderName'>${(message.name)}</span>`;
+        }
+        console.log('id:' + state.clientId + " name:" + state.name)
         return (`<li class='message ${liClassName}'>
         <div class='messageContainer'>
+            ${nameElement}
             <span class='messageBody'>
                 ${message.body}
             </span>
         </div>
     </li>`)
     }
+
+    const handleMicFlip = () => {
+        flipMic(!mic)
+    }
+
+    let micElement = mic ?
+        <span className="material-icons micButton"
+            onClick={() => handleMicFlip()}>mic</span> :
+        <span className="material-icons micButton"
+            onClick={() => handleMicFlip()}>mic_off</span>
 
     return (
         <div className="outerContainer" id="outerContainer">
@@ -55,6 +90,7 @@ const Chat = () => {
                     />
                     <i className="material-icons sendButton"
                         onClick={() => sendMessage(null)}>send</i>
+                    {micElement}
                 </div>
             </footer>
         </div>

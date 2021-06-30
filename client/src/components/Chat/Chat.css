@@ -36,6 +36,18 @@
     cursor: pointer;
 }
 
+.micButton{
+    background-color:transparent;
+    color:rgb(3,107,252);
+    padding:2px;
+    margin:5px;
+    align-items: center;
+}
+
+.micButton:hover{
+    cursor: pointer;
+}
+
 .chatContainer{
     flex:1;
 }
@@ -70,6 +82,18 @@
     flex-direction:row-reverse;
 }
 
+.chatMessages .message.mine .messageContainer{
+    align-items: flex-end;
+}
+
+.chatMessages .message.their .messageContainer{
+    align-items: flex-start;
+}
+
 .chatMessages .message.mine .messageBody{
     background-color:#1FA2F1;
+}
+
+.senderName{
+    color:rgba(0,0,0,0.6);
 }
