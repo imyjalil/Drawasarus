@@ -12,7 +12,8 @@ const Chat = () => {
     let state = useSelector(state => {
         return {
             clientId: state.user.clientId,
-            name: state.user.name
+            name: state.user.name,
+            gameId: state.user.gameId
         }
     })
 
@@ -23,12 +24,13 @@ const Chat = () => {
 
         message = message.trim()
         if (message === '') return
-
+        console.log('id:' + state.clientId + " name:" + state.name + 'gameId:' + state.gameId)
         message = {
-            method: events.GUESS,
-            body: message,
-            clientId: state.clientId,
-            name: state.name
+            'method': events.GUESS,
+            'guessWord': message,
+            'clientId': state.clientId,
+            'name': state.name,
+            'gameId': state.gameId
         }
 
         dispatch(wsSendMessage(message))
@@ -54,7 +56,7 @@ const Chat = () => {
         if (!isMine) {
             nameElement = `<span class='senderName'>${(message.name)}</span>`;
         }
-        console.log('id:' + state.clientId + " name:" + state.name)
+
         return (`<li class='message ${liClassName}'>
         <div class='messageContainer'>
             ${nameElement}
