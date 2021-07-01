@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import events from '../utilities/constants'
-const Canvas = (props) => {
+const Canvas = () => {
 
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
-    
-    let x1,y1,x2,y2;
+
+    let x1, y1, x2, y2;
 
 
     useEffect(() => {
@@ -38,7 +38,7 @@ const Canvas = (props) => {
         x1 = getMousePosition(nativeEvent).x
         y1 = getMousePosition(nativeEvent).y
 
-        contextRef.current.moveTo(x1,y1);
+        contextRef.current.moveTo(x1, y1);
         //console.log('moved to ' + offsetX + ", " + offsetY)
         setIsDrawing(true);
     };
@@ -56,24 +56,24 @@ const Canvas = (props) => {
         x2 = getMousePosition(nativeEvent).x
         y2 = getMousePosition(nativeEvent).y
 
-        contextRef.current.lineTo(x2,y2);
+        contextRef.current.lineTo(x2, y2);
         //console.log('line to ' + offsetX + ", " + offsetY)
         contextRef.current.stroke();
 
-        let payload = {
-            'method':events.DRAW,
-            'clientId': props.clientId,
-            'gameId':props.gameId,
-            'canvasEvent':[x1,y1,x2,y2]
-        }
+        // let payload = {
+        //     'method':events.DRAW,
+        //     'clientId': props.clientId,
+        //     'gameId':props.gameId,
+        //     'canvasEvent':[x1,y1,x2,y2]
+        // }
 
-        console.log(canvasRef.current.toDataURL("image/png"))
+        // console.log(canvasRef.current.toDataURL("image/png"))
 
-        let ws = props.ws
-        ws.send(JSON.stringify(payload))
+        // let ws = props.ws
+        // ws.send(JSON.stringify(payload))
 
-        
-       
+
+
 
     };
 
