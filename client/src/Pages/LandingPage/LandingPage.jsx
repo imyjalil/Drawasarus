@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
 import { wsConnect, wsSendMessage } from '../../Redux/actions/socketActions';
-import { storeName } from '../../Redux/actions/userActions';
+import { createGame, storeName, storeGameId } from '../../Redux/actions/userActions';
 import events from '../../utilities/constants'
 
 
@@ -27,83 +27,38 @@ function LandingPage() {
     })
 
 
-    const createButtonHandler = async () => {
+    const createButtonHandler = () => {
+        // first send a get request to create game
+        // store the gameid and client id redux thunk
 
-        let name = document.getElementById('name').value
-        let clientId, gameId;
-        dispatch(storeName(name))
-
-        console.log("create button handler")
-
-        dispatch(wsConnect('ws://localhost:9090/'))
-
-        console.log("after dispatch")
-
-        //console.log(state)
-
-        //load spinner
-
-        //initiate timeout of 5 secs with 0.5s interval, check if client is set
-        //if it is, send createpayload
-        let attempts = 10
-        while (attempts > 0) {
-
-            await new Promise(r => setTimeout(r, 500))
-            attempts = attempts - 1
-            if (sessionStorage.getItem('clientId') !== null) {
-                clientId = sessionStorage.getItem('clientId');
-                break
-            }
-        }
-
-        if (attempts === 0) {
-            //display error andd return
-            console.log('timeout')
-            return
-        }
-        console.log('ctreatepayload state: ')
-        console.log(state)
-        let createPayload = {
-            'method': events.CREATE_GAME,
-            'clientId': clientId,
-            'name': name
-        }
-
-        dispatch(wsSendMessage(createPayload))
-
-        // console.log(state)
-
-        attempts = 10
-        while (attempts > 0) {
-
-            await new Promise(r => setTimeout(r, 500))
-            attempts = attempts - 1
-            if (sessionStorage.getItem('gameId') !== null) {
-                gameId = sessionStorage.getItem('gameId')
-                break
-            }
-        }
-
-        if (attempts === 0) {
-            //display error andd return
-            console.log('timeout')
-            return
-        }
-        let joinPayload = {
-            'method': events.JOIN,
-            'gameId': gameId,
-            'clientId': clientId,
-            'name': name
-        }
-
-        dispatch(wsSendMessage(joinPayload))
-
-        history.push("/game/" + gameId)
+        dispatch(createGame("helloroom"))
+            .then(path => {
+                if (path != '') {
+                    // if we got a valid room id
+                    dispatch(wsConnect('ws://localhost:9091/'))
+                    console.log(path)
+                    history.push(path)
+                }
+            })
     }
+
+    const joinButtonHandler = () => {
+
+        // need to raise a alert when user didn't entered the game code
+
+        // 1234 is for default test game code
+        dispatch(storeGameId('1234'))
+        dispatch(wsConnect('ws://localhost:9091/'))
+        history.push('game/1234')
+    }
+
 
     return (
         <div className="LandingPage" >
+            <h1>{state.clientId}</h1>
             <input type="text" id="name" defaultValue="karun" /><br></br>
+            <input type="button" value="Join" onClick={joinButtonHandler} />
+            <input type="text" id="name" defaultValue="1234" /><br></br>
             <input type="button" value="Create" onClick={createButtonHandler} /><br></br>
         </div >
     )
