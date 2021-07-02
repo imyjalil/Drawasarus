@@ -1,13 +1,12 @@
-import { CLIENT_CREATE, CLIENT_ID, GAME_ID, NAME, SOCKET, GAME_CREATE } from "../../utilities/constants";
-
-
+import { CLIENT_CREATE, CLIENT_ID, GAME_ID, NAME, SOCKET, GAME_CREATE, GUESS } from "../../utilities/constants";
 
 const initalState = {
     gameId: '',
     name: '',
     clientId: '',
     isClientCreated: false,
-    isGameCreated: false
+    isGameCreated: false,
+    chatEvent: null
 }
 
 
@@ -52,6 +51,14 @@ export default function userReducer(state = initalState, action) {
             return {
                 ...state,
                 isGameCreated: action.payload['isGameCreated']
+            }
+
+        case GUESS:
+            console.log('in guess reducer')
+            console.log(action)
+            return {
+                ...state,
+                chatEvent: action.payload['chatEvent']
             }
 
         default:

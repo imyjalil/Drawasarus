@@ -1,7 +1,9 @@
 import { storeClientId, storeGameId, setClientCreation, setGameCreation } from '../Redux/actions/userActions';
+import { signalChatEvent } from '../Redux/actions/gameActions';
+import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
-const eventHandler = (event, dispatch) => {
+const eventHandler = (event, dispatch, state) => {
     console.log('event received:')
     if (event && event.data) {
         let data = JSON.parse(event.data)
@@ -14,11 +16,18 @@ const eventHandler = (event, dispatch) => {
                 case events.CONNECT:
                     //console.log('connect event');
                     let clientId = data.clientId;
+
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
                     dispatch(setClientCreation(true))
-                    sessionStorage.setItem('clientId', clientId);
-                    //console.log('client id:' + clientId);
+
+                    let joinPayload = {
+                        'method': events.JOIN_GAME,
+                        'clientId': clientId,
+                        'gameId': state.user.gameId,
+                        'name': state.user.name
+                    }
+                    dispatch(wsSendMessage(joinPayload))
 
                     break;
                 case events.CREATE_GAME:
@@ -31,10 +40,13 @@ const eventHandler = (event, dispatch) => {
                     sessionStorage.setItem('gameId', gameId);
                     break;
 
-                case events.JOIN:
+                case events.JOIN_GAME:
                     let otherUser = data.name
                     console.log(otherUser, "Joined")
                     break;
+
+                case events.GUESS:
+                    dispatch(signalChatEvent(data))
 
                 default:
                     console.log('other event:' + data.method)

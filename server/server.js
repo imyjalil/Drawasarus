@@ -7,7 +7,7 @@ const cors = require('cors')
 
 const app = express()
 app.use(cors())
-
+app.use(express.json())
 
 const httpServer = http.createServer()
 httpServer.listen(9091, () => console.log("Listening.. on 9091"))
@@ -26,21 +26,6 @@ id = 0;
 games = {}
 clients = {}
 
-
-test = () => {
-
-    console.log("test room")
-    const gameId = 1234
-
-    games[gameId] = {}
-    games[gameId]['clients'] = []
-
-    games[gameId]['currWord'] = ''
-    games[gameId]['canvasEvents'] = []
-}
-
-test()
-
 function generateId() {
     return ++id;
 }
@@ -57,7 +42,9 @@ let broadcastExceptSelf = (clientId, gameId, payload) => {
 }
 
 let broadcastAll = (clientId, gameId, payload) => {
+    console.log("about to broadcast")
     games[gameId]['clients'].forEach((client) => {
+        console.log(client)
         clients[client]['connection'].send(JSON.stringify(payload))
     })
 }
@@ -90,7 +77,7 @@ wsServer.on('request', req => {
                 clients[clientId]['gameId'] = gameId
 
                 games[gameId]['clients'].push(clientId)
-
+                console.log(games)
                 payload = {
                     'method': events.JOIN_GAME,
                     'name': clients[clientId]['name']
@@ -135,7 +122,7 @@ wsServer.on('request', req => {
 
                 payload = {
                     'method': events.GUESS,
-                    'word': guessWord,
+                    'guessWord': guessWord,
                     'clientId': clientId,
                     'name': name
                 }
@@ -198,5 +185,26 @@ app.post("/create-game", (req, res) => {
 
 
 });
+
+app.get("/isValidGame", (req, res) => {
+    console.log(req.headers.gameid)
+    console.log(req.params)
+    let payload = {
+        'valid': false
+    }
+    console.log('abc')
+    if (!req || !req.headers || !req.headers.gameid) {
+        return res.send(JSON.stringify(payload))
+    }
+    console.log('def')
+    let gameId = req.headers.gameid
+    if (gameId in games) {
+        payload = {
+            'valid': true
+        }
+    }
+    console.log('ghi')
+    return res.send(JSON.stringify(payload))
+})
 
 app.listen(9000)

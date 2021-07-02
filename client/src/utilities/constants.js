@@ -1,5 +1,5 @@
 module.exports = {
-    JOIN: 'join',
+    JOIN_GAME: 'join',
     CREATE_GAME: 'create',
     DRAW: 'draw',
     GUESS: 'guess',

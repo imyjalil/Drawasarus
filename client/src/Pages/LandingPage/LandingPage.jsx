@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { wsConnect, wsSendMessage } from '../../Redux/actions/socketActions';
 import { createGame, storeName, storeGameId } from '../../Redux/actions/userActions';
 import events from '../../utilities/constants'
-
+import axios from 'axios';
 
 function LandingPage() {
 
@@ -30,7 +30,7 @@ function LandingPage() {
     const createButtonHandler = () => {
         // first send a get request to create game
         // store the gameid and client id redux thunk
-
+        dispatch(storeName(document.getElementById('name').value))
         dispatch(createGame("helloroom"))
             .then(path => {
                 if (path != '') {
@@ -42,24 +42,34 @@ function LandingPage() {
             })
     }
 
-    const joinButtonHandler = () => {
+    const joinButtonHandler = async () => {
 
-        // need to raise a alert when user didn't entered the game code
+        dispatch(storeName(document.getElementById('name').value))
+        // api to check if the gameid exists
+        let gameId = document.getElementById('gameId').value
+        let headers = {
+            "gameId": gameId
+        }
+        let resp = await axios.get("http://localhost:9000/isValidGame?a=123", { headers })
+        console.log(resp.data)
+        if (!resp || !resp.data || !resp.data['valid']) {
+            alert("Game id is Invalid. Please check again")
+            return
+        }
 
-        // 1234 is for default test game code
-        dispatch(storeGameId('1234'))
+        dispatch(storeGameId(gameId))
         dispatch(wsConnect('ws://localhost:9091/'))
-        history.push('game/1234')
+        history.push('game/' + gameId)
     }
 
 
     return (
         <div className="LandingPage" >
             <h1>{state.clientId}</h1>
-            <input type="text" id="name" defaultValue="karun" /><br></br>
-            <input type="button" value="Join" onClick={joinButtonHandler} />
-            <input type="text" id="name" defaultValue="1234" /><br></br>
+            <input type="text" id="name" defaultValue="abc" /><br></br>
             <input type="button" value="Create" onClick={createButtonHandler} /><br></br>
+            <input type="text" id="gameId" /><br></br>
+            <input type="button" value="Join" onClick={joinButtonHandler} />
         </div >
     )
 }

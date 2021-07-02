@@ -1,4 +1,4 @@
-import { CLIENT_ID, CONNECT, CREATE_GAME, GAME_ID, JOIN, NAME, SOCKET, CLIENT_CREATE, GAME_CREATE } from '../../utilities/constants';
+import { CLIENT_ID, CONNECT, CREATE_GAME, GAME_ID, JOIN_GAME, NAME, SOCKET, CLIENT_CREATE, GAME_CREATE } from '../../utilities/constants';
 import axios from 'axios'
 
 
@@ -23,7 +23,7 @@ export const createGame = (roomName) => (dispatch) => {
 
 export const joinGame = () => {
     return {
-        type: JOIN
+        type: JOIN_GAME
     }
 }
 export const connect = () => {

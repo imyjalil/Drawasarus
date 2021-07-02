@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { wsSendMessage } from '../../Redux/actions/socketActions'
 import events from '../../utilities/constants'
@@ -13,9 +13,16 @@ const Chat = () => {
         return {
             clientId: state.user.clientId,
             name: state.user.name,
-            gameId: state.user.gameId
+            gameId: state.user.gameId,
+            chatEvent: state.user.chatEvent
         }
     })
+
+    useEffect(() => {
+        console.log('chatEvent:')
+        console.log(state.chatEvent)
+        addChatMessage(state.chatEvent)
+    }, [state.chatEvent])
 
     const sendMessage = (message) => {
         if (message === null) {
@@ -40,9 +47,11 @@ const Chat = () => {
 
     const addChatMessage = (message) => {
         if (!message) {
-            alert("Invalid message")
+            console.log("Invalid message")
             return
         }
+        console.log('addChatMessage message:')
+        console.log(message)
         var messageDiv = createMessage(message)
         document.getElementById("chatMessages").innerHTML += messageDiv
         let containerElement = document.getElementById('outerContainer')
@@ -50,7 +59,7 @@ const Chat = () => {
     }
 
     const createMessage = (message) => {
-        var isMine = message.sender === 'self'//need to change this to id later
+        var isMine = message.clientId === state.clientId
         var liClassName = isMine ? "mine" : "their"
         let nameElement = '';
         if (!isMine) {
@@ -61,7 +70,7 @@ const Chat = () => {
         <div class='messageContainer'>
             ${nameElement}
             <span class='messageBody'>
-                ${message.body}
+                ${message.guessWord}
             </span>
         </div>
     </li>`)
