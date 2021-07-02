@@ -27,6 +27,19 @@ games = {}
 clients = {}
 
 
+test = () => {
+
+    console.log("test room")
+    const gameId = 1234
+
+    games[gameId] = {}
+    games[gameId]['clients'] = []
+
+    games[gameId]['currWord'] = ''
+    games[gameId]['canvasEvents'] = []
+}
+
+test()
 
 function generateId() {
     return ++id;
@@ -50,6 +63,8 @@ let broadcastAll = (clientId, gameId, payload) => {
 }
 
 wsServer.on('request', req => {
+
+
 
     const connection = req.accept(null, req.origin)
 
