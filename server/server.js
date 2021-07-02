@@ -167,10 +167,10 @@ wsServer.on('request', req => {
 
 app.post("/create-game", (req, res) => {
 
-    const newId = uuid4()
+    const gameId = uuid4()
 
     payload = {
-        'gameId': generateId()
+        'gameId': gameId
     }
     res.send(payload)
     console.log("--------")
