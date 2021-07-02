@@ -1,11 +1,13 @@
 .leaderBoard{
     background-color:aqua;
     overflow:auto;
+    height:100%;
 }
 
 .canvas{
     background-color: white;
-    margin:auto
+    margin:auto;
+    height:70%;
 }
 
 .chat{
@@ -15,5 +17,9 @@
 }
 
 .gamePageContainer{
+    height:100%;
+}
+
+.firstContainer{
     height:100%;
 }

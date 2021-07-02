@@ -41,8 +41,7 @@ const Chat = () => {
         }
 
         dispatch(wsSendMessage(message))
-        // addChatMessage(message)
-        // document.getElementsByClassName('textContainer')[0].value = ''
+        document.getElementsByClassName('textContainer')[0].value = ''
     }
 
     const addChatMessage = (message) => {

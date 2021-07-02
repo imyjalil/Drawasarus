@@ -19,7 +19,7 @@ function GamePage() {
 
     useEffect(() => {
         setloading(true)
-        
+
     }, []);
 
 
