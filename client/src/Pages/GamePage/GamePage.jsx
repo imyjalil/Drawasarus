@@ -37,9 +37,6 @@ function GamePage() {
 
     return (
         <div className='gamePageContainer'>
-            <div>
-                <h1>clientID = {state.clientId}</h1>
-            </div>
             <div className="col-sm-2 leaderBoard" >
                 <LeaderBoard />
             </div>
