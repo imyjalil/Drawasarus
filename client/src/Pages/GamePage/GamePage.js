@@ -34,14 +34,26 @@ function GamePage() {
         }
     })
 
+    const copy = () => {
+        const area = document.getElementsByClassName('gameIdElement')[0]
+        area.select();
+        document.execCommand('copy')
+    }
 
     return (
         <div className='gamePageContainer'>
             <div className="col-sm-2 leaderBoard" >
                 <LeaderBoard />
             </div>
-            <div className="col-sm-8 canvas">
-                <Canvas />
+            <div className="col-sm-8 middleContainer">
+                <div className="canvas">
+                    <Canvas />
+                </div>
+                <div className="infoContainer">
+                    <p>Game Id</p>
+                    <div className="gameIdElement">{state.gameId}</div>
+                    <span class="material-icons-outlined copyButton" onClick={copy}>content_copy</span>
+                </div>
             </div>
             <div className="col-sm-2 chat" >
                 <Chat />

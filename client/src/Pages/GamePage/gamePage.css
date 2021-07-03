@@ -6,7 +6,7 @@
 
 .canvas{
     background-color: white;
-    margin:auto;
+    margin-top:30px;
     height:70%;
 }
 
@@ -20,6 +20,11 @@
     height:100%;
 }
 
-.firstContainer{
+.middleContainer{
     height:100%;
+}
+.infoContainer{
+    margin-top:10px;
+    height:100%;
+    background-color: lightblue;
 }
