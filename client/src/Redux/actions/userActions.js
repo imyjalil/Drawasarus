@@ -1,4 +1,4 @@
-import { CLIENT_ID, CONNECT, CREATE_GAME, GAME_ID, JOIN_GAME, NAME, SOCKET, CLIENT_CREATE, GAME_CREATE } from '../../utilities/constants';
+import { CLIENT_ID, CONNECT, GAME_ID, JOIN_GAME, NAME, SOCKET, } from '../../utilities/constants';
 import axios from 'axios'
 
 
@@ -69,20 +69,3 @@ export const storeName = (name) => {
     }
 }
 
-export const setClientCreation = (flag) => {
-    return {
-        type: CLIENT_CREATE,
-        payload: {
-            'isClientCreated': flag
-        }
-    }
-}
-
-export const setGameCreation = (flag) => {
-    return {
-        type: GAME_CREATE,
-        payload: {
-            'isGameCreated': flag
-        }
-    }
-}

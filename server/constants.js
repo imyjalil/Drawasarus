@@ -4,4 +4,6 @@ module.exports = {
     DRAW: 'draw',
     GUESS: 'guess',
     WORD_SELECT: 'wordselect',
+    UPDATE_PLAYER_LIST: 'update_player_list',
+    REMOVE_PLAYER: 'remove_player'
 }

@@ -41,7 +41,7 @@ let broadcastExceptSelf = (clientId, gameId, payload) => {
     })
 }
 
-let broadcastAll = (clientId, gameId, payload) => {
+let broadcastAll = (gameId, payload) => {
     console.log("about to broadcast")
     games[gameId]['clients'].forEach((client) => {
         console.log(client)
@@ -56,7 +56,15 @@ wsServer.on('request', req => {
     const connection = req.accept(null, req.origin)
 
     connection.on('open', () => console.log("connect"))
-    connection.on('close', () => console.log("closed! "))
+    connection.on('close', () => {
+        let gameId = clients[connection.clientId]['gameId']
+        payload = {
+            'method': events.REMOVE_PLAYER,
+            'id': clientId
+        }
+        broadcastAll(gameId, payload)
+    }
+    )
     connection.on("message", message => {
         console.log('message received ')
         const body = JSON.parse(message.utf8Data)
@@ -76,13 +84,39 @@ wsServer.on('request', req => {
                 clients[clientId]['name'] = name;
                 clients[clientId]['gameId'] = gameId
 
+                console.log("adding the ", clientId, "to game ", gameId)
+
                 games[gameId]['clients'].push(clientId)
                 console.log(games)
-                payload = {
-                    'method': events.JOIN_GAME,
-                    'name': clients[clientId]['name']
+
+
+                // payload = {
+                //     'method': events.JOIN_GAME,
+                //     'name': clients[clientId]['name']
+                // }
+
+                players = []
+
+                lobbyPlayers = games[gameId]['clients']
+
+                console.log(lobbyPlayers)
+
+                for (let index = 0; index < lobbyPlayers.length; index++) {
+                    let id = lobbyPlayers[index]
+                    console.log("inside", id, index)
+                    console.log("inside", clients[id]['name'])
+                    let name = clients[id].name
+                    players.push({ 'name': name, 'id': id, 'points': 0 })
                 }
-                broadcastExceptSelf(clientId, gameId, payload)
+
+                payload = {
+                    'method': events.UPDATE_PLAYER_LIST,
+                    'playerlist': players
+                }
+
+                console.log("payload", players)
+
+                broadcastAll(gameId, payload)
                 break;
 
             case events.DRAW:
@@ -127,7 +161,7 @@ wsServer.on('request', req => {
                     'name': name
                 }
 
-                broadcastAll(clientId, gameId, payload)
+                broadcastAll(gameId, payload)
 
 
                 break;
@@ -153,6 +187,7 @@ wsServer.on('request', req => {
 
 
     const clientId = generateId()
+    connection.clientId = clientId
 
     // first creation of client
     clients[clientId] = {}
@@ -163,6 +198,7 @@ wsServer.on('request', req => {
         "clientId": clientId
     }
     connection.send(JSON.stringify(payLoad))
+    // console.log("--->", connection)
 
 })
 
@@ -175,7 +211,7 @@ app.post("/create-game", (req, res) => {
         'gameId': gameId
     }
     res.send(payload)
-    console.log("--------")
+    console.log("creating a game with code", gameId)
 
     games[gameId] = {}
     games[gameId]['clients'] = []

@@ -2,11 +2,13 @@ import { createStore, combineReducers, applyMiddleware, compose } from "redux"
 import userReducer from "./reducers/userReducer"
 import reduxThunk from 'redux-thunk'
 import socketMiddleware from "./middleware/middleware"
+import gameReducer from "./reducers/gameReducers"
 
 
 
 const rootReducer = combineReducers({
-    user: userReducer
+    user: userReducer,
+    game: gameReducer
 })
 
 
