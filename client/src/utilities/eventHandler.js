@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId, setClientCreation, setGameCreation } from '../Redux/actions/userActions';
-import { signalChatEvent } from '../Redux/actions/gameActions';
+import { signalChatEvent, setCanvasImage } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -47,6 +47,12 @@ const eventHandler = (event, dispatch, state) => {
 
                 case events.GUESS:
                     dispatch(signalChatEvent(data))
+                    break;
+
+                case events.DRAW:
+                    console.log('draw event')
+                    dispatch(setCanvasImage(data))
+                    break;
 
                 default:
                     console.log('other event:' + data.method)

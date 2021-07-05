@@ -31,11 +31,9 @@ function generateId() {
 }
 
 let broadcastExceptSelf = (clientId, gameId, payload) => {
-
+    console.log('broadcastExceptSelf')
     games[gameId]['clients'].forEach((client) => {
         if (client !== clientId) {
-            console.log("-----------------", clients[client]['name'])
-            console.log(payload)
             clients[client]['connection'].send(JSON.stringify(payload))
         }
     })
@@ -44,7 +42,6 @@ let broadcastExceptSelf = (clientId, gameId, payload) => {
 let broadcastAll = (clientId, gameId, payload) => {
     console.log("about to broadcast")
     games[gameId]['clients'].forEach((client) => {
-        console.log(client)
         clients[client]['connection'].send(JSON.stringify(payload))
     })
 }
@@ -89,15 +86,15 @@ wsServer.on('request', req => {
                 console.log('DRAW')
                 gameId = body.gameId
                 clientId = body.clientId
-                let canvasEvent = body.canvasEvent
+                let canvasImage = body.canvasImage
 
-                console.log(canvasEvent)
+                //console.log(canvasEvent)
 
                 // game[gameId]['canvasEvents'].push(canvasEvent)
 
                 payload = {
                     'method': events.DRAW,
-                    'canvasEvent': canvasEvent
+                    'canvasImage': canvasImage
                 }
 
 

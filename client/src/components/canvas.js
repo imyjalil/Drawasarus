@@ -1,13 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import events from '../utilities/constants'
+import { useDispatch, useSelector } from 'react-redux'
+import { wsSendMessage } from '../Redux/actions/socketActions'
+
 const Canvas = () => {
 
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
 
-    let x1, y1, x2, y2;
+    const dispatch = useDispatch()
+    let state = useSelector(state => {
+        return {
+            clientId: state.user.clientId,
+            gameId: state.user.gameId,
+            canvasImage: state.user.canvasImage
+        }
+    })
 
+    let x1, y1, x2, y2;
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -23,7 +34,21 @@ const Canvas = () => {
         contextRef.current = context;
     }, []);
 
+    useEffect(() => {
 
+        console.log('canvas image use effect change')
+        if (state.canvasImage != null) {
+            let canvasImage = state.canvasImage.canvasImage
+            console.log('drawing')
+            //console.log(canvasImage.length)
+            console.log(canvasImage)
+            let image = new Image()
+            image.src = canvasImage
+            let canvasElement = document.getElementById('canvasElement')
+            let ctx = canvasElement.getContext('2d')
+            ctx.drawImage(image, 0, 0)
+        }
+    }, [state.canvasImage])
     //https://stackoverflow.com/questions/43955925/html5-responsive-canvas-mouse-position-and-resize
     const getMousePosition = (e) => {
         const canvas = canvasRef.current;
@@ -77,18 +102,35 @@ const Canvas = () => {
 
     };
 
+    const sendCanvasImage = () => {
+        let canvas = document.getElementById('canvasElement')
+        var base64ImageData = canvas.toDataURL("image/png");
+        console.log(base64ImageData)
+        let message = {
+            'method': events.DRAW,
+            'gameId': state.gameId,
+            'clientId': state.clientId,
+            'canvasImage': base64ImageData
+        }
+        dispatch(wsSendMessage(message))
+    }
+
     let canvasStyle = {
         width: `100%`
     }
     return (
-        <canvas
-            onMouseDown={startDrawing}
-            onMouseUp={finishDrawing}
-            onMouseMove={draw}
-            ref={canvasRef}
-            id="canvasElement"
-            style={canvasStyle}
-        />
+        <div>
+            <input type="button" value="senddata" onClick={sendCanvasImage} />
+            <canvas
+                onMouseDown={startDrawing}
+                onMouseUp={finishDrawing}
+                onMouseMove={draw}
+                ref={canvasRef}
+                id="canvasElement"
+                className="canvasElement"
+                style={canvasStyle}
+            />
+        </div>
     );
 }
 

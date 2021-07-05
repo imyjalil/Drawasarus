@@ -1,29 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-
+import React from 'react'
+import { useSelector } from 'react-redux'
 import LeaderBoard from '../../components/LeaderBoard'
 import Canvas from '../../components/canvas'
 import Chat from '../../components/Chat/Chat'
 import Modal from '../../components/modal'
 import './gamePage.css'
 import { joinGame } from '../../Redux/actions/userActions'
-import { wsSendMessage } from '../../Redux/actions/socketActions'
 function GamePage() {
-
-
-    const dispatch = useDispatch()
-
-
-    const [loading, setloading] = useState(false)
-
-
-    useEffect(() => {
-        setloading(true)
-
-    }, []);
-
-
-
 
     let state = useSelector(state => {
 
@@ -52,7 +35,7 @@ function GamePage() {
                 <div className="infoContainer">
                     <p>Game Id</p>
                     <div className="gameIdElement">{state.gameId}</div>
-                    <span class="material-icons-outlined copyButton" onClick={copy}>content_copy</span>
+                    <span className="material-icons-outlined copyButton" onClick={copy}>content_copy</span>
                 </div>
             </div>
             <div className="col-sm-2 chat" >

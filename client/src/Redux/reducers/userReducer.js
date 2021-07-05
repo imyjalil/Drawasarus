@@ -1,4 +1,4 @@
-import { CLIENT_CREATE, CLIENT_ID, GAME_ID, NAME, SOCKET, GAME_CREATE, GUESS } from "../../utilities/constants";
+import { DRAW, CLIENT_CREATE, CLIENT_ID, GAME_ID, NAME, SOCKET, GAME_CREATE, GUESS } from "../../utilities/constants";
 
 const initalState = {
     gameId: '',
@@ -6,7 +6,8 @@ const initalState = {
     clientId: '',
     isClientCreated: false,
     isGameCreated: false,
-    chatEvent: null
+    chatEvent: null,
+    canvasImage: null
 }
 
 
@@ -59,6 +60,13 @@ export default function userReducer(state = initalState, action) {
             return {
                 ...state,
                 chatEvent: action.payload['chatEvent']
+            }
+
+        case DRAW:
+            console.log('in DRAW reducer')
+            return {
+                ...state,
+                canvasImage: action.payload['canvasImage']
             }
 
         default:
