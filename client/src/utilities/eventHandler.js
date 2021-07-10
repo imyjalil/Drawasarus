@@ -1,5 +1,5 @@
-import { storeClientId, storeGameId, setClientCreation, setGameCreation } from '../Redux/actions/userActions';
-import { signalChatEvent } from '../Redux/actions/gameActions';
+import { storeClientId, storeGameId } from '../Redux/actions/userActions';
+import { removePlayer, signalChatEvent, updatePlayerList } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -10,7 +10,8 @@ const eventHandler = (event, dispatch, state) => {
 
         console.log(data)
         if (data && data.method) {
-            console.log('event type:' + data.method)
+            console.log('In event, handler event type:' + data.method)
+
             switch (data.method) {
 
                 case events.CONNECT:
@@ -19,7 +20,6 @@ const eventHandler = (event, dispatch, state) => {
 
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
-                    dispatch(setClientCreation(true))
 
                     let joinPayload = {
                         'method': events.JOIN_GAME,
@@ -29,14 +29,12 @@ const eventHandler = (event, dispatch, state) => {
                     }
                     dispatch(wsSendMessage(joinPayload))
 
+
                     break;
                 case events.CREATE_GAME:
-                    //store game idsend clien t
-                    //console.log('create event');
-                    //console.log(data)
+
                     let gameId = data.gameId
                     dispatch(storeGameId(gameId))
-                    dispatch(setGameCreation(true))
                     sessionStorage.setItem('gameId', gameId);
                     break;
 
@@ -47,6 +45,14 @@ const eventHandler = (event, dispatch, state) => {
 
                 case events.GUESS:
                     dispatch(signalChatEvent(data))
+                    break;
+                case events.UPDATE_PLAYER_LIST:
+                    console.log("updating the playerlist")
+                    dispatch(updatePlayerList(data))
+
+                case events.REMOVE_PLAYER:
+                    dispatch(removePlayer(data.id))
+                    break;
 
                 default:
                     console.log('other event:' + data.method)

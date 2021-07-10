@@ -65,7 +65,7 @@ const socketMiddleware = () => {
                 socket.send(JSON.stringify(action.payload))
                 break;
             default:
-                console.log("action type", action.type, " not found")
+                console.log("default action", action.type, " not found")
         }
 
 

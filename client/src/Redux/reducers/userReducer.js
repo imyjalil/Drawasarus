@@ -1,12 +1,10 @@
-import { CLIENT_CREATE, CLIENT_ID, GAME_ID, NAME, SOCKET, GAME_CREATE, GUESS } from "../../utilities/constants";
+import { CLIENT_ID, GAME_ID, NAME, SOCKET, GUESS } from "../../utilities/constants";
 
 const initalState = {
     gameId: '',
     name: '',
     clientId: '',
-    isClientCreated: false,
-    isGameCreated: false,
-    chatEvent: null
+    chatEvent: null  
 }
 
 
@@ -39,18 +37,6 @@ export default function userReducer(state = initalState, action) {
             return {
                 ...state,
                 name: action.payload['name']
-            }
-
-        case CLIENT_CREATE:
-            return {
-                ...state,
-                isClientCreated: action.payload['isClientCreated']
-            }
-
-        case GAME_CREATE:
-            return {
-                ...state,
-                isGameCreated: action.payload['isGameCreated']
             }
 
         case GUESS:

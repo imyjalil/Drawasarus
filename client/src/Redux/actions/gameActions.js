@@ -1,6 +1,6 @@
 
 
-import { DRAW, GUESS } from "../../utilities/constants"
+import { DRAW, GUESS, ADD_PLAYER, REMOVE_PLAYER, UPDATE_PLAYER_LIST } from "../../utilities/constants"
 
 export const draw = () => {
     return {
@@ -13,6 +13,23 @@ export const signalChatEvent = (chatEvent) => {
         type: GUESS,
         payload: {
             'chatEvent': chatEvent
+        }
+    }
+}
+
+export const updatePlayerList = (updatePlayers) => {
+
+    return {
+        type: UPDATE_PLAYER_LIST,
+        payload: updatePlayers
+    }
+}
+
+export const removePlayer = (id) => {
+    return {
+        type: REMOVE_PLAYER,
+        payload: {
+            'id': id
         }
     }
 }
