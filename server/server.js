@@ -63,6 +63,7 @@ wsServer.on('request', req => {
             'id': clientId
         }
         broadcastAll(gameId, payload)
+        games[gameId]['clients'] = games[gameId]['clients'].filter((id) => { return id != connection.clientId })
     }
     )
     connection.on("message", message => {
@@ -101,13 +102,10 @@ wsServer.on('request', req => {
 
                 console.log(lobbyPlayers)
 
-                for (let index = 0; index < lobbyPlayers.length; index++) {
-                    let id = lobbyPlayers[index]
-                    console.log("inside", id, index)
-                    console.log("inside", clients[id]['name'])
+                lobbyPlayers.forEach((id) => {
                     let name = clients[id].name
                     players.push({ 'name': name, 'id': id, 'points': 0 })
-                }
+                })
 
                 payload = {
                     'method': events.UPDATE_PLAYER_LIST,
