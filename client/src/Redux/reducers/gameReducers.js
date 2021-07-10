@@ -20,7 +20,7 @@ export default function gameReducer(state = intialState, action) {
         case REMOVE_PLAYER:
             return {
                 ...state,
-                players: state.players.filter(player => player.id != action.payload)
+                players: state.players.filter(player => player.id != action.payload.id)
             }
         default:
             return state;

@@ -28,6 +28,8 @@ export const updatePlayerList = (updatePlayers) => {
 export const removePlayer = (id) => {
     return {
         type: REMOVE_PLAYER,
-        payload: id
+        payload: {
+            'id': id
+        }
     }
 }
