@@ -20,7 +20,6 @@ const eventHandler = (event, dispatch, state) => {
 
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
-                    // dispatch(setClientCreation(true))
 
                     let joinPayload = {
                         'method': events.JOIN_GAME,
@@ -33,9 +32,7 @@ const eventHandler = (event, dispatch, state) => {
 
                     break;
                 case events.CREATE_GAME:
-                    //store game idsend clien t
-                    //console.log('create event');
-                    //console.log(data)
+
                     let gameId = data.gameId
                     dispatch(storeGameId(gameId))
                     sessionStorage.setItem('gameId', gameId);
@@ -51,7 +48,7 @@ const eventHandler = (event, dispatch, state) => {
                     break;
                 case events.UPDATE_PLAYER_LIST:
                     console.log("updating the playerlist")
-                    dispatch(updatePlayerList(data.playerlist))
+                    dispatch(updatePlayerList(data))
 
                 case events.REMOVE_PLAYER:
                     dispatch(removePlayer(data.id))

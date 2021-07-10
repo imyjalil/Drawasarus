@@ -15,7 +15,7 @@ export default function gameReducer(state = intialState, action) {
         case UPDATE_PLAYER_LIST:
             return {
                 ...state,
-                players: action.payload
+                players: action.payload.playerlist
             }
         case REMOVE_PLAYER:
             return {

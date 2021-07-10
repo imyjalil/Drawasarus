@@ -17,11 +17,11 @@ export const signalChatEvent = (chatEvent) => {
     }
 }
 
-export const updatePlayerList = (playerList) => {
+export const updatePlayerList = (updatePlayers) => {
 
     return {
         type: UPDATE_PLAYER_LIST,
-        payload: playerList
+        payload: updatePlayers
     }
 }
 

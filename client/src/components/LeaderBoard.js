@@ -8,9 +8,8 @@ function LeaderBoard() {
     const dispatch = useDispatch()
     const players = useSelector(state => state.game.players)
 
-    // const listItems = players.map((d) => <li key={d.id}>{d.name} {d.points}</li>);
 
-    const listItems = players.map((d) => <Player name={d.name} points={d.points} />);
+    const listItems = players.map((player) => <Player name={player.name} points={player.points} />);
 
 
     return (
