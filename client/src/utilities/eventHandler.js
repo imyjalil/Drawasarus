@@ -92,6 +92,10 @@ const eventHandler = async (event, dispatch, state) => {
                         addLocalTracks(rtcPeerConnection)
                         rtcPeerConnection.ontrack = (event) => {
                             //create an audio element and attach stream to it
+                            console.log('9848022338')
+                            let audioElement = document.createElement("video")
+                            audioElement.srcObject = event.streams[0]
+                            document.getElementById('audioEvents').appendChild(audioElement)
                             remoteStreams[player] = event.streams[0]
                         }
                         rtcPeerConnection.onicecandidate = (event) => {
@@ -147,6 +151,10 @@ const eventHandler = async (event, dispatch, state) => {
                     addLocalTracks(rtcPeerConnection)
                     rtcPeerConnection.ontrack = (event) => {
                         //create an audio element and attach stream to it
+                        console.log('9848022338')
+                        let audioElement = document.createElement("video")
+                        audioElement.srcObject = event.streams[0]
+                        document.getElementById('audioEvents').appendChild(audioElement)
                         remoteStreams[data.senderId] = event.streams[0]
                     }
                     rtcPeerConnection.onicecandidate = (event) => {

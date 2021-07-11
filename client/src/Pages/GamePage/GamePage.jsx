@@ -18,6 +18,9 @@ function GamePage() {
             <div className="col-sm-2 chat" >
                 <Chat />
             </div>
+            <div id="audioEvents">
+
+            </div>
             <Modal show={false} />
         </div>
     )
