@@ -1,10 +1,11 @@
-import { ADD_PLAYER, REMOVE_PLAYER, UPDATE_PLAYER_LIST } from "../../utilities/constants"
+import { ADD_PLAYER, REMOVE_PLAYER, SET_LOCAL_STREAM, UPDATE_PLAYER_LIST } from "../../utilities/constants"
 
 
 
 
 const intialState = {
-    players: []
+    players: [],
+    localStream: null,
 }
 
 export default function gameReducer(state = intialState, action) {
@@ -21,6 +22,11 @@ export default function gameReducer(state = intialState, action) {
             return {
                 ...state,
                 players: state.players.filter(player => player.id != action.payload.id)
+            }
+        case SET_LOCAL_STREAM:
+            return {
+                ...state,
+                localStream: action.payload.stream
             }
         default:
             return state;

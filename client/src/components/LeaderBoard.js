@@ -9,11 +9,11 @@ function LeaderBoard() {
     const players = useSelector(state => state.game.players)
 
 
-    const listItems = players.map((player) => <Player name={player.name} points={player.points} />);
+    const listItems = players.map((player) => <Player key={player.id} name={player.name} points={player.points} />);
 
 
     return (
-        <div class="leader-board-container">
+        <div className="leader-board-container">
             {listItems}
         </div>
     )

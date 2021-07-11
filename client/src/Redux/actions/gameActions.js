@@ -1,6 +1,6 @@
 
 
-import { DRAW, GUESS, ADD_PLAYER, REMOVE_PLAYER, UPDATE_PLAYER_LIST } from "../../utilities/constants"
+import { DRAW, GUESS, ADD_PLAYER, REMOVE_PLAYER, UPDATE_PLAYER_LIST, SET_LOCAL_STREAM } from "../../utilities/constants"
 
 export const draw = () => {
     return {
@@ -30,6 +30,15 @@ export const removePlayer = (id) => {
         type: REMOVE_PLAYER,
         payload: {
             'id': id
+        }
+    }
+}
+
+export const setLocalStream = (stream) => {
+    return {
+        type: SET_LOCAL_STREAM,
+        payload: {
+            'stream': stream
         }
     }
 }
