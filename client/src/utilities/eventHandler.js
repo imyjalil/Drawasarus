@@ -12,6 +12,11 @@ const mediaConstraints = {
     video: false
 }
 
+// const mediaConstraints = {
+//     audio: true,
+//     video: { width: 1280, height: 720 },
+// }
+
 const iceServers = {
     iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
@@ -90,10 +95,13 @@ const eventHandler = async (event, dispatch, state) => {
                         let rtcPeerConnection = new RTCPeerConnection(iceServers)
                         connections[player] = rtcPeerConnection
                         addLocalTracks(rtcPeerConnection)
+
                         rtcPeerConnection.ontrack = (event) => {
                             //create an audio element and attach stream to it
-                            console.log('9848022338')
+                            console.log('9848022338 prevclients')
+                            console.log(event)
                             let audioElement = document.createElement("video")
+                            audioElement.autoplay = "autoplay"
                             audioElement.srcObject = event.streams[0]
                             document.getElementById('audioEvents').appendChild(audioElement)
                             remoteStreams[player] = event.streams[0]
@@ -149,14 +157,18 @@ const eventHandler = async (event, dispatch, state) => {
                     let rtcPeerConnection = new RTCPeerConnection(iceServers)
                     connections[data.senderId] = rtcPeerConnection
                     addLocalTracks(rtcPeerConnection)
+
                     rtcPeerConnection.ontrack = (event) => {
                         //create an audio element and attach stream to it
-                        console.log('9848022338')
+                        console.log('9848022338 offer')
+                        console.log(event)
                         let audioElement = document.createElement("video")
+                        audioElement.autoplay = "autoplay"
                         audioElement.srcObject = event.streams[0]
                         document.getElementById('audioEvents').appendChild(audioElement)
                         remoteStreams[data.senderId] = event.streams[0]
                     }
+
                     rtcPeerConnection.onicecandidate = (event) => {
                         if (event.candidate) {
                             let iceCandidatePayload = {
@@ -169,7 +181,10 @@ const eventHandler = async (event, dispatch, state) => {
                             dispatch(wsSendMessage(iceCandidatePayload))
                         }
                     }
+
+
                     rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp))
+
                     let answerCreation = await async function () {
                         console.log('in offer creation')
                         let sessionDescription
