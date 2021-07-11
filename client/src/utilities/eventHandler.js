@@ -1,8 +1,16 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { removePlayer, signalChatEvent, updatePlayerList, setLocalStream } from '../Redux/actions/gameActions';
+import { removePlayer, signalChatEvent, updatePlayerList } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
+let localStream;
+let connections = {};
+let remoteStreams = {};
+
+const mediaConstraints = {
+    audio: true,
+    video: false
+}
 
 const iceServers = {
     iceServers: [
@@ -14,7 +22,15 @@ const iceServers = {
     ],
 }
 
-const eventHandler = (event, dispatch, state) => {
+function addLocalTracks(rtcPeerConnection) {
+    console.log('addLocalTracks:')
+    console.log(localStream)
+    localStream.getTracks().forEach((track) => {
+        rtcPeerConnection.addTrack(track, localStream)
+    })
+}
+
+const eventHandler = async (event, dispatch, state) => {
 
 
     console.log('event received:')
@@ -34,22 +50,6 @@ const eventHandler = (event, dispatch, state) => {
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
 
-
-                    // get the media access
-                    navigator.mediaDevices.getUserMedia({
-                        audio: true,
-                        video: false
-                    })
-                        .then(function (stream) {
-                            /* use the stream */
-                            dispatch(setLocalStream(stream))
-                        })
-                        .catch(function (err) {
-                            /* handle the error */
-                            console.log("not able to get the local stream")
-                        });
-
-
                     let joinPayload = {
                         'method': events.JOIN_GAME,
                         'clientId': clientId,
@@ -59,7 +59,9 @@ const eventHandler = (event, dispatch, state) => {
 
                     dispatch(wsSendMessage(joinPayload))
 
-
+                    localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+                    console.log('localStream fetched:')
+                    console.log(localStream)
                     break;
                 case events.CREATE_GAME:
 
@@ -76,34 +78,123 @@ const eventHandler = (event, dispatch, state) => {
                 case events.GUESS:
                     dispatch(signalChatEvent(data))
                     break;
-                case events.UPDATE_PLAYER_LIST:
 
-
-
-                    let players = state.game.players.map(player => player.id)
-
-                    let newPlayers = data.playerlist
-
-                    console.log("clientId", state.user.clientiId)
-
-                    newPlayers.forEach(player => {
-                        if (players.includes(player.id) == false && player.id != state.user.clientiId) {
-                            console.log("--> new player", player.id)
-
-                            let rtcPeerConnection = new RTCPeerConnection(iceServers)
-                            // addLocalTracks(rtcPeerConnection)
-                            // rtcPeerConnection.ontrack = setRemoteStream
-                            // rtcPeerConnection.onicecandidate = sendIceCandidate
-                            // await createOffer(rtcPeerConnection)
+                case 'prevClients':
+                    let prevClients = data.clients
+                    while (localStream == null || localStream == undefined) {
+                        await new Promise(r => setTimeout(r, 100));
+                    }
+                    for (let player of prevClients) {
+                        console.log("--> new player", player)
+                        console.log(state)
+                        let rtcPeerConnection = new RTCPeerConnection(iceServers)
+                        connections[player] = rtcPeerConnection
+                        addLocalTracks(rtcPeerConnection)
+                        rtcPeerConnection.ontrack = (event) => {
+                            //create an audio element and attach stream to it
+                            remoteStreams[player] = event.streams[0]
                         }
-                    });
+                        rtcPeerConnection.onicecandidate = (event) => {
+                            if (event.candidate) {
+                                let iceCandidatePayload = {
+                                    'method': 'sendIceCandidate',
+                                    'senderId': state.user.clientId,
+                                    'receiverId': player,
+                                    label: event.candidate.sdpMLineIndex,
+                                    candidate: event.candidate.candidate
+                                }
+                                dispatch(wsSendMessage(iceCandidatePayload))
+                            }
+                        }
+                        console.log('before offer creation')
+                        let offercreation = await async function () {
+                            console.log('in offer creation')
+                            let sessionDescription
+                            try {
+                                sessionDescription = await rtcPeerConnection.createOffer()
+                                rtcPeerConnection.setLocalDescription(sessionDescription)
+                                console.log('offer creation succeeded')
+                            } catch (error) {
+                                console.log('error in setting session desc')
+                            }
 
+                            let webRTCOfferPayload = {
+                                'method': 'webRTCOffer',
+                                sdp: sessionDescription,
+                                'senderId': state.user.clientId,
+                                'receiverId': player
+                            }
+                            console.log('sending offer websocket')
+                            dispatch(wsSendMessage(webRTCOfferPayload))
+                        }()
+                    }
+                    break
+
+                case events.UPDATE_PLAYER_LIST:
                     console.log("updating the playerlist")
                     dispatch(updatePlayerList(data))
+                    break
 
                 case events.REMOVE_PLAYER:
                     dispatch(removePlayer(data.id))
                     break;
+
+                case 'webRTCOffer':
+                    console.log('webrtcoffer')
+                    console.log(data)
+                    let rtcPeerConnection = new RTCPeerConnection(iceServers)
+                    connections[data.senderId] = rtcPeerConnection
+                    addLocalTracks(rtcPeerConnection)
+                    rtcPeerConnection.ontrack = (event) => {
+                        //create an audio element and attach stream to it
+                        remoteStreams[data.senderId] = event.streams[0]
+                    }
+                    rtcPeerConnection.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            let iceCandidatePayload = {
+                                'method': 'sendIceCandidate',
+                                'senderId': state.user.clientId,
+                                'receiverId': data.senderId,
+                                label: event.candidate.sdpMLineIndex,
+                                candidate: event.candidate.candidate
+                            }
+                            dispatch(wsSendMessage(iceCandidatePayload))
+                        }
+                    }
+                    rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp))
+                    let answerCreation = await async function () {
+                        console.log('in offer creation')
+                        let sessionDescription
+                        try {
+                            sessionDescription = await rtcPeerConnection.createAnswer()
+                            rtcPeerConnection.setLocalDescription(sessionDescription)
+                            console.log('offer creation succeeded')
+                        } catch (error) {
+                            console.log('error in setting session desc')
+                        }
+
+                        let webRTCAnswerPayload = {
+                            'method': 'webRTCAnswer',
+                            sdp: sessionDescription,
+                            'senderId': state.user.clientId,
+                            'receiverId': data.senderId
+                        }
+                        console.log('sending answer websocket')
+                        dispatch(wsSendMessage(webRTCAnswerPayload))
+                    }()
+                    break
+
+                case 'webRTCAnswer':
+                    connections[data.senderId].setRemoteDescription(data.sdp)
+                    break
+
+                case 'sendIceCandidate':
+                    let candidate = new RTCIceCandidate({
+                        sdpMLineIndex: data.label,
+                        candidate: data.candidate
+                    })
+                    connections[data.senderId].addIceCandidate(candidate)
+                    break
 
                 default:
                     console.log('other event:' + data.method)

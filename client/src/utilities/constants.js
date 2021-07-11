@@ -16,5 +16,6 @@ module.exports = {
     REMOVE_PLAYER: 'remove_player',
     MUTE: 'mute',
     UNMUTE: 'unmute',
-    SET_LOCAL_STREAM: 'localstream'
+    SET_LOCAL_STREAM: 'localstream',
+    SET_REMOTE_STREAM: 'remotestream'
 }

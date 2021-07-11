@@ -20,8 +20,8 @@ function Player(props) {
             <div>{props.points}</div>
 
             {mute ?
-                <span class="material-icons-outlined" onClick={inverse}>mute</span> :
-                <span className="material-icons-outlined" onClick={inverse}> unmute</span>
+                <span className="material-icons" onClick={inverse}>volume_off</span> :
+                <span className="material-icons" onClick={inverse}>volume_up</span>
             }
 
 

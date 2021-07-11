@@ -49,12 +49,29 @@ let broadcastAll = (gameId, payload) => {
     })
 }
 
+let sendMessageTo = (clientId, payload) => {
+    clients[clientId]['connection'].send(JSON.stringify(payload))
+}
+
 wsServer.on('request', req => {
 
 
 
     const connection = req.accept(null, req.origin)
 
+    const clientId = generateId()
+    connection.clientId = clientId
+
+    // first creation of client
+    clients[clientId] = {}
+    clients[clientId]['connection'] = connection
+
+    payLoad = {
+        "method": "connect",
+        "clientId": clientId
+    }
+    connection.send(JSON.stringify(payLoad))
+    // console.log("--->", connection)
     connection.on('open', () => console.log("connect"))
     connection.on('close', () => {
         let gameId = clients[connection.clientId]['gameId']
@@ -67,7 +84,7 @@ wsServer.on('request', req => {
     }
     )
     connection.on("message", message => {
-        console.log('message received ')
+        //console.log('message received ')
         const body = JSON.parse(message.utf8Data)
         let payLoad = {}
         let gameId, name, clientId;
@@ -87,6 +104,11 @@ wsServer.on('request', req => {
 
                 console.log("adding the ", clientId, "to game ", gameId)
 
+                prevClientsPayload = {
+                    'method': 'prevClients',
+                    'clients': games[gameId]['clients']
+                }
+                sendMessageTo(clientId, prevClientsPayload)
                 games[gameId]['clients'].push(clientId)
                 console.log(games)
 
@@ -179,24 +201,22 @@ wsServer.on('request', req => {
 
                 broadcastExceptSelf(clientId, gameId, payload)
                 break
+            case 'webRTCOffer':
+                sendMessageTo(body.receiverId, body)
+                break
+
+            case 'webRTCAnswer':
+                sendMessageTo(body.receiverId, body)
+                break
+
+            case 'sendIceCandidate':
+                sendMessageTo(body.receiverId, body)
+                break
         }
 
     })
 
 
-    const clientId = generateId()
-    connection.clientId = clientId
-
-    // first creation of client
-    clients[clientId] = {}
-    clients[clientId]['connection'] = connection
-
-    payLoad = {
-        "method": "connect",
-        "clientId": clientId
-    }
-    connection.send(JSON.stringify(payLoad))
-    // console.log("--->", connection)
 
 })
 

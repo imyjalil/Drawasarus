@@ -16,7 +16,7 @@ export const wsDisconnect = (host) => {
 }
 
 export const wsSendMessage = (payload) => {
-    console.log('dispatchinf sendmessage')
+    console.log('dispatching sendmessage')
     return {
         type: WS_SEND_MESSAGE,
         payload: payload
