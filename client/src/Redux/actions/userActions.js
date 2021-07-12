@@ -60,7 +60,7 @@ export const storeGameId = (gameId) => {
 }
 
 export const storeName = (name) => {
-    console.log('dispatching storename')
+    //console.log('dispatching storename')
     return {
         type: NAME,
         payload: {

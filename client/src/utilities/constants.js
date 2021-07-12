@@ -13,5 +13,10 @@ module.exports = {
     WS_DISCONNECT: 'ws_disconnect',
     WS_SEND_MESSAGE: 'ws_message',
     UPDATE_PLAYER_LIST: 'update_player_list',
-    REMOVE_PLAYER: 'remove_player'
+    REMOVE_PLAYER: 'remove_player',
+    MUTE: 'mute',
+    UNMUTE: 'unmute',
+    SET_LOCAL_STREAM: 'localstream',
+    SET_REMOTE_STREAM: 'remotestream',
+    SET_REMOTE_CORDS: 'cords'
 }

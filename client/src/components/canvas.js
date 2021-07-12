@@ -1,13 +1,33 @@
 import React, { useEffect, useRef, useState } from "react";
+import { wsSendMessage } from "../Redux/actions/socketActions";
 import events from '../utilities/constants'
+import { useDispatch, useSelector } from 'react-redux'
+import { remoteCords } from "../Redux/actions/gameActions";
+
+
+
+let x1, y1, x2, y2;
+
+
 const Canvas = () => {
 
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
 
-    let x1, y1, x2, y2;
+    const dispatch = useDispatch()
 
+    let state = useSelector(state => {
+
+        return {
+            clientId: state.user.clientId,
+            gameId: state.user.gameId,
+            remoteCords: state.game.remoteCords,
+            receivedDrawEvent: state.game.receivedDrawEvent
+        }
+    })
+
+    console.log("remote", state.remoteCords)
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -19,9 +39,21 @@ const Canvas = () => {
         //context.scale(2, 2);
         context.lineCap = "round";
         context.strokeStyle = "black";
-        context.lineWidth = 3;
+        context.lineWidth = 2;
         contextRef.current = context;
     }, []);
+
+    useEffect(() => {
+
+        console.log("remote canvas", state.remoteCords)
+        const { oldx, oldy, newx, newy } = state.remoteCords;
+        contextRef.current.moveTo(oldx, oldy);
+        contextRef.current.lineTo(newx, newy);
+        contextRef.current.stroke();
+
+
+    }, [state.receivedDrawEvent])
+
 
 
     //https://stackoverflow.com/questions/43955925/html5-responsive-canvas-mouse-position-and-resize
@@ -35,11 +67,13 @@ const Canvas = () => {
     const startDrawing = ({ nativeEvent }) => {
         contextRef.current.beginPath();
 
+
+
         x1 = getMousePosition(nativeEvent).x
         y1 = getMousePosition(nativeEvent).y
 
         contextRef.current.moveTo(x1, y1);
-        //console.log('moved to ' + offsetX + ", " + offsetY)
+        console.log('moved to ' + x1 + ", " + y1)
         setIsDrawing(true);
     };
 
@@ -56,9 +90,29 @@ const Canvas = () => {
         x2 = getMousePosition(nativeEvent).x
         y2 = getMousePosition(nativeEvent).y
 
+        console.log(x1, y1, x2, y2)
+
+        const payload = {
+            'method': events.SET_REMOTE_CORDS,
+            'gameId': state.gameId,
+            'clientid': state.clientId,
+            cords: [x1, y1, x2, y2]
+        }
+
+        dispatch(wsSendMessage(payload))
+
         contextRef.current.lineTo(x2, y2);
         //console.log('line to ' + offsetX + ", " + offsetY)
         contextRef.current.stroke();
+
+
+
+
+
+        x1 = x2;
+        y1 = y2;
+
+
 
         // let payload = {
         //     'method':events.DRAW,

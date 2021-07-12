@@ -9,7 +9,7 @@ import axios from 'axios';
 function LandingPage() {
 
 
-    console.log("render landing")
+    //console.log("render landing")
 
 
     const dispatch = useDispatch()

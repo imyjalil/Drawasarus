@@ -14,7 +14,7 @@ const socketMiddleware = () => {
     // the below three returns the callbacks
 
     const onMessage = (store) => (event) => {
-        console.log("on message")
+        //console.log("on message")
         eventHandler(event, store.dispatch, store.getState())
 
     }
