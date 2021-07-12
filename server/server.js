@@ -140,6 +140,7 @@ wsServer.on('request', req => {
                 break;
 
             case events.DRAW:
+
                 console.log('DRAW')
                 gameId = body.gameId
                 clientId = body.clientId
@@ -159,6 +160,26 @@ wsServer.on('request', req => {
                 broadcastExceptSelf(clientId, gameId, payload)
 
                 break;
+
+            case events.CORDS:
+
+                gameId = body.gameId
+                clientId = body.clientId
+                let cords = body.cords
+
+                console.log(cords)
+
+                payLoad = {
+                    'method': events.CORDS,
+                    'cords': cords
+                }
+
+                broadcastExceptSelf(clientId, gameId, payLoad)
+
+
+                break;
+
+
 
             case events.GUESS:
                 console.log('GUESS')

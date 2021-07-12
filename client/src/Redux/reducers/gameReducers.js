@@ -1,4 +1,4 @@
-import { ADD_PLAYER, REMOVE_PLAYER, SET_LOCAL_STREAM, SET_REMOTE_STREAM, UPDATE_PLAYER_LIST } from "../../utilities/constants"
+import { ADD_PLAYER, SET_REMOTE_CORDS, REMOVE_PLAYER, SET_LOCAL_STREAM, SET_REMOTE_STREAM, UPDATE_PLAYER_LIST } from "../../utilities/constants"
 
 
 
@@ -6,6 +6,8 @@ import { ADD_PLAYER, REMOVE_PLAYER, SET_LOCAL_STREAM, SET_REMOTE_STREAM, UPDATE_
 const intialState = {
     players: [],
     localStream: null,
+    remoteCords: [0, 0, 0, 0],
+    receivedDrawEvent: false
 }
 
 export default function gameReducer(state = intialState, action) {
@@ -22,6 +24,12 @@ export default function gameReducer(state = intialState, action) {
             return {
                 ...state,
                 players: state.players.filter(player => player.id != action.payload.id)
+            }
+        case SET_REMOTE_CORDS:
+            return {
+                ...state,
+                remoteCords: action.payload.cords,
+                receivedDrawEvent: !state.receivedDrawEvent
             }
         case SET_LOCAL_STREAM:
             return {

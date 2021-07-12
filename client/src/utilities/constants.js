@@ -17,5 +17,6 @@ module.exports = {
     MUTE: 'mute',
     UNMUTE: 'unmute',
     SET_LOCAL_STREAM: 'localstream',
-    SET_REMOTE_STREAM: 'remotestream'
+    SET_REMOTE_STREAM: 'remotestream',
+    SET_REMOTE_CORDS: 'cords'
 }
