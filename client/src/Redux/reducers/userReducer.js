@@ -1,7 +1,7 @@
 import { CLIENT_ID, GAME_ID, NAME, SOCKET, GUESS } from "../../utilities/constants";
 
 const initalState = {
-    gameId: '',
+    gameId: null,
     name: '',
     clientId: '',
     chatEvent: null
