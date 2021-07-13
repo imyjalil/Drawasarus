@@ -6,17 +6,24 @@ import { remoteCords } from "../Redux/actions/gameActions";
 
 
 
-let x1, y1, x2, y2;
-
+let count1 = 0;
+let count2 = 0;
 
 const Canvas = () => {
 
+    console.log("render")
+
     const [isDrawing, setIsDrawing] = useState(false);
+    const [prevX, setPrevX] = useState(null)
+    const [prevY, setPrevY] = useState(null)
+    const [x, setX] = useState(null)
+    const [y, setY] = useState(null)
+
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
 
-    const dispatch = useDispatch()
 
+    const dispatch = useDispatch()
     let state = useSelector(state => {
 
         return {
@@ -26,8 +33,6 @@ const Canvas = () => {
             receivedDrawEvent: state.game.receivedDrawEvent
         }
     })
-
-    console.log("remote", state.remoteCords)
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -47,9 +52,9 @@ const Canvas = () => {
 
         console.log("remote canvas", state.remoteCords)
         const { oldx, oldy, newx, newy } = state.remoteCords;
-        contextRef.current.moveTo(oldx, oldy);
-        contextRef.current.lineTo(newx, newy);
-        contextRef.current.stroke();
+        count2++;
+        drawLine(oldx, oldy, newx, newy)
+        console.log("useeffect ",count2)
 
 
     }, [state.receivedDrawEvent])
@@ -64,71 +69,56 @@ const Canvas = () => {
         return { x: mouseX, y: mouseY };
     }
 
-    const startDrawing = ({ nativeEvent }) => {
+    const drawLine = (x1, y1, x2, y2) => {
+
+        console.log("drawing")
         contextRef.current.beginPath();
-
-
-
-        x1 = getMousePosition(nativeEvent).x
-        y1 = getMousePosition(nativeEvent).y
-
         contextRef.current.moveTo(x1, y1);
-        console.log('moved to ' + x1 + ", " + y1)
+        contextRef.current.lineTo(x2, y2);
+        contextRef.current.stroke()
+        contextRef.current.closePath();
+    }
+
+    const startDrawing = ({ nativeEvent }) => {
+
+        // set the current x,y as prev cords
+        setPrevX(x)
+        setPrevY(y)
         setIsDrawing(true);
+
+        console.log("prev x,y", prevX, prevY)
     };
 
     const finishDrawing = () => {
-        contextRef.current.closePath();
         setIsDrawing(false);
     };
 
     const draw = ({ nativeEvent }) => {
-        if (!isDrawing) {
-            return;
-        }
 
-        x2 = getMousePosition(nativeEvent).x
-        y2 = getMousePosition(nativeEvent).y
+        let x = getMousePosition(nativeEvent).x
+        let y = getMousePosition(nativeEvent).y
 
-        console.log(x1, y1, x2, y2)
+        setX(x)
+        setY(y)
+
+        if (!isDrawing) return;
+
+        // console.log("Drawing", x, y)
+        count1++;
+        console.log("draw",count1)
+        drawLine(prevX, prevY, x, y)
+
+        setPrevX(x)
+        setPrevY(y)
 
         const payload = {
             'method': events.SET_REMOTE_CORDS,
             'gameId': state.gameId,
-            'clientid': state.clientId,
-            cords: [x1, y1, x2, y2]
+            'clientId': state.clientId,
+            cords: [prevX, prevY, x, y]
         }
 
         dispatch(wsSendMessage(payload))
-
-        contextRef.current.lineTo(x2, y2);
-        //console.log('line to ' + offsetX + ", " + offsetY)
-        contextRef.current.stroke();
-
-
-
-
-
-        x1 = x2;
-        y1 = y2;
-
-
-
-        // let payload = {
-        //     'method':events.DRAW,
-        //     'clientId': props.clientId,
-        //     'gameId':props.gameId,
-        //     'canvasEvent':[x1,y1,x2,y2]
-        // }
-
-        // console.log(canvasRef.current.toDataURL("image/png"))
-
-        // let ws = props.ws
-        // ws.send(JSON.stringify(payload))
-
-
-
-
     };
 
     let canvasStyle = {
