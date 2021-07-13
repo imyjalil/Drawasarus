@@ -6,7 +6,7 @@ import { createGame, storeName, storeGameId } from '../../Redux/actions/userActi
 import events from '../../utilities/constants'
 import axios from 'axios';
 
-const PORT = process.env.port || 9091
+const PORT = process.env.PORT || 9091
 const webSocketURL = 'ws://localhost:' + PORT + '/'
 const serverURL = "http://localhost:" + PORT + "/"
 function LandingPage() {

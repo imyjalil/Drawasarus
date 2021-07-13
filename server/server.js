@@ -22,7 +22,7 @@ id = 0;
 games = {}
 clients = {}
 
-const PORT = process.env.port || 9091
+const PORT = process.env.PORT || 9091
 
 function generateId() {
     return ++id;
