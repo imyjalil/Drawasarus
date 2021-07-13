@@ -1,5 +1,5 @@
 const events = require('./constants')
-
+const path = require('path');
 const http = require("http")
 const express = require('express')
 const { v4: uuid4 } = require('uuid')
@@ -8,6 +8,7 @@ const cors = require('cors')
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'build')));
 const httpServer = http.createServer(app)
 
 const websocketServer = require("websocket").server;
@@ -276,6 +277,10 @@ app.get("/isValidGame", (req, res) => {
     console.log('ghi')
     return res.send(JSON.stringify(payload))
 })
+
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 httpServer.listen(9091, () => console.log("Listening.. on 9091"))
 
