@@ -6,6 +6,9 @@ import { createGame, storeName, storeGameId } from '../../Redux/actions/userActi
 import events from '../../utilities/constants'
 import axios from 'axios';
 
+const PORT = process.env.port || 9091
+const webSocketURL = 'ws://localhost:' + PORT + '/'
+const serverURL = "http://localhost:" + PORT + "/"
 function LandingPage() {
 
 
@@ -35,7 +38,8 @@ function LandingPage() {
             .then(path => {
                 if (path != '') {
                     // if we got a valid room id
-                    dispatch(wsConnect('ws://localhost:9091/'))
+
+                    dispatch(wsConnect(webSocketURL))
                     console.log(path)
                     history.push(path)
                 }
@@ -50,7 +54,7 @@ function LandingPage() {
         let headers = {
             "gameId": gameId
         }
-        let resp = await axios.get("http://localhost:9091/isValidGame", { headers })
+        let resp = await axios.get(serverURL + "isValidGame", { headers })
         console.log(resp.data)
         if (!resp || !resp.data || !resp.data['valid']) {
             alert("Game id is Invalid. Please check again")
@@ -58,7 +62,7 @@ function LandingPage() {
         }
 
         dispatch(storeGameId(gameId))
-        dispatch(wsConnect('ws://localhost:9091/'))
+        dispatch(wsConnect(webSocketURL))
         history.push('game/' + gameId)
     }
 

@@ -1,9 +1,10 @@
 import { CLIENT_ID, CONNECT, GAME_ID, JOIN_GAME, NAME, SOCKET, } from '../../utilities/constants';
 import axios from 'axios'
 
-
+const PORT = process.env.port || 9091
+const serverURL = "http://localhost:" + PORT + "/"
 export const createGame = (roomName) => (dispatch) => {
-    return axios.post("http://localhost:9091/create-game")
+    return axios.post(serverURL + "create-game")
         .then(response => {
             console.log(response.data)
             response = response.data

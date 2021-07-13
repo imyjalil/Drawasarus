@@ -22,6 +22,8 @@ id = 0;
 games = {}
 clients = {}
 
+const PORT = process.env.port || 9091
+
 function generateId() {
     return ++id;
 }
@@ -282,5 +284,5 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-httpServer.listen(9091, () => console.log("Listening.. on 9091"))
+httpServer.listen(PORT, () => console.log("Listening.. on " + PORT))
 
