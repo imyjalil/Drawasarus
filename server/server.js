@@ -8,14 +8,9 @@ const cors = require('cors')
 const app = express()
 app.use(cors())
 app.use(express.json())
-
-const httpServer = http.createServer()
-httpServer.listen(9091, () => console.log("Listening.. on 9091"))
-
-
+const httpServer = http.createServer(app)
 
 const websocketServer = require("websocket").server;
-const { groupEnd } = require('console');
 const wsServer = new websocketServer(
     {
         "httpServer": httpServer
@@ -282,4 +277,5 @@ app.get("/isValidGame", (req, res) => {
     return res.send(JSON.stringify(payload))
 })
 
-app.listen(9000)
+httpServer.listen(9091, () => console.log("Listening.. on 9091"))
+

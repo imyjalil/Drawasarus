@@ -50,7 +50,7 @@ function LandingPage() {
         let headers = {
             "gameId": gameId
         }
-        let resp = await axios.get("http://localhost:9000/isValidGame?a=123", { headers })
+        let resp = await axios.get("http://localhost:9091/isValidGame", { headers })
         console.log(resp.data)
         if (!resp || !resp.data || !resp.data['valid']) {
             alert("Game id is Invalid. Please check again")
