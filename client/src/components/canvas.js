@@ -23,6 +23,7 @@ const Canvas = () => {
             clientId: state.user.clientId,
             gameId: state.user.gameId,
             remoteCords: state.game.remoteCords,
+            image: state.game.image,
             receivedDrawEvent: state.game.receivedDrawEvent
         }
     })
@@ -45,14 +46,16 @@ const Canvas = () => {
 
     useEffect(() => {
 
-        console.log("remote canvas", state.remoteCords)
-        const { oldx, oldy, newx, newy } = state.remoteCords;
-        contextRef.current.moveTo(oldx, oldy);
-        contextRef.current.lineTo(newx, newy);
-        contextRef.current.stroke();
+        console.log("Image event", state.image)
+
+        if (state.image != null) {
+            var image = new Image();
+            image.src = state.image;
+            contextRef.current.drawImage(image, 0, 0)
+        }
 
 
-    }, [state.receivedDrawEvent])
+    }, [state.image])
 
 
 
@@ -92,43 +95,24 @@ const Canvas = () => {
 
         console.log(x1, y1, x2, y2)
 
-        const payload = {
-            'method': events.SET_REMOTE_CORDS,
+        let payload = {
+            'method': events.DRAW,
+            'clientId': state.clientId,
             'gameId': state.gameId,
-            'clientid': state.clientId,
-            cords: [x1, y1, x2, y2]
+            'canvasEvent': canvasRef.current.toDataURL("image/png")
         }
 
-        dispatch(wsSendMessage(payload))
+        setInterval(() => {
+            dispatch(wsSendMessage(payload))
+        }, 150)
+
+
 
         contextRef.current.lineTo(x2, y2);
         //console.log('line to ' + offsetX + ", " + offsetY)
         contextRef.current.stroke();
-
-
-
-
-
         x1 = x2;
         y1 = y2;
-
-
-
-        // let payload = {
-        //     'method':events.DRAW,
-        //     'clientId': props.clientId,
-        //     'gameId':props.gameId,
-        //     'canvasEvent':[x1,y1,x2,y2]
-        // }
-
-        // console.log(canvasRef.current.toDataURL("image/png"))
-
-        // let ws = props.ws
-        // ws.send(JSON.stringify(payload))
-
-
-
-
     };
 
     let canvasStyle = {

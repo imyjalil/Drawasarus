@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { removePlayer, signalChatEvent, updatePlayerList, remoteCords } from '../Redux/actions/gameActions';
+import { removePlayer, signalChatEvent, updatePlayerList, draw } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -83,9 +83,12 @@ const eventHandler = async (event, dispatch, state) => {
                 case events.GUESS:
                     dispatch(signalChatEvent(data))
                     break;
+                case events.DRAW:
+                    dispatch(draw(data))
+                    break;
 
                 case events.SET_REMOTE_CORDS:
-                    dispatch(remoteCords(data))
+                    // dispatch(remoteCords(data))
                     break;
 
                 case 'prevClients':

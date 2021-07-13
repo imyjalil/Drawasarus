@@ -2,9 +2,12 @@
 
 import { CORDS, DRAW, GUESS, ADD_PLAYER, REMOVE_PLAYER, UPDATE_PLAYER_LIST, SET_LOCAL_STREAM, SET_REMOTE_STREAM, SET_REMOTE_CORDS } from "../../utilities/constants"
 
-export const draw = () => {
+export const draw = (image) => {
     return {
-        type: DRAW
+        type: DRAW,
+        payload: {
+            'image': image.canvasEvent
+        }
     }
 }
 
