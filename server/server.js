@@ -49,6 +49,52 @@ let sendMessageTo = (clientId, payload) => {
     clients[clientId]['connection'].send(JSON.stringify(payload))
 }
 
+let startTurn = (gameId) => {
+
+    games[gameId]['curent_player']++;
+
+    const current_index = games[gameId]['curent_player'];
+    const clientId = games[gameId]['clients'][current_index]
+    const name = clients[clientId]['name']
+
+
+
+    const payload = {
+        'method': 'TURN',
+        'words': ['abc', 'def', 'fgh']
+    }
+
+    sendMessageTo(clientId, payload)
+
+
+    let others = {
+        'method': 'WAIT',
+        'name': name
+    }
+
+    broadcastExceptSelf(clientId, gameId);
+
+
+    games[gameId]['turnTimer'] = setTimeout(() => {
+        startTurn(gameid)
+    }, 10000)
+
+}
+
+let startGameSession = (gameId) => {
+
+
+    game[gameId]['gameTimer'] = setTimeout((gameId) => {
+
+        endGameSession()
+
+        startGameSession(gameId)
+    }
+        , 60000)
+
+}
+
+
 wsServer.on('request', req => {
 
 
@@ -135,6 +181,22 @@ wsServer.on('request', req => {
                 broadcastAll(gameId, payload)
                 break;
 
+
+            case events.START_GAME:
+
+                gameId = body.gameId
+
+                // pick current player
+                games[gameId]['current_player'] = -1;
+                games[gameId]['gameTimer'] = null
+                games[gameId]['turnTimer'] = null
+
+
+                // only admin
+                startTurn(gameId)
+
+                break;
+
             case events.DRAW:
 
                 console.log('DRAW')
@@ -178,24 +240,44 @@ wsServer.on('request', req => {
 
 
             case events.GUESS:
+
                 console.log('GUESS')
                 gameId = body.gameId
                 clientId = body.clientId
                 let guessWord = body.guessWord
                 name = body.name
 
-                //validation
-                // let match = false
-                // console.log(games)
-                // if (guessWord == games[gameId]['currWord']) {
-                //     match = true
-                // }
+                validation
+                let match = false
+                console.log(games)
 
-                payload = {
-                    'method': events.GUESS,
-                    'guessWord': guessWord,
-                    'clientId': clientId,
-                    'name': name
+
+                //  Note: set the gameTimer to null when the gamesessions ends
+                if (games[gameId]['gameTimer']!=null && guessWord == games[gameId]['currWord']) {
+                    match = true
+
+                    // client points calculation
+
+
+                    payload = {
+                        'method': events.GUESS,
+                        'clientId': clientId,
+                        'name': name,
+                        'points': 1
+                    }
+
+                    // if every body gueses the clear the game timer 
+
+                }
+                else {
+
+                    payload = {
+                        'method': events.GUESS,
+                        'guessWord': guessWord,
+                        'clientId': clientId,
+                        'name': name
+                    }
+
                 }
 
                 broadcastAll(gameId, payload)
@@ -205,9 +287,13 @@ wsServer.on('request', req => {
             case events.WORD_SELECT:
 
                 gameId = body.gameId
+                clearTimeout(game[gameId]['turnTimer'])
+                game[gameId]['turnTimer'] = null;
+
                 clientId = body.clientId
                 let word = body.word
                 games[gameId]['currWord'] = word
+
 
                 hint = "_".repeat(len(word))
 
@@ -217,6 +303,9 @@ wsServer.on('request', req => {
                 }
 
                 broadcastExceptSelf(clientId, gameId, payload)
+
+                startGameSession(gameId);
+
                 break
             case 'webRTCOffer':
                 sendMessageTo(body.receiverId, body)
@@ -261,7 +350,8 @@ app.get("/isValidGame", (req, res) => {
     console.log(req.headers.gameid)
     console.log(req.params)
     let payload = {
-        'valid': false
+        'valid': false,
+        'isAdmin': true
     }
     console.log('abc')
     if (!req || !req.headers || !req.headers.gameid) {
