@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { removePlayer, signalChatEvent, updatePoints,updatePlayerList,draw, setChoice, setSelector, setWordHint } from '../Redux/actions/gameActions';
+import { removePlayer, signalChatEvent, updatePoints, updatePlayerList, draw, setChoice, setSelector, setWordHint } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -96,7 +96,7 @@ const eventHandler = async (event, dispatch, state) => {
 
                     // if the data has points the update the player list
                     if (data.points != 0) {
-                        dispatch(updatePoints(data.points,data.clientId))
+                        dispatch(updatePoints(data.points, data.clientId))
                     }
                     dispatch(signalChatEvent(data))
                     break;

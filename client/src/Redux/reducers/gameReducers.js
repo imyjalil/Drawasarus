@@ -1,4 +1,4 @@
-import { DRAW,UPDATE_POINTS, ADD_PLAYER, SET_REMOTE_CORDS, REMOVE_PLAYER, SET_LOCAL_STREAM, SET_REMOTE_STREAM, UPDATE_PLAYER_LIST } from "../../utilities/constants"
+import { DRAW, UPDATE_POINTS, ADD_PLAYER, SET_REMOTE_CORDS, REMOVE_PLAYER, SET_LOCAL_STREAM, SET_REMOTE_STREAM, UPDATE_PLAYER_LIST } from "../../utilities/constants"
 
 
 
@@ -31,12 +31,10 @@ export default function gameReducer(state = intialState, action) {
                 ...state,
                 players: state.players.map(player => {
 
-                    if (player.id === action.payload.id) {
-                        return {
-                            ...player,
-                            points: player.points + action.payload.points
-                        }
+                    if (player.id == action.payload.id) {
+                        player.points++;
                     }
+
                     return player
                 })
             }

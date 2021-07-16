@@ -5,6 +5,8 @@ import "./LeaderBoard.css"
 
 function LeaderBoard() {
 
+
+
     const dispatch = useDispatch()
     const players = useSelector(state => state.game.players)
 
