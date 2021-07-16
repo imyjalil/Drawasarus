@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { removePlayer, signalChatEvent, updatePlayerList, draw } from '../Redux/actions/gameActions';
+import { removePlayer, signalChatEvent, updatePlayerList, draw, setChoice, setSelector, setWordHint } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -79,6 +79,18 @@ const eventHandler = async (event, dispatch, state) => {
                     let otherUser = data.name
                     console.log(otherUser, "Joined")
                     break;
+
+                case 'TURN':
+                    dispatch(setChoice(data.words))
+                    break
+
+                case 'WAIT':
+                    dispatch(setSelector(data.name))
+                    break
+
+                case 'wordselect':
+                    dispatch(setWordHint(data.hint))
+                    break
 
                 case events.GUESS:
                     dispatch(signalChatEvent(data))

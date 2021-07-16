@@ -64,3 +64,30 @@ export const setRemoteStream = (stream, id) => {
         }
     }
 }
+
+export const setChoice = (words) => {
+    return {
+        type: 'CHOICE',
+        payload: {
+            'words': words
+        }
+    }
+}
+
+export const setSelector = (name) => {
+    return {
+        type: 'SELECTOR',
+        payload: {
+            'name': name
+        }
+    }
+}
+
+export const setWordHint = (hint) => {
+    return {
+        type: 'HINT',
+        payload: {
+            'hint': hint
+        }
+    }
+}

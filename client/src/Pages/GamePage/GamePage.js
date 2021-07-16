@@ -10,15 +10,63 @@ import events from '../../utilities/constants'
 import { wsSendMessage } from '../../Redux/actions/socketActions'
 
 function GamePage() {
+
     let history = useHistory()
     let dispatch = useDispatch()
+
+    let [modalContent, setModalContent] = useState(null)
+
     let state = useSelector(state => {
 
         return {
             gameId: state.user.gameId,
-            isCreator: state.user.isCreator
+            isCreator: state.user.isCreator,
+            choice: state.game.choice,
+            selector: state.game.selector,
+            hint: state.game.hint
         }
     })
+
+    const [showModal, setModal] = useState(state.isCreator)
+
+    function setStateAsync(state) {
+        return new Promise((resolve) => {
+            setModal(state, resolve)
+        });
+    }
+
+    useEffect(() => {
+        console.log('choice use effect')
+        if (state.choice !== null) {
+            console.log('seeting modal to true')
+            setModal(showModal => true)
+            console.log(state.choice)
+
+            let choiceModalContent = (<div>
+                <p>choose a word</p>
+                {state.choice.map((word) => {
+                    return <button key={word} onClick={() => { handleChoiceSelection(word) }}>{word}</button>
+                })}
+            </div>)
+            console.log('showModal:', showModal)
+            setModalContent(<Modal id="modal" show={showModal} children={choiceModalContent} />)
+
+        }
+
+    }, [state.choice])
+
+    useEffect(() => {
+        console.log('selector use effect')
+        if (state.selector !== null) {
+            console.log('seeting modal to true')
+            setModal(showModal => true)
+            let showSelectorModalContent = (<div>
+                <p>Please wait {state.selector} is choosing a word</p>
+            </div>)
+            console.log('showModal:', showModal)
+            setModalContent(<Modal id="modal" show={showModal} children={showSelectorModalContent} />)
+        }
+    }, [state.selector])
 
     useEffect(() => {
         if (state.gameId === null) {
@@ -26,14 +74,40 @@ function GamePage() {
         }
     }, [state.gameId])
 
-    const [showModal, setModal] = useState(state.isCreator)
+    useEffect(() => {
+        console.log('basic use effect showModal:', showModal)
+        let startGameModalContent = (<div>Click here to copy the game code
+            <span className="material-icons copyButton" onClick={copyGameCode}>content_copy</span>
+            <button onClick={handleStartGameClose}>Start Game!</button></div>)
+        setModalContent(<Modal id="modal" show={showModal} children={startGameModalContent} />)
+    }, [])
+
+    useEffect(() => {
+        if (state.hint !== null) {
+            console.log('hint:', state.hint)
+        }
+    }, [state.hint])
+
+    function handleChoiceSelection(word) {
+        let choicePayload = {
+            'method': 'choice',
+            'word': word
+        }
+        console.log('handleChoiceSelection setting modal to false')
+        setModal(false)
+        dispatch(wsSendMessage(choicePayload))
+    }
+
     function handleStartGameClose() {
         let startGamePayload = {
             'method': events.START_GAME,
             gameId: state.gameId
         }
-        dispatch(wsSendMessage(startGamePayload))
+        console.log('handleStartGameClose setting modal to false')
         setModal(false)
+        dispatch(wsSendMessage(startGamePayload))
+
+
     }
 
     function copyGameCode() {
@@ -42,9 +116,8 @@ function GamePage() {
         navigator.clipboard.writeText(gameCode)
     }
 
-    let startGameModalContent = (<div>Click here to copy the game code
-        <span className="material-icons copyButton" onClick={copyGameCode}>content_copy</span>
-        <button onClick={handleStartGameClose}>Start Game!</button></div>)
+
+
     return (
         <div className='gamePageContainer'>
             <div className="col-sm-2 leaderBoard" >
@@ -59,7 +132,7 @@ function GamePage() {
             <div id="audioEvents">
 
             </div>
-            <Modal show={showModal} children={startGameModalContent} />
+            {modalContent}
         </div>
     )
 }

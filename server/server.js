@@ -49,7 +49,7 @@ let sendMessageTo = (clientId, payload) => {
     clients[clientId]['connection'].send(JSON.stringify(payload))
 }
 
-const showResults = (gameId)  =>{
+const showResults = (gameId) => {
     players = []
 
     lobbyPlayers = games[gameId]['clients']
@@ -61,12 +61,12 @@ const showResults = (gameId)  =>{
         players.push({ 'name': name, 'id': id, 'points': 0 })
     })
 
-    const  payload = {
-        method:events.END_GAME,
-        playerlist:players
+    const payload = {
+        method: events.END_GAME,
+        playerlist: players
     }
 
-    broadcastAll(gameId,payload)
+    broadcastAll(gameId, payload)
 
     // clear the  timers
     clearTimeout(games[gameId]['turnTimer'])
@@ -86,8 +86,7 @@ let startTurn = (gameId) => {
 
     const count = games[gameId]['clients'].length
 
-    if(games[gameId]['current_player'] >= count)
-    {
+    if (games[gameId]['current_player'] >= count) {
         //
         showResults(gameId)
         return;
@@ -123,7 +122,7 @@ let startTurn = (gameId) => {
 
     games[gameId]['turnTimer'] = setTimeout(() => {
         startTurn(gameId)
-    }, 10000)
+    }, 300000)
 
 }
 
