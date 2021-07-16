@@ -17,7 +17,7 @@ const Canvas = (props) => {
     const contextRef = useRef(null);
 
     const dispatch = useDispatch()
-
+    let interval;
     let state = useSelector(state => {
 
         return {
@@ -47,7 +47,6 @@ const Canvas = (props) => {
 
     useEffect(() => {
 
-        console.log("Image event", state.image)
 
         if (state.image != null) {
             var image = new Image();
@@ -85,6 +84,7 @@ const Canvas = (props) => {
     const finishDrawing = () => {
         contextRef.current.closePath();
         setIsDrawing(false);
+        clearInterval(interval)
     };
 
     const draw = ({ nativeEvent }) => {
@@ -104,9 +104,9 @@ const Canvas = (props) => {
             'canvasEvent': canvasRef.current.toDataURL("image/png")
         }
 
-        setInterval(() => {
-            dispatch(wsSendMessage(payload))
-        }, 150)
+        // interval = setInterval(() => {
+        //     dispatch(wsSendMessage(payload))
+        // }, 150)
 
 
 

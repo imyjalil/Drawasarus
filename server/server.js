@@ -235,7 +235,7 @@ wsServer.on('request', req => {
 
             case events.DRAW:
 
-
+                console.log('DRAW')
                 gameId = body.gameId
                 clientId = body.clientId
                 let canvasEvent = body.canvasEvent
