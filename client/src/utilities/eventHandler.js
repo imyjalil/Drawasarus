@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { removePlayer, signalChatEvent, updatePlayerList, draw, setChoice, setSelector, setWordHint } from '../Redux/actions/gameActions';
+import { removePlayer, signalChatEvent, updatePoints,updatePlayerList,draw, setChoice, setSelector, setWordHint } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 

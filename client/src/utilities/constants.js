@@ -20,4 +20,5 @@ module.exports = {
     SET_REMOTE_STREAM: 'remotestream',
     SET_REMOTE_CORDS: 'cords',
     START_GAME: 'start_game',
+    UPDATE_POINTS: 'update_points'
 }
