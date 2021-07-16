@@ -14,12 +14,13 @@ function GamePage() {
     let history = useHistory()
     let dispatch = useDispatch()
 
-    let [modalContent, setModalContent] = useState(null)
-
+    let [childrenContent, setChildrenContent] = useState(null)
+    let [canDraw, flipDrawState] = useState(false)
     let state = useSelector(state => {
 
         return {
             gameId: state.user.gameId,
+            clientId: state.user.clientId,
             isCreator: state.user.isCreator,
             choice: state.game.choice,
             selector: state.game.selector,
@@ -29,27 +30,21 @@ function GamePage() {
 
     const [showModal, setModal] = useState(state.isCreator)
 
-    function setStateAsync(state) {
-        return new Promise((resolve) => {
-            setModal(state, resolve)
-        });
-    }
 
     useEffect(() => {
         console.log('choice use effect')
         if (state.choice !== null) {
             console.log('seeting modal to true')
-            setModal(showModal => true)
+            setModal(true)
             console.log(state.choice)
 
-            let choiceModalContent = (<div>
+            setChildrenContent(<div>
                 <p>choose a word</p>
                 {state.choice.map((word) => {
                     return <button key={word} onClick={() => { handleChoiceSelection(word) }}>{word}</button>
                 })}
             </div>)
-            console.log('showModal:', showModal)
-            setModalContent(<Modal id="modal" show={showModal} children={choiceModalContent} />)
+            console.log('showModal before:', showModal)
 
         }
 
@@ -58,13 +53,13 @@ function GamePage() {
     useEffect(() => {
         console.log('selector use effect')
         if (state.selector !== null) {
+            flipDrawState(false)
             console.log('seeting modal to true')
-            setModal(showModal => true)
-            let showSelectorModalContent = (<div>
+            setModal(true)
+            setChildrenContent(<div>
                 <p>Please wait {state.selector} is choosing a word</p>
             </div>)
             console.log('showModal:', showModal)
-            setModalContent(<Modal id="modal" show={showModal} children={showSelectorModalContent} />)
         }
     }, [state.selector])
 
@@ -76,26 +71,29 @@ function GamePage() {
 
     useEffect(() => {
         console.log('basic use effect showModal:', showModal)
-        let startGameModalContent = (<div>Click here to copy the game code
+        setChildrenContent(<div>Click here to copy the game code
             <span className="material-icons copyButton" onClick={copyGameCode}>content_copy</span>
             <button onClick={handleStartGameClose}>Start Game!</button></div>)
-        setModalContent(<Modal id="modal" show={showModal} children={startGameModalContent} />)
     }, [])
 
     useEffect(() => {
         if (state.hint !== null) {
             console.log('hint:', state.hint)
+            setModal(false)
         }
     }, [state.hint])
 
     function handleChoiceSelection(word) {
         let choicePayload = {
             'method': 'choice',
-            'word': word
+            'word': word,
+            'clientId': state.clientId,
+            'gameId': state.gameId
         }
         console.log('handleChoiceSelection setting modal to false')
         setModal(false)
         dispatch(wsSendMessage(choicePayload))
+        flipDrawState(true)
     }
 
     function handleStartGameClose() {
@@ -124,7 +122,7 @@ function GamePage() {
                 <LeaderBoard />
             </div>
             <div className="col-sm-8 canvas">
-                <Canvas />
+                <Canvas canDraw={canDraw} />
             </div>
             <div className="col-sm-2 chat" >
                 <Chat />
@@ -132,7 +130,7 @@ function GamePage() {
             <div id="audioEvents">
 
             </div>
-            {modalContent}
+            <Modal id="modal" show={showModal} children={childrenContent} />
         </div>
     )
 }

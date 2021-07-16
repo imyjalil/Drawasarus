@@ -9,9 +9,9 @@ import { remoteCords } from "../Redux/actions/gameActions";
 let x1, y1, x2, y2;
 
 
-const Canvas = () => {
+const Canvas = (props) => {
 
-    const [canDraw, startDraw] = useState(false)
+    let canDraw = props.canDraw
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);

@@ -30,17 +30,13 @@ let broadcastExceptSelf = (clientId, gameId, payload) => {
 
     games[gameId]['clients'].forEach((client) => {
         if (client !== clientId) {
-            console.log("-----------------", clients[client]['name'])
-            console.log(payload)
             clients[client]['connection'].send(JSON.stringify(payload))
         }
     })
 }
 
 let broadcastAll = (gameId, payload) => {
-    console.log("about to broadcast")
     games[gameId]['clients'].forEach((client) => {
-        console.log(client)
         clients[client]['connection'].send(JSON.stringify(payload))
     })
 }
@@ -68,12 +64,7 @@ const showResults = (gameId) => {
 
     broadcastAll(gameId, payload)
 
-    // clear the  timers
-    clearTimeout(games[gameId]['turnTimer'])
-    clearTimeout(games[gameId]['gameTimer'])
 
-    games[gameId]['turnTimer'] = null;
-    games[gameId]['gameTimer'] = null;
 
 }
 
@@ -88,6 +79,13 @@ let startTurn = (gameId) => {
 
     if (games[gameId]['current_player'] >= count) {
         //
+        // clear the  timers
+        clearTimeout(games[gameId]['turnTimer'])
+        clearTimeout(games[gameId]['gameTimer'])
+
+        games[gameId]['turnTimer'] = null;
+        games[gameId]['gameTimer'] = null;
+
         showResults(gameId)
         return;
     }
@@ -122,27 +120,20 @@ let startTurn = (gameId) => {
 
     games[gameId]['turnTimer'] = setTimeout(() => {
         startTurn(gameId)
-    }, 300000)
+    }, 10000)
 
 }
 
 let startGameSession = (gameId) => {
-
-
-    game[gameId]['gameTimer'] = setTimeout((gameId) => {
-
-        endGameSession()
-
-        startGameSession(gameId)
-    }
-        , 60000)
-
+    const currGameId = gameId
+    games[currGameId]['gameTimer'] = setTimeout(() => {
+        //endGameSession()
+        startTurn(currGameId)
+    }, 20000)
 }
 
 
 wsServer.on('request', req => {
-
-
 
     const connection = req.accept(null, req.origin)
 
@@ -244,14 +235,13 @@ wsServer.on('request', req => {
 
             case events.DRAW:
 
-                console.log('DRAW')
+
                 gameId = body.gameId
                 clientId = body.clientId
                 let canvasEvent = body.canvasEvent
 
-                console.log(canvasEvent)
 
-                // game[gameId]['canvasEvents'].push(canvasEvent)
+
 
                 payload = {
                     'method': events.DRAW,
@@ -270,7 +260,7 @@ wsServer.on('request', req => {
                 clientId = body.clientId
                 let cords = body.cords
 
-                console.log(cords)
+                //console.log(cords)
 
                 payLoad = {
                     'method': events.CORDS,
@@ -295,7 +285,6 @@ wsServer.on('request', req => {
                 //validation
                 let match = false
                 console.log(games)
-
 
                 //  Note: set the gameTimer to null when the gamesessions ends
                 if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
@@ -329,28 +318,24 @@ wsServer.on('request', req => {
 
 
                 break;
-            case events.WORD_SELECT:
-
+            case 'choice':
                 gameId = body.gameId
-                clearTimeout(game[gameId]['turnTimer'])
-                game[gameId]['turnTimer'] = null;
+                console.log('choice event gameId:', gameId)
 
+                clearTimeout(games[gameId]['turnTimer'])
+                games[gameId]['turnTimer'] = null;
                 clientId = body.clientId
                 let word = body.word
                 games[gameId]['currWord'] = word
 
-
-                hint = "_".repeat(len(word))
+                hint = "_ ".repeat(word.length)
 
                 payload = {
                     'method': 'wordselect',
                     'hint': hint
                 }
-
                 broadcastExceptSelf(clientId, gameId, payload)
-
                 startGameSession(gameId);
-
                 break
             case 'webRTCOffer':
                 sendMessageTo(body.receiverId, body)
@@ -366,7 +351,6 @@ wsServer.on('request', req => {
         }
 
     })
-
 
 
 })
