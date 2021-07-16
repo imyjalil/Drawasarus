@@ -177,6 +177,7 @@ wsServer.on('request', req => {
                 name = body.name
                 gameId = body.gameId
 
+                clients[clientId]['points'] = 0;
                 clients[clientId]['name'] = name;
                 clients[clientId]['gameId'] = gameId
 
@@ -310,7 +311,7 @@ wsServer.on('request', req => {
                         'guessWord': guessWord,
                         'clientId': clientId,
                         'name': name,
-                        'points':0
+                        'points': 0
                     }
 
                 }
