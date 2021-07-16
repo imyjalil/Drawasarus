@@ -4,7 +4,8 @@ const initalState = {
     gameId: null,
     name: '',
     clientId: '',
-    chatEvent: null
+    chatEvent: null,
+    isCreator: false
 }
 
 
@@ -21,6 +22,7 @@ export default function userReducer(state = initalState, action) {
                 ...state,
                 ws: action.payload['ws']
             }
+
         case GAME_ID:
             return {
                 ...state,
@@ -45,6 +47,12 @@ export default function userReducer(state = initalState, action) {
             return {
                 ...state,
                 chatEvent: action.payload['chatEvent']
+            }
+
+        case 'set_create':
+            return {
+                ...state,
+                isCreator: true
             }
 
         default:

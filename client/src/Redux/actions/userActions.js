@@ -69,3 +69,9 @@ export const storeName = (name) => {
     }
 }
 
+export const setCreator = () => {
+    //console.log('dispatching storename')
+    return {
+        type: 'set_create'
+    }
+}

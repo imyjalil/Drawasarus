@@ -11,6 +11,7 @@ let x1, y1, x2, y2;
 
 const Canvas = () => {
 
+    const [canDraw, startDraw] = useState(false)
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
@@ -68,6 +69,7 @@ const Canvas = () => {
     }
 
     const startDrawing = ({ nativeEvent }) => {
+        if (!canDraw) return
         contextRef.current.beginPath();
 
 
@@ -126,6 +128,7 @@ const Canvas = () => {
             ref={canvasRef}
             id="canvasElement"
             style={canvasStyle}
+            disabled
         />
     );
 }

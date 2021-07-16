@@ -51,11 +51,15 @@ let sendMessageTo = (clientId, payload) => {
 
 let startTurn = (gameId) => {
 
-    games[gameId]['curent_player']++;
+    console.log(games[gameId]['current_player'])
+    games[gameId]['current_player']++;
 
-    const current_index = games[gameId]['curent_player'];
+    const current_index = games[gameId]['current_player'];
+    console.log('current_index:', current_index)
     const clientId = games[gameId]['clients'][current_index]
+    console.log('clientId:', clientId)
     const name = clients[clientId]['name']
+    console.log('name:', name)
 
 
 
@@ -67,16 +71,16 @@ let startTurn = (gameId) => {
     sendMessageTo(clientId, payload)
 
 
-    let others = {
+    let othersPayload = {
         'method': 'WAIT',
         'name': name
     }
 
-    broadcastExceptSelf(clientId, gameId);
+    broadcastExceptSelf(clientId, gameId, othersPayload);
 
 
     games[gameId]['turnTimer'] = setTimeout(() => {
-        startTurn(gameid)
+        startTurn(gameId)
     }, 10000)
 
 }
@@ -247,13 +251,13 @@ wsServer.on('request', req => {
                 let guessWord = body.guessWord
                 name = body.name
 
-                validation
+                //validation
                 let match = false
                 console.log(games)
 
 
                 //  Note: set the gameTimer to null when the gamesessions ends
-                if (games[gameId]['gameTimer']!=null && guessWord == games[gameId]['currWord']) {
+                if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
                     match = true
 
                     // client points calculation

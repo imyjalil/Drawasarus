@@ -1,9 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
-import { wsConnect, wsSendMessage } from '../../Redux/actions/socketActions';
-import { createGame, storeName, storeGameId } from '../../Redux/actions/userActions';
-import events from '../../utilities/constants'
+import { wsConnect } from '../../Redux/actions/socketActions';
+import { createGame, storeName, storeGameId, setCreator } from '../../Redux/actions/userActions';
 import axios from 'axios';
 
 function LandingPage() {
@@ -30,6 +29,7 @@ function LandingPage() {
     const createButtonHandler = () => {
         // first send a get request to create game
         // store the gameid and client id redux thunk
+        dispatch(setCreator())
         dispatch(storeName(document.getElementById('name').value))
         dispatch(createGame("helloroom"))
             .then(path => {

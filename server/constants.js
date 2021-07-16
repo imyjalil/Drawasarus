@@ -7,5 +7,5 @@ module.exports = {
     UPDATE_PLAYER_LIST: 'update_player_list',
     REMOVE_PLAYER: 'remove_player',
     CORDS: 'cords',
-    START_GAME: 'start_game',
+    START_GAME: 'start_game'
 }
