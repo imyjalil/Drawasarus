@@ -290,14 +290,14 @@ wsServer.on('request', req => {
                 if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
                     match = true
 
-                    // client points calculation
-
+                    // calcualte the client points
+                    clients[clientId]['points'] += 1
 
                     payload = {
                         'method': events.GUESS,
                         'clientId': clientId,
                         'name': name,
-                        'points': 1
+                        'points': clients[clientId]['points']
                     }
 
                     // if every body gueses the clear the game timer 
@@ -309,7 +309,8 @@ wsServer.on('request', req => {
                         'method': events.GUESS,
                         'guessWord': guessWord,
                         'clientId': clientId,
-                        'name': name
+                        'name': name,
+                        'points':0
                     }
 
                 }

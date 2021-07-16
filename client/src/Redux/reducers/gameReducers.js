@@ -26,6 +26,22 @@ export default function gameReducer(state = intialState, action) {
                 players: action.payload.playerlist
             }
 
+        case UPDATE_POINTS:
+            return {
+                ...state,
+                players: state.players.map(player => {
+
+                    if (player.id === action.payload.id) {
+                        return {
+                            ...player,
+                            points: player.points + action.payload.points
+                        }
+                    }
+                    return player
+                })
+            }
+
+
         case REMOVE_PLAYER:
             return {
                 ...state,

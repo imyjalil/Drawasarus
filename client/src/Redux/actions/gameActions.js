@@ -28,6 +28,16 @@ export const updatePlayerList = (updatePlayers) => {
     }
 }
 
+export const updatePoints = (points, clientId) => {
+    return {
+        type: UPDATE_POINTS,
+        payload: {
+            'points': points,
+            'clientId': clientId
+        }
+    }
+}
+
 export const removePlayer = (id) => {
     return {
         type: REMOVE_PLAYER,

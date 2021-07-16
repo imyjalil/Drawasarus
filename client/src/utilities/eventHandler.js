@@ -93,6 +93,11 @@ const eventHandler = async (event, dispatch, state) => {
                     break
 
                 case events.GUESS:
+
+                    // if the data has points the update the player list
+                    if (data.points != 0) {
+                        dispatch(updatePoints(data.points,data.clientId))
+                    }
                     dispatch(signalChatEvent(data))
                     break;
                 case events.DRAW:
