@@ -62,6 +62,7 @@
     align-items:flex-end;
     flex-shrink:0;
     --webkit-flex:0;
+    margin:5px;
 }
 
 .chatMessages .message .messageBody{
@@ -96,4 +97,9 @@
 
 .senderName{
     color:rgba(0,0,0,0.6);
+}
+
+.notif{
+    text-align: center;
+    list-style:none;
 }
