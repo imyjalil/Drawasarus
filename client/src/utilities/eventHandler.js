@@ -117,6 +117,7 @@ const eventHandler = async (event, dispatch, state) => {
                         rtcPeerConnection.ontrack = (event) => {
                             //create an audio element and attach stream to it
                             console.log(event)
+                            console.log("new client remote stream attached <---", data.senderId)
                             let audioElement = document.createElement("video")
                             audioElement.autoplay = "autoplay"
                             audioElement.srcObject = event.streams[0]
@@ -183,6 +184,7 @@ const eventHandler = async (event, dispatch, state) => {
                     rtcPeerConnection.ontrack = (event) => {
                         //create an audio element and attach stream to it
                         console.log(event)
+                        console.log("remote stream attached <---", data.senderId)
                         let audioElement = document.createElement("video")
                         audioElement.autoplay = "autoplay"
                         audioElement.srcObject = event.streams[0]
