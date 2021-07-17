@@ -59,6 +59,7 @@ function LandingPage() {
 
     return (
         <div className="LandingPage" >
+            <h1>{state.clientId}</h1>
             <input type="text" id="name" defaultValue="abc" /><br></br>
             <input type="button" value="Create" onClick={createButtonHandler} /><br></br>
             <input type="text" id="gameId" /><br></br>

@@ -12,7 +12,8 @@ function Player(props) {
     let state = useSelector(state => {
 
         return {
-            clientId: state.user.clientId
+            clientId: state.user.clientId,
+            localStream: state.game.localStream
         }
     })
 
@@ -29,7 +30,23 @@ function Player(props) {
         console.log(audioEvents)
         let childNodes = audioEvents.childNodes;
 
-        console.log("clicked element id", props.id)
+
+
+        if (state.clientId == props.id && state.localStream != null) {
+            console.log("self mute")
+
+            if (mute) {
+                state.localStream.getAudioTracks().forEach(track => track.enabled = true)
+            }
+            else {
+                state.localStream.getAudioTracks().forEach(track => track.enabled = false)
+            }
+
+            setmute(!mute)
+            return;
+        }
+
+
 
         // iterate over the child nodes
         childNodes.forEach((child) => {
@@ -41,16 +58,18 @@ function Player(props) {
                 const remoteStream = child.srcObject
 
 
-
                 if (remoteStream != null) {
 
+                    // console.log("tracks", child.srcObject.getAudioTracks())
+
                     if (mute) {
-                        remoteStream.getAudioTracks()[0].enabled = false;
+                        child.srcObject.getAudioTracks().forEach(track => track.enabled = true)
                     }
                     else {
-                        remoteStream.getAudioTracks()[0].enabled = true;
+                        child.srcObject.getAudioTracks().forEach(track => track.enabled = false)
                     }
 
+                    console.log(child.srcObject)
                     setmute(!mute)
                 }
             }
