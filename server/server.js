@@ -54,7 +54,7 @@ const showResults = (gameId) => {
 
     lobbyPlayers.forEach((id) => {
         let name = clients[id].name
-        players.push({ 'name': name, 'id': id, 'points': 0 })
+        players.push({ 'name': name, 'id': id, 'points': clients[id]['points'] })
     })
 
     const payload = {
@@ -228,15 +228,10 @@ wsServer.on('request', req => {
                 clientId = body.clientId
                 let canvasEvent = body.canvasEvent
 
-
-
-
                 payload = {
                     'method': events.DRAW,
                     'canvasEvent': canvasEvent
                 }
-
-
 
                 broadcastExceptSelf(clientId, gameId, payload)
 
@@ -247,8 +242,6 @@ wsServer.on('request', req => {
                 gameId = body.gameId
                 clientId = body.clientId
                 let cords = body.cords
-
-                //console.log(cords)
 
                 payLoad = {
                     'method': events.CORDS,

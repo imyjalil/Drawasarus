@@ -101,3 +101,12 @@ export const setWordHint = (hint) => {
         }
     }
 }
+
+export const endGame = (playerlist) => {
+    return {
+        type: 'end_game',
+        payload: {
+            'playerlist': playerlist
+        }
+    }
+}
