@@ -47,11 +47,29 @@ const Canvas = (props) => {
 
     useEffect(() => {
 
+        console.log("received new cords", state.remoteCords)
+        const [oldx, oldy, newx, newy] = state.remoteCords;
+        drawLine(oldx, oldy, newx, newy)
+    }, [state.receivedDrawEvent])
+
+    const drawLine = (x1, y1, x2, y2) => {
+
+        contextRef.current.beginPath();
+        contextRef.current.moveTo(x1, y1);
+        contextRef.current.lineTo(x2, y2);
+        contextRef.current.stroke()
+        contextRef.current.closePath();
+    }
+
+
+
+    useEffect(() => {
+
 
         if (state.image != null) {
-            var image = new Image();
-            image.src = state.image;
-            contextRef.current.drawImage(image, 0, 0)
+            // var image = new Image();
+            // image.src = state.image;
+            // contextRef.current.drawImage(image, 0, 0)
         }
 
 
@@ -97,12 +115,14 @@ const Canvas = (props) => {
 
         console.log(x1, y1, x2, y2)
 
-        let payload = {
-            'method': events.DRAW,
-            'clientId': state.clientId,
+        const payload = {
+            'method': events.SET_REMOTE_CORDS,
             'gameId': state.gameId,
-            'canvasEvent': canvasRef.current.toDataURL("image/png")
+            'clientId': state.clientId,
+            cords: [x1, y1, x2, y2]
         }
+
+        dispatch(wsSendMessage(payload))
 
         // interval = setInterval(() => {
         //     dispatch(wsSendMessage(payload))
