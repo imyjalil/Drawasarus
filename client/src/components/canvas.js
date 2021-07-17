@@ -43,6 +43,17 @@ const Canvas = (props) => {
         context.strokeStyle = "black";
         context.lineWidth = 2;
         contextRef.current = context;
+
+        // window.onresize = () => {
+
+        //     console.log("resize")
+        //     const canvas = canvasRef.current;
+        //     canvas.style.width = '100%';
+        //     canvas.style.height = '100%';
+        //     canvas.width = canvas.offsetWidth;
+        //     canvas.height = canvas.offsetHeight;
+        // }
+
     }, []);
 
     useEffect(() => {
@@ -60,6 +71,8 @@ const Canvas = (props) => {
         contextRef.current.stroke()
         contextRef.current.closePath();
     }
+
+
 
 
 
