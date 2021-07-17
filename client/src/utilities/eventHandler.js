@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { removePlayer, signalChatEvent, updatePoints, updatePlayerList, draw, setChoice, setSelector, setWordHint, setLocalStream } from '../Redux/actions/gameActions';
+import { removePlayer, signalChatEvent, updatePoints, updatePlayerList, draw, setChoice, setSelector, setWordHint, endGame } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -57,8 +57,6 @@ const eventHandler = async (event, dispatch, state) => {
                     dispatch(wsSendMessage(joinPayload))
 
                     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
-
-                    dispatch(setLocalStream(localStream))
                     console.log('localStream fetched:')
                     break;
 
@@ -167,6 +165,10 @@ const eventHandler = async (event, dispatch, state) => {
 
                 case events.REMOVE_PLAYER:
                     dispatch(removePlayer(data.id))
+                    break;
+
+                case 'end_game':
+                    dispatch(endGame(data.playerlist))
                     break;
 
                 case 'webRTCOffer':

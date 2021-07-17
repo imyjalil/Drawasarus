@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import events from '../../utilities/constants'
 import { wsSendMessage } from '../../Redux/actions/socketActions'
+import { setWordHint } from '../../Redux/actions/gameActions'
 
 function GamePage() {
 
@@ -24,7 +25,8 @@ function GamePage() {
             isCreator: state.user.isCreator,
             choice: state.game.choice,
             selector: state.game.selector,
-            hint: state.game.hint
+            hint: state.game.hint,
+            playerlist: state.game.playerlist
         }
     })
 
@@ -42,13 +44,12 @@ function GamePage() {
                     return <button key={word} onClick={() => { handleChoiceSelection(word) }}>{word}</button>
                 })}
             </div>)
-
         }
-
     }, [state.choice])
 
     useEffect(() => {
         if (state.selector !== null) {
+            dispatch(setWordHint(null))
             flipDrawState(false)
             setModal(true)
             setChildrenContent(<div>
@@ -59,7 +60,7 @@ function GamePage() {
 
     useEffect(() => {
         if (state.gameId === null) {
-            history.push('/')
+            moveToHomePage()
         }
     }, [state.gameId])
 
@@ -70,11 +71,38 @@ function GamePage() {
     }, [])
 
     useEffect(() => {
+        console.log('hint useeffect')
         if (state.hint !== null) {
             console.log('hint:', state.hint)
             setModal(false)
         }
     }, [state.hint])
+
+    useEffect(() => {
+        if (state.playerlist !== null) {
+            let playerlist = state.playerlist
+            playerlist.sort((a, b) => (a.points > b.points) ? -1 : 1)
+            console.log('playlist')
+            console.log(playerlist)
+            console.log(typeof playerlist)
+            setModal(true)
+            setChildrenContent(<div>
+                <p>Leader Board</p>
+                {state.playerlist.map((entry) => {
+                    return (<div key={entry.id}>
+                        <p>{entry.name}</p>
+                        <p>{entry.points}</p>
+                    </div>)
+                })}
+                <p>Game Ended!!!</p>
+            </div>)
+
+        }
+    }, [state.playerlist])
+
+    function moveToHomePage() {
+        history.push('/')
+    }
 
     function handleChoiceSelection(word) {
         let choicePayload = {

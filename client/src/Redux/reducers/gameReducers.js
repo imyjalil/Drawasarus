@@ -5,13 +5,14 @@ import { DRAW, UPDATE_POINTS, ADD_PLAYER, SET_REMOTE_CORDS, REMOVE_PLAYER, SET_L
 
 const intialState = {
     players: [],
+    localStream: null,
     remoteCords: [0, 0, 0, 0],
     receivedDrawEvent: false,
     image: null,
     choice: null,
     selector: null,
     hint: null,
-    localStream: null
+    playerlist: null//will be populated on end_game event
 }
 
 export default function gameReducer(state = intialState, action) {
@@ -91,7 +92,13 @@ export default function gameReducer(state = intialState, action) {
         case 'HINT':
             return {
                 ...state,
-                hint: action.payload.hint
+                hint: JSON.parse(JSON.stringify(action.payload.hint))
+            }
+
+        case 'end_game':
+            return {
+                ...state,
+                playerlist: action.payload.playerlist
             }
 
         default:
