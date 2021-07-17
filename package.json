@@ -1,0 +1,18 @@
+{
+  "name": "drawasarus",
+  "version": "1.0.0",
+  "description": "An Attempt to create a multiplayer drawing game",
+  "scripts": {
+    "start": "cd server && npm install && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imyjalil/Drawasarus.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/imyjalil/Drawasarus/issues"
+  },
+  "homepage": "https://github.com/imyjalil/Drawasarus#readme"
+}
