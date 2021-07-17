@@ -266,6 +266,12 @@ wsServer.on('request', req => {
                 let guessWord = body.guessWord
                 name = body.name
 
+                // get the current game player
+                let currentPlayer = games[gameId]['current_player']
+                let currentPlayerId = games[gameId]['clients'][currentPlayer]
+
+
+
                 //validation
                 let match = false
                 console.log(games)
@@ -274,14 +280,23 @@ wsServer.on('request', req => {
                 if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
                     match = true
 
-                    // calcualte the client points
-                    clients[clientId]['points'] += 1
+
+                    const gotPoints = clients[clientId]['reward']
+                    let points = 0;
+
+                    // add points only he has not got it before
+                    if (gotPoints == false && clientId != currentPlayerId) {
+
+                        clients[clientId]['points'] += 1
+                        clients[clientId]['reward'] = true
+                        points = clients[clientId]['points']
+                    }
 
                     payload = {
                         'method': events.GUESS,
                         'clientId': clientId,
                         'name': name,
-                        'points': clients[clientId]['points']
+                        'points': points
                     }
 
                     // if every body gueses the clear the game timer 
@@ -302,7 +317,15 @@ wsServer.on('request', req => {
                 break;
 
             case 'choice':
+
+
                 gameId = body.gameId
+
+                // set the reward to false for the players in the game
+                games[gameId]['clients'].forEach((id) => {
+                    clients[id]['reward'] = false
+                })
+
                 console.log('choice event gameId:', gameId)
 
                 clearTimeout(games[gameId]['turnTimer'])
