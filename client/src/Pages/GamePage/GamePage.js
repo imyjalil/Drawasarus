@@ -32,9 +32,7 @@ function GamePage() {
 
 
     useEffect(() => {
-        console.log('choice use effect')
         if (state.choice !== null) {
-            console.log('seeting modal to true')
             setModal(true)
             console.log(state.choice)
 
@@ -44,22 +42,18 @@ function GamePage() {
                     return <button key={word} onClick={() => { handleChoiceSelection(word) }}>{word}</button>
                 })}
             </div>)
-            console.log('showModal before:', showModal)
 
         }
 
     }, [state.choice])
 
     useEffect(() => {
-        console.log('selector use effect')
         if (state.selector !== null) {
             flipDrawState(false)
-            console.log('seeting modal to true')
             setModal(true)
             setChildrenContent(<div>
                 <p>Please wait {state.selector} is choosing a word</p>
             </div>)
-            console.log('showModal:', showModal)
         }
     }, [state.selector])
 
@@ -70,7 +64,6 @@ function GamePage() {
     }, [state.gameId])
 
     useEffect(() => {
-        console.log('basic use effect showModal:', showModal)
         setChildrenContent(<div>Click here to copy the game code
             <span className="material-icons copyButton" onClick={copyGameCode}>content_copy</span>
             <button onClick={handleStartGameClose}>Start Game!</button></div>)
@@ -90,7 +83,6 @@ function GamePage() {
             'clientId': state.clientId,
             'gameId': state.gameId
         }
-        console.log('handleChoiceSelection setting modal to false')
         setModal(false)
         dispatch(wsSendMessage(choicePayload))
         flipDrawState(true)
@@ -101,7 +93,6 @@ function GamePage() {
             'method': events.START_GAME,
             gameId: state.gameId
         }
-        console.log('handleStartGameClose setting modal to false')
         setModal(false)
         dispatch(wsSendMessage(startGamePayload))
 

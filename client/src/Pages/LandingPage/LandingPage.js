@@ -7,10 +7,7 @@ import axios from 'axios';
 
 function LandingPage() {
 
-
     //console.log("render landing")
-
-
     const dispatch = useDispatch()
     const history = useHistory()
 
@@ -31,12 +28,10 @@ function LandingPage() {
         // store the gameid and client id redux thunk
         dispatch(setCreator())
         dispatch(storeName(document.getElementById('name').value))
-        dispatch(createGame("helloroom"))
+        dispatch(createGame())
             .then(path => {
                 if (path != '') {
-                    // if we got a valid room id
                     dispatch(wsConnect('ws://localhost:9091/'))
-                    console.log(path)
                     history.push(path)
                 }
             })
@@ -45,7 +40,6 @@ function LandingPage() {
     const joinButtonHandler = async () => {
 
         dispatch(storeName(document.getElementById('name').value))
-        // api to check if the gameid exists
         let gameId = document.getElementById('gameId').value
         let headers = {
             "gameId": gameId

@@ -64,16 +64,12 @@ const showResults = (gameId) => {
 
     broadcastAll(gameId, payload)
 
-
-
 }
 
 let startTurn = (gameId) => {
 
     console.log(games[gameId]['current_player'])
-
     games[gameId]['current_player']++;
-
 
     const count = games[gameId]['clients'].length
 
@@ -90,17 +86,12 @@ let startTurn = (gameId) => {
         return;
     }
 
-
     const current_index = games[gameId]['current_player'];
     console.log('current_index:', current_index)
     const clientId = games[gameId]['clients'][current_index]
     console.log('clientId:', clientId)
     const name = clients[clientId]['name']
     console.log('name:', name)
-
-
-
-
 
     const payload = {
         'method': 'TURN',
@@ -109,14 +100,12 @@ let startTurn = (gameId) => {
 
     sendMessageTo(clientId, payload)
 
-
     let othersPayload = {
         'method': 'WAIT',
         'name': name
     }
 
     broadcastExceptSelf(clientId, gameId, othersPayload);
-
 
     games[gameId]['turnTimer'] = setTimeout(() => {
         startTurn(gameId)
@@ -136,7 +125,6 @@ let startGameSession = (gameId) => {
 wsServer.on('request', req => {
 
     const connection = req.accept(null, req.origin)
-
     const clientId = generateId()
     connection.clientId = clientId
 
@@ -218,7 +206,6 @@ wsServer.on('request', req => {
                 broadcastAll(gameId, payload)
                 break;
 
-
             case events.START_GAME:
 
                 gameId = body.gameId
@@ -269,11 +256,7 @@ wsServer.on('request', req => {
                 }
 
                 broadcastExceptSelf(clientId, gameId, payLoad)
-
-
                 break;
-
-
 
             case events.GUESS:
 
@@ -305,7 +288,6 @@ wsServer.on('request', req => {
 
                 }
                 else {
-
                     payload = {
                         'method': events.GUESS,
                         'guessWord': guessWord,
@@ -313,13 +295,12 @@ wsServer.on('request', req => {
                         'name': name,
                         'points': 0
                     }
-
                 }
 
                 broadcastAll(gameId, payload)
 
-
                 break;
+
             case 'choice':
                 gameId = body.gameId
                 console.log('choice event gameId:', gameId)
@@ -361,7 +342,6 @@ wsServer.on('request', req => {
 app.post("/create-game", (req, res) => {
 
     const gameId = uuid4()
-
     payload = {
         'gameId': gameId
     }
@@ -373,7 +353,6 @@ app.post("/create-game", (req, res) => {
 
     games[gameId]['currWord'] = ''
     games[gameId]['canvasEvents'] = []
-
 
 });
 

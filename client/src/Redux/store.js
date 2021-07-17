@@ -4,13 +4,10 @@ import reduxThunk from 'redux-thunk'
 import socketMiddleware from "./middleware/middleware"
 import gameReducer from "./reducers/gameReducers"
 
-
-
 const rootReducer = combineReducers({
     user: userReducer,
     game: gameReducer
 })
-
 
 const middleware = [
     reduxThunk,
@@ -24,7 +21,5 @@ const store = createStore(rootReducer,
     )
 
 )
-
-console.log("in store", store.getState())
 
 export default store

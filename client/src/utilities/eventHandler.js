@@ -12,11 +12,6 @@ const mediaConstraints = {
     video: false
 }
 
-// const mediaConstraints = {
-//     audio: true,
-//     video: { width: 1280, height: 720 },
-// }
-
 const iceServers = {
     iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
@@ -37,7 +32,6 @@ function addLocalTracks(rtcPeerConnection) {
 
 const eventHandler = async (event, dispatch, state) => {
 
-
     console.log('event received:')
     if (event && event.data) {
         let data = JSON.parse(event.data)
@@ -49,9 +43,7 @@ const eventHandler = async (event, dispatch, state) => {
             switch (data.method) {
 
                 case events.CONNECT:
-                    //console.log('connect event');
                     let clientId = data.clientId;
-
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
 
@@ -66,10 +58,9 @@ const eventHandler = async (event, dispatch, state) => {
 
                     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
                     console.log('localStream fetched:')
-                    console.log(localStream)
                     break;
-                case events.CREATE_GAME:
 
+                case events.CREATE_GAME:
                     let gameId = data.gameId
                     dispatch(storeGameId(gameId))
                     sessionStorage.setItem('gameId', gameId);
@@ -100,6 +91,7 @@ const eventHandler = async (event, dispatch, state) => {
                     }
                     dispatch(signalChatEvent(data))
                     break;
+
                 case events.DRAW:
                     dispatch(draw(data))
                     break;
@@ -122,7 +114,6 @@ const eventHandler = async (event, dispatch, state) => {
 
                         rtcPeerConnection.ontrack = (event) => {
                             //create an audio element and attach stream to it
-                            console.log('9848022338 prevclients')
                             console.log(event)
                             let audioElement = document.createElement("video")
                             audioElement.autoplay = "autoplay"
@@ -184,7 +175,6 @@ const eventHandler = async (event, dispatch, state) => {
 
                     rtcPeerConnection.ontrack = (event) => {
                         //create an audio element and attach stream to it
-                        console.log('9848022338 offer')
                         console.log(event)
                         let audioElement = document.createElement("video")
                         audioElement.autoplay = "autoplay"
@@ -248,15 +238,6 @@ const eventHandler = async (event, dispatch, state) => {
             }
         }
     }
-
-
-
-
-
-
-
-
-
 }
 
 export default eventHandler;

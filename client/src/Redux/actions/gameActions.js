@@ -1,6 +1,6 @@
 
 
-import { CORDS, UPDATE_POINTS, DRAW, GUESS, ADD_PLAYER, REMOVE_PLAYER, UPDATE_PLAYER_LIST, SET_LOCAL_STREAM, SET_REMOTE_STREAM, SET_REMOTE_CORDS } from "../../utilities/constants"
+import { UPDATE_POINTS, DRAW, GUESS, REMOVE_PLAYER, UPDATE_PLAYER_LIST, SET_LOCAL_STREAM, SET_REMOTE_STREAM, SET_REMOTE_CORDS } from "../../utilities/constants"
 
 export const draw = (image) => {
     return {

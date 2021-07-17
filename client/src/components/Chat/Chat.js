@@ -59,11 +59,11 @@ const Chat = () => {
 
     const createMessage = (message) => {
         var isMine = message.clientId === state.clientId
+        console.log(message)
         if (message.points) {
             let str = (isMine ? 'You' : message.name) + ' got it right'
             return (`<li class=notif>${str}</li>`)
         }
-
         var liClassName = isMine ? "mine" : "their"
         let nameElement = '';
         if (!isMine) {

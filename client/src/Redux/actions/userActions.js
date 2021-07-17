@@ -2,7 +2,7 @@ import { CLIENT_ID, CONNECT, GAME_ID, JOIN_GAME, NAME, SOCKET, } from '../../uti
 import axios from 'axios'
 
 
-export const createGame = (roomName) => (dispatch) => {
+export const createGame = () => (dispatch) => {
     return axios.post("http://localhost:9091/create-game")
         .then(response => {
             console.log(response.data)
@@ -12,7 +12,7 @@ export const createGame = (roomName) => (dispatch) => {
         })
         .catch(error => {
             return ''
-            // need to dispatch game create failed action
+            alert('Unable to start Game. Please try later')
         })
 
 }

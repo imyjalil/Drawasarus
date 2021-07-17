@@ -16,8 +16,6 @@ const intialState = {
 
 export default function gameReducer(state = intialState, action) {
 
-    //console.log("In game reducer", action)
-
     switch (action.type) {
 
         case UPDATE_PLAYER_LIST:
@@ -38,7 +36,6 @@ export default function gameReducer(state = intialState, action) {
                     return player
                 })
             }
-
 
         case REMOVE_PLAYER:
             return {
@@ -100,5 +97,4 @@ export default function gameReducer(state = intialState, action) {
         default:
             return state;
     }
-
 }
