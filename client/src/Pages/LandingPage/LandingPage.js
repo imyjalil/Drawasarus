@@ -31,7 +31,7 @@ function LandingPage() {
         dispatch(createGame())
             .then(path => {
                 if (path != '') {
-                    dispatch(wsConnect('ws://localhost:9091/'))
+                    dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
                     history.push(path)
                 }
             })
@@ -44,7 +44,7 @@ function LandingPage() {
         let headers = {
             "gameId": gameId
         }
-        let resp = await axios.get("http://localhost:9091/isValidGame", { headers })
+        let resp = await axios.get("https://drawasarus.herokuapp.com/isValidGame", { headers })
         console.log(resp.data)
         if (!resp || !resp.data || !resp.data['valid']) {
             alert("Game id is Invalid. Please check again")
@@ -52,7 +52,7 @@ function LandingPage() {
         }
 
         dispatch(storeGameId(gameId))
-        dispatch(wsConnect('ws://localhost:9091/'))
+        dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
         history.push('game/' + gameId)
     }
 

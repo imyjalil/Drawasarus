@@ -3,7 +3,7 @@ import axios from 'axios'
 
 
 export const createGame = () => (dispatch) => {
-    return axios.post("http://localhost:9091/create-game")
+    return axios.post("https://drawasarus.herokuapp.com/create-game")
         .then(response => {
             console.log(response.data)
             response = response.data
