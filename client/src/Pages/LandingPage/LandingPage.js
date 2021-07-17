@@ -31,7 +31,7 @@ function LandingPage() {
         dispatch(createGame())
             .then(path => {
                 if (path != '') {
-                    dispatch(wsConnect('ws://localhost:9091/'))
+                    dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
                     history.push(path)
                 }
             })
@@ -52,7 +52,7 @@ function LandingPage() {
         }
 
         dispatch(storeGameId(gameId))
-        dispatch(wsConnect('ws://localhost:9091/'))
+        dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
         history.push('game/' + gameId)
     }
 
