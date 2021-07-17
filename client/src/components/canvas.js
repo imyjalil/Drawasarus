@@ -9,14 +9,15 @@ import { remoteCords } from "../Redux/actions/gameActions";
 let x1, y1, x2, y2;
 
 
-const Canvas = () => {
+const Canvas = (props) => {
 
+    let canDraw = props.canDraw
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
 
     const dispatch = useDispatch()
-
+    let interval;
     let state = useSelector(state => {
 
         return {
@@ -46,7 +47,6 @@ const Canvas = () => {
 
     useEffect(() => {
 
-        console.log("Image event", state.image)
 
         if (state.image != null) {
             var image = new Image();
@@ -68,6 +68,7 @@ const Canvas = () => {
     }
 
     const startDrawing = ({ nativeEvent }) => {
+        if (!canDraw) return
         contextRef.current.beginPath();
 
 
@@ -83,6 +84,7 @@ const Canvas = () => {
     const finishDrawing = () => {
         contextRef.current.closePath();
         setIsDrawing(false);
+        clearInterval(interval)
     };
 
     const draw = ({ nativeEvent }) => {
@@ -102,9 +104,9 @@ const Canvas = () => {
             'canvasEvent': canvasRef.current.toDataURL("image/png")
         }
 
-        setInterval(() => {
-            dispatch(wsSendMessage(payload))
-        }, 150)
+        // interval = setInterval(() => {
+        //     dispatch(wsSendMessage(payload))
+        // }, 150)
 
 
 
@@ -126,6 +128,7 @@ const Canvas = () => {
             ref={canvasRef}
             id="canvasElement"
             style={canvasStyle}
+            disabled
         />
     );
 }

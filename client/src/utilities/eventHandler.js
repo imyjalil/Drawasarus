@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { removePlayer, signalChatEvent, updatePlayerList, draw } from '../Redux/actions/gameActions';
+import { removePlayer, signalChatEvent, updatePoints, updatePlayerList, draw, setChoice, setSelector, setWordHint, endGame, setLocalStream } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -11,11 +11,6 @@ const mediaConstraints = {
     audio: true,
     video: false
 }
-
-// const mediaConstraints = {
-//     audio: true,
-//     video: { width: 1280, height: 720 },
-// }
 
 const iceServers = {
     iceServers: [
@@ -37,7 +32,6 @@ function addLocalTracks(rtcPeerConnection) {
 
 const eventHandler = async (event, dispatch, state) => {
 
-
     console.log('event received:')
     if (event && event.data) {
         let data = JSON.parse(event.data)
@@ -49,9 +43,7 @@ const eventHandler = async (event, dispatch, state) => {
             switch (data.method) {
 
                 case events.CONNECT:
-                    //console.log('connect event');
                     let clientId = data.clientId;
-
                     console.log("dispatch client id")
                     dispatch(storeClientId(clientId))
 
@@ -66,10 +58,11 @@ const eventHandler = async (event, dispatch, state) => {
 
                     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
                     console.log('localStream fetched:')
-                    console.log(localStream)
-                    break;
-                case events.CREATE_GAME:
+                    dispatch(setLocalStream(localStream))
 
+                    break;
+
+                case events.CREATE_GAME:
                     let gameId = data.gameId
                     dispatch(storeGameId(gameId))
                     sessionStorage.setItem('gameId', gameId);
@@ -80,9 +73,27 @@ const eventHandler = async (event, dispatch, state) => {
                     console.log(otherUser, "Joined")
                     break;
 
+                case 'TURN':
+                    dispatch(setChoice(data.words))
+                    break
+
+                case 'WAIT':
+                    dispatch(setSelector(data.name))
+                    break
+
+                case 'wordselect':
+                    dispatch(setWordHint(data.hint))
+                    break
+
                 case events.GUESS:
+
+                    // if the data has points the update the player list
+                    if (data.points != 0) {
+                        dispatch(updatePoints(data.points, data.clientId))
+                    }
                     dispatch(signalChatEvent(data))
                     break;
+
                 case events.DRAW:
                     dispatch(draw(data))
                     break;
@@ -105,11 +116,11 @@ const eventHandler = async (event, dispatch, state) => {
 
                         rtcPeerConnection.ontrack = (event) => {
                             //create an audio element and attach stream to it
-                            console.log('9848022338 prevclients')
                             console.log(event)
                             let audioElement = document.createElement("video")
                             audioElement.autoplay = "autoplay"
                             audioElement.srcObject = event.streams[0]
+                            audioElement.setAttribute("id", player)
                             document.getElementById('audioEvents').appendChild(audioElement)
                             remoteStreams[player] = event.streams[0]
                         }
@@ -158,6 +169,10 @@ const eventHandler = async (event, dispatch, state) => {
                     dispatch(removePlayer(data.id))
                     break;
 
+                case 'end_game':
+                    dispatch(endGame(data.playerlist))
+                    break;
+
                 case 'webRTCOffer':
                     console.log('webrtcoffer')
                     console.log(data)
@@ -167,11 +182,11 @@ const eventHandler = async (event, dispatch, state) => {
 
                     rtcPeerConnection.ontrack = (event) => {
                         //create an audio element and attach stream to it
-                        console.log('9848022338 offer')
                         console.log(event)
                         let audioElement = document.createElement("video")
                         audioElement.autoplay = "autoplay"
                         audioElement.srcObject = event.streams[0]
+                        audioElement.setAttribute("id", data.senderId)
                         document.getElementById('audioEvents').appendChild(audioElement)
                         remoteStreams[data.senderId] = event.streams[0]
                     }
@@ -231,15 +246,6 @@ const eventHandler = async (event, dispatch, state) => {
             }
         }
     }
-
-
-
-
-
-
-
-
-
 }
 
 export default eventHandler;

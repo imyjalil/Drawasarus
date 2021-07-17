@@ -4,23 +4,21 @@ const initalState = {
     gameId: null,
     name: '',
     clientId: '',
-    chatEvent: null
+    chatEvent: null,
+    isCreator: false
 }
 
-
-
 export default function userReducer(state = initalState, action) {
-    //console.log("In user reducer", action.type)
 
     switch (action.type) {
 
 
         case SOCKET:
-            //console.log("update socket", action)
             return {
                 ...state,
                 ws: action.payload['ws']
             }
+
         case GAME_ID:
             return {
                 ...state,
@@ -40,11 +38,16 @@ export default function userReducer(state = initalState, action) {
             }
 
         case GUESS:
-            //console.log('in guess reducer')
             console.log(action)
             return {
                 ...state,
                 chatEvent: action.payload['chatEvent']
+            }
+
+        case 'set_create':
+            return {
+                ...state,
+                isCreator: true
             }
 
         default:

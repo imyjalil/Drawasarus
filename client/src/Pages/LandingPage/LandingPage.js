@@ -1,17 +1,13 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
-import { wsConnect, wsSendMessage } from '../../Redux/actions/socketActions';
-import { createGame, storeName, storeGameId } from '../../Redux/actions/userActions';
-import events from '../../utilities/constants'
+import { wsConnect } from '../../Redux/actions/socketActions';
+import { createGame, storeName, storeGameId, setCreator } from '../../Redux/actions/userActions';
 import axios from 'axios';
 
 function LandingPage() {
 
-
     //console.log("render landing")
-
-
     const dispatch = useDispatch()
     const history = useHistory()
 
@@ -30,13 +26,12 @@ function LandingPage() {
     const createButtonHandler = () => {
         // first send a get request to create game
         // store the gameid and client id redux thunk
+        dispatch(setCreator())
         dispatch(storeName(document.getElementById('name').value))
-        dispatch(createGame("helloroom"))
+        dispatch(createGame())
             .then(path => {
                 if (path != '') {
-                    // if we got a valid room id
                     dispatch(wsConnect('ws://localhost:9091/'))
-                    console.log(path)
                     history.push(path)
                 }
             })
@@ -45,7 +40,6 @@ function LandingPage() {
     const joinButtonHandler = async () => {
 
         dispatch(storeName(document.getElementById('name').value))
-        // api to check if the gameid exists
         let gameId = document.getElementById('gameId').value
         let headers = {
             "gameId": gameId
@@ -65,7 +59,6 @@ function LandingPage() {
 
     return (
         <div className="LandingPage" >
-            <h1>{state.clientId}</h1>
             <input type="text" id="name" defaultValue="abc" /><br></br>
             <input type="button" value="Create" onClick={createButtonHandler} /><br></br>
             <input type="text" id="gameId" /><br></br>

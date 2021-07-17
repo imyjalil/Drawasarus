@@ -3,8 +3,6 @@ import { Route, Switch } from 'react-router-dom'
 import GamePage from './Pages/GamePage/GamePage'
 import LandingPage from './Pages/LandingPage/LandingPage'
 
-
-
 function Playground(props) {
 
     return (
