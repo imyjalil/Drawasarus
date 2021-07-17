@@ -9,6 +9,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'build')));
+
 const httpServer = http.createServer(app)
 
 const websocketServer = require("websocket").server;
@@ -398,5 +399,7 @@ app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-httpServer.listen(9091, () => console.log("Listening.. on 9091"))
+const port = process.env.PORT || 9091;
+
+httpServer.listen(port, () => console.log("Listening.. on ", port))
 
