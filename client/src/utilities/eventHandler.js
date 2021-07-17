@@ -118,6 +118,7 @@ const eventHandler = async (event, dispatch, state) => {
                             let audioElement = document.createElement("video")
                             audioElement.autoplay = "autoplay"
                             audioElement.srcObject = event.streams[0]
+                            audioElement.setAttribute("id", player)
                             document.getElementById('audioEvents').appendChild(audioElement)
                             remoteStreams[player] = event.streams[0]
                         }
@@ -183,6 +184,7 @@ const eventHandler = async (event, dispatch, state) => {
                         let audioElement = document.createElement("video")
                         audioElement.autoplay = "autoplay"
                         audioElement.srcObject = event.streams[0]
+                        audioElement.setAttribute("id", data.senderId)
                         document.getElementById('audioEvents').appendChild(audioElement)
                         remoteStreams[data.senderId] = event.streams[0]
                     }
