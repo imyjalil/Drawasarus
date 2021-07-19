@@ -1,5 +1,5 @@
 const events = require('./constants')
-
+const path = require('path');
 const http = require("http")
 const express = require('express')
 const { v4: uuid4 } = require('uuid')
@@ -8,14 +8,11 @@ const cors = require('cors')
 const app = express()
 app.use(cors())
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'build')));
 
-const httpServer = http.createServer()
-httpServer.listen(9091, () => console.log("Listening.. on 9091"))
-
-
+const httpServer = http.createServer(app)
 
 const websocketServer = require("websocket").server;
-const { groupEnd } = require('console');
 const wsServer = new websocketServer(
     {
         "httpServer": httpServer
@@ -39,23 +36,122 @@ let broadcastExceptSelf = (clientId, gameId, payload) => {
     })
 }
 
-let broadcastAll = (clientId, gameId, payload) => {
-    console.log("about to broadcast")
+let broadcastAll = (gameId, payload) => {
     games[gameId]['clients'].forEach((client) => {
         clients[client]['connection'].send(JSON.stringify(payload))
     })
 }
 
+let sendMessageTo = (clientId, payload) => {
+    clients[clientId]['connection'].send(JSON.stringify(payload))
+}
+
+const showResults = (gameId) => {
+    players = []
+
+    lobbyPlayers = games[gameId]['clients']
+
+    console.log("end game")
+
+    lobbyPlayers.forEach((id) => {
+        let name = clients[id].name
+        players.push({ 'name': name, 'id': id, 'points': clients[id]['points'] })
+    })
+
+    const payload = {
+        method: events.END_GAME,
+        playerlist: players
+    }
+
+    broadcastAll(gameId, payload)
+
+}
+
+let startTurn = (gameId) => {
+
+    console.log(games[gameId]['current_player'])
+    games[gameId]['current_player']++;
+
+    const count = games[gameId]['clients'].length
+
+    if (games[gameId]['current_player'] >= count) {
+        //
+        // clear the  timers
+        clearTimeout(games[gameId]['turnTimer'])
+        clearTimeout(games[gameId]['gameTimer'])
+
+        games[gameId]['turnTimer'] = null;
+        games[gameId]['gameTimer'] = null;
+
+        showResults(gameId)
+        return;
+    }
+
+    const current_index = games[gameId]['current_player'];
+    console.log('current_index:', current_index)
+    const clientId = games[gameId]['clients'][current_index]
+    console.log('clientId:', clientId)
+    const name = clients[clientId]['name']
+    console.log('name:', name)
+
+    const payload = {
+        'method': 'TURN',
+        'words': ['abc', 'def', 'fgh']
+    }
+
+    sendMessageTo(clientId, payload)
+
+    let othersPayload = {
+        'method': 'WAIT',
+        'name': name
+    }
+
+    broadcastExceptSelf(clientId, gameId, othersPayload);
+
+    games[gameId]['turnTimer'] = setTimeout(() => {
+        startTurn(gameId)
+    }, 10000)
+
+}
+
+let startGameSession = (gameId) => {
+    const currGameId = gameId
+    games[currGameId]['gameTimer'] = setTimeout(() => {
+        //endGameSession()
+        startTurn(currGameId)
+    }, 20000)
+}
+
+
 wsServer.on('request', req => {
 
-
-
     const connection = req.accept(null, req.origin)
+    const clientId = generateId()
+    connection.clientId = clientId
 
+    // first creation of client
+    clients[clientId] = {}
+    clients[clientId]['connection'] = connection
+
+    payLoad = {
+        "method": "connect",
+        "clientId": clientId
+    }
+    connection.send(JSON.stringify(payLoad))
+    // console.log("--->", connection)
     connection.on('open', () => console.log("connect"))
-    connection.on('close', () => console.log("closed! "))
+    connection.on('close', () => {
+        let gameId = clients[connection.clientId]['gameId']
+        payload = {
+            'method': events.REMOVE_PLAYER,
+            'id': clientId
+        }
+        broadcastAll(gameId, payload)
+        games[gameId]['clients'] = games[gameId]['clients'].filter((id) => { return id != connection.clientId })
+    }
+    )
     connection.on("message", message => {
-        console.log('message received ')
+        //console.log('message received ')
         const body = JSON.parse(message.utf8Data)
         let payLoad = {}
         let gameId, name, clientId;
@@ -70,96 +166,192 @@ wsServer.on('request', req => {
                 name = body.name
                 gameId = body.gameId
 
+                clients[clientId]['points'] = 0;
                 clients[clientId]['name'] = name;
                 clients[clientId]['gameId'] = gameId
 
+                console.log("adding the ", clientId, "to game ", gameId)
+
+                prevClientsPayload = {
+                    'method': 'prevClients',
+                    'clients': games[gameId]['clients']
+                }
+                sendMessageTo(clientId, prevClientsPayload)
                 games[gameId]['clients'].push(clientId)
                 console.log(games)
+
+
+                // payload = {
+                //     'method': events.JOIN_GAME,
+                //     'name': clients[clientId]['name']
+                // }
+
+                players = []
+
+                lobbyPlayers = games[gameId]['clients']
+
+                console.log(lobbyPlayers)
+
+                lobbyPlayers.forEach((id) => {
+                    let name = clients[id].name
+                    players.push({ 'name': name, 'id': id, 'points': 0 })
+                })
+
                 payload = {
-                    'method': events.JOIN_GAME,
-                    'name': clients[clientId]['name']
+                    'method': events.UPDATE_PLAYER_LIST,
+                    'playerlist': players
                 }
-                broadcastExceptSelf(clientId, gameId, payload)
+
+                console.log("payload", players)
+
+                broadcastAll(gameId, payload)
+                break;
+
+            case events.START_GAME:
+
+                gameId = body.gameId
+
+                // pick current player
+                games[gameId]['current_player'] = -1;
+                games[gameId]['gameTimer'] = null
+                games[gameId]['turnTimer'] = null
+
+
+                // only admin
+                startTurn(gameId)
+
                 break;
 
             case events.DRAW:
+
                 console.log('DRAW')
                 gameId = body.gameId
                 clientId = body.clientId
                 let canvasImage = body.canvasImage
-
-                //console.log(canvasEvent)
-
-                // game[gameId]['canvasEvents'].push(canvasEvent)
 
                 payload = {
                     'method': events.DRAW,
                     'canvasImage': canvasImage
                 }
 
-
-
                 broadcastExceptSelf(clientId, gameId, payload)
 
                 break;
 
+            case events.CORDS:
+
+                gameId = body.gameId
+                clientId = body.clientId
+                let cords = body.cords
+
+                payLoad = {
+                    'method': events.CORDS,
+                    'cords': cords
+                }
+
+                broadcastExceptSelf(clientId, gameId, payLoad)
+                break;
+
             case events.GUESS:
+
                 console.log('GUESS')
                 gameId = body.gameId
                 clientId = body.clientId
                 let guessWord = body.guessWord
                 name = body.name
 
-                //validation
-                // let match = false
-                // console.log(games)
-                // if (guessWord == games[gameId]['currWord']) {
-                //     match = true
-                // }
+                // get the current game player
+                let currentPlayer = games[gameId]['current_player']
+                let currentPlayerId = games[gameId]['clients'][currentPlayer]
 
-                payload = {
-                    'method': events.GUESS,
-                    'guessWord': guessWord,
-                    'clientId': clientId,
-                    'name': name
+
+
+                //validation
+                let match = false
+                console.log(games)
+
+                //  Note: set the gameTimer to null when the gamesessions ends
+                if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
+                    match = true
+
+
+                    const gotPoints = clients[clientId]['reward']
+                    let points = 0;
+
+                    // add points only he has not got it before
+                    if (gotPoints == false && clientId != currentPlayerId) {
+
+                        clients[clientId]['points'] += 1
+                        clients[clientId]['reward'] = true
+                        points = clients[clientId]['points']
+                    }
+
+                    payload = {
+                        'method': events.GUESS,
+                        'clientId': clientId,
+                        'name': name,
+                        'points': points
+                    }
+
+                    // if every body gueses the clear the game timer 
+
+                }
+                else {
+                    payload = {
+                        'method': events.GUESS,
+                        'guessWord': guessWord,
+                        'clientId': clientId,
+                        'name': name,
+                        'points': 0
+                    }
                 }
 
-                broadcastAll(clientId, gameId, payload)
-
+                broadcastAll(gameId, payload)
 
                 break;
-            case events.WORD_SELECT:
+
+            case 'choice':
+
 
                 gameId = body.gameId
+
+                // set the reward to false for the players in the game
+                games[gameId]['clients'].forEach((id) => {
+                    clients[id]['reward'] = false
+                })
+
+                console.log('choice event gameId:', gameId)
+
+                clearTimeout(games[gameId]['turnTimer'])
+                games[gameId]['turnTimer'] = null;
                 clientId = body.clientId
                 let word = body.word
                 games[gameId]['currWord'] = word
 
-                hint = "_".repeat(len(word))
+                hint = "_ ".repeat(word.length)
 
                 payload = {
                     'method': 'wordselect',
                     'hint': hint
                 }
-
                 broadcastExceptSelf(clientId, gameId, payload)
+                startGameSession(gameId);
+                break
+            case 'webRTCOffer':
+                sendMessageTo(body.receiverId, body)
+                break
+
+            case 'webRTCAnswer':
+                sendMessageTo(body.receiverId, body)
+                break
+
+            case 'sendIceCandidate':
+                sendMessageTo(body.receiverId, body)
                 break
         }
 
     })
 
-
-    const clientId = generateId()
-
-    // first creation of client
-    clients[clientId] = {}
-    clients[clientId]['connection'] = connection
-
-    payLoad = {
-        "method": "connect",
-        "clientId": clientId
-    }
-    connection.send(JSON.stringify(payLoad))
 
 })
 
@@ -167,12 +359,11 @@ wsServer.on('request', req => {
 app.post("/create-game", (req, res) => {
 
     const gameId = uuid4()
-
     payload = {
         'gameId': gameId
     }
     res.send(payload)
-    console.log("--------")
+    console.log("creating a game with code", gameId)
 
     games[gameId] = {}
     games[gameId]['clients'] = []
@@ -180,14 +371,14 @@ app.post("/create-game", (req, res) => {
     games[gameId]['currWord'] = ''
     games[gameId]['canvasEvents'] = []
 
-
 });
 
 app.get("/isValidGame", (req, res) => {
     console.log(req.headers.gameid)
     console.log(req.params)
     let payload = {
-        'valid': false
+        'valid': false,
+        'isAdmin': true
     }
     console.log('abc')
     if (!req || !req.headers || !req.headers.gameid) {
@@ -204,4 +395,11 @@ app.get("/isValidGame", (req, res) => {
     return res.send(JSON.stringify(payload))
 })
 
-app.listen(9000)
+app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+const port = process.env.PORT || 9091;
+
+httpServer.listen(port, () => console.log("Listening.. on ", port))
+

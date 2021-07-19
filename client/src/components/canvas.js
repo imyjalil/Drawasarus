@@ -1,24 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
+import { wsSendMessage } from "../Redux/actions/socketActions";
 import events from '../utilities/constants'
 import { useDispatch, useSelector } from 'react-redux'
-import { wsSendMessage } from '../Redux/actions/socketActions'
+import { remoteCords } from "../Redux/actions/gameActions";
 
-const Canvas = () => {
 
+
+let x1, y1, x2, y2;
+
+
+const Canvas = (props) => {
+
+    let canDraw = props.canDraw
     const [isDrawing, setIsDrawing] = useState(false);
     const canvasRef = useRef(null);
     const contextRef = useRef(null);
 
     const dispatch = useDispatch()
+    let interval;
     let state = useSelector(state => {
+
         return {
             clientId: state.user.clientId,
             gameId: state.user.gameId,
-            canvasImage: state.user.canvasImage
+            remoteCords: state.game.remoteCords,
+            image: state.game.image,
+            receivedDrawEvent: state.game.receivedDrawEvent
         }
     })
 
-    let x1, y1, x2, y2;
+    console.log("remote", state.remoteCords)
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -30,12 +41,55 @@ const Canvas = () => {
         //context.scale(2, 2);
         context.lineCap = "round";
         context.strokeStyle = "black";
-        context.lineWidth = 3;
+        context.lineWidth = 2;
         contextRef.current = context;
+
+        // window.onresize = () => {
+
+        //     console.log("resize")
+        //     const canvas = canvasRef.current;
+        //     canvas.style.width = '100%';
+        //     canvas.style.height = '100%';
+        //     canvas.width = canvas.offsetWidth;
+        //     canvas.height = canvas.offsetHeight;
+        // }
+
     }, []);
 
     useEffect(() => {
 
+        console.log("received new cords", state.remoteCords)
+        const [oldx, oldy, newx, newy] = state.remoteCords;
+        drawLine(oldx, oldy, newx, newy)
+    }, [state.receivedDrawEvent])
+
+    const drawLine = (x1, y1, x2, y2) => {
+
+        contextRef.current.beginPath();
+        contextRef.current.moveTo(x1, y1);
+        contextRef.current.lineTo(x2, y2);
+        contextRef.current.stroke()
+        contextRef.current.closePath();
+    }
+
+
+
+
+
+    useEffect(() => {
+
+
+        if (state.image != null) {
+            // var image = new Image();
+            // image.src = state.image;
+            // contextRef.current.drawImage(image, 0, 0)
+        }
+
+
+    }, [state.image])
+
+
+    useEffect(() => {
         console.log('canvas image use effect change')
         if (state.canvasImage != null) {
             let canvasImage = state.canvasImage.canvasImage
@@ -58,19 +112,23 @@ const Canvas = () => {
     }
 
     const startDrawing = ({ nativeEvent }) => {
+        if (!canDraw) return
         contextRef.current.beginPath();
+
+
 
         x1 = getMousePosition(nativeEvent).x
         y1 = getMousePosition(nativeEvent).y
 
         contextRef.current.moveTo(x1, y1);
-        //console.log('moved to ' + offsetX + ", " + offsetY)
+        console.log('moved to ' + x1 + ", " + y1)
         setIsDrawing(true);
     };
 
     const finishDrawing = () => {
         contextRef.current.closePath();
         setIsDrawing(false);
+        clearInterval(interval)
     };
 
     const draw = ({ nativeEvent }) => {
@@ -81,25 +139,28 @@ const Canvas = () => {
         x2 = getMousePosition(nativeEvent).x
         y2 = getMousePosition(nativeEvent).y
 
+        console.log(x1, y1, x2, y2)
+
+        const payload = {
+            'method': events.SET_REMOTE_CORDS,
+            'gameId': state.gameId,
+            'clientId': state.clientId,
+            cords: [x1, y1, x2, y2]
+        }
+
+        dispatch(wsSendMessage(payload))
+
+        // interval = setInterval(() => {
+        //     dispatch(wsSendMessage(payload))
+        // }, 150)
+
+
+
         contextRef.current.lineTo(x2, y2);
         //console.log('line to ' + offsetX + ", " + offsetY)
         contextRef.current.stroke();
-
-        // let payload = {
-        //     'method':events.DRAW,
-        //     'clientId': props.clientId,
-        //     'gameId':props.gameId,
-        //     'canvasEvent':[x1,y1,x2,y2]
-        // }
-
-        // console.log(canvasRef.current.toDataURL("image/png"))
-
-        // let ws = props.ws
-        // ws.send(JSON.stringify(payload))
-
-
-
-
+        x1 = x2;
+        y1 = y2;
     };
 
     const sendCanvasImage = () => {
@@ -119,18 +180,15 @@ const Canvas = () => {
         width: `100%`
     }
     return (
-        <div>
-            <input type="button" value="senddata" onClick={sendCanvasImage} />
-            <canvas
-                onMouseDown={startDrawing}
-                onMouseUp={finishDrawing}
-                onMouseMove={draw}
-                ref={canvasRef}
-                id="canvasElement"
-                className="canvasElement"
-                style={canvasStyle}
-            />
-        </div>
+        <canvas
+            onMouseDown={startDrawing}
+            onMouseUp={finishDrawing}
+            onMouseMove={draw}
+            ref={canvasRef}
+            id="canvasElement"
+            style={canvasStyle}
+            disabled
+        />
     );
 }
 

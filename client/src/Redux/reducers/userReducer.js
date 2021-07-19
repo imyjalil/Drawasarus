@@ -1,29 +1,24 @@
-import { DRAW, CLIENT_CREATE, CLIENT_ID, GAME_ID, NAME, SOCKET, GAME_CREATE, GUESS } from "../../utilities/constants";
+import { CLIENT_ID, GAME_ID, NAME, SOCKET, GUESS, DRAW } from "../../utilities/constants";
 
 const initalState = {
-    gameId: '',
+    gameId: null,
     name: '',
     clientId: '',
-    isClientCreated: false,
-    isGameCreated: false,
     chatEvent: null,
-    canvasImage: null
+    isCreator: false
 }
 
-
-
 export default function userReducer(state = initalState, action) {
-    console.log("In user reducer", action.type)
 
     switch (action.type) {
 
 
         case SOCKET:
-            console.log("update socket", action)
             return {
                 ...state,
                 ws: action.payload['ws']
             }
+
         case GAME_ID:
             return {
                 ...state,
@@ -42,24 +37,17 @@ export default function userReducer(state = initalState, action) {
                 name: action.payload['name']
             }
 
-        case CLIENT_CREATE:
-            return {
-                ...state,
-                isClientCreated: action.payload['isClientCreated']
-            }
-
-        case GAME_CREATE:
-            return {
-                ...state,
-                isGameCreated: action.payload['isGameCreated']
-            }
-
         case GUESS:
-            console.log('in guess reducer')
             console.log(action)
             return {
                 ...state,
                 chatEvent: action.payload['chatEvent']
+            }
+
+        case 'set_create':
+            return {
+                ...state,
+                isCreator: true
             }
 
         case DRAW:

@@ -1,9 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom';
-import { wsConnect, wsSendMessage } from '../../Redux/actions/socketActions';
-import { createGame, storeName, storeGameId } from '../../Redux/actions/userActions';
-import events from '../../utilities/constants'
+import { wsConnect } from '../../Redux/actions/socketActions';
+import { createGame, storeName, storeGameId, setCreator } from '../../Redux/actions/userActions';
 import axios from 'axios';
 import './LandingPage.css'
 
@@ -33,13 +32,12 @@ function LandingPage() {
     const createButtonHandler = () => {
         // first send a get request to create game
         // store the gameid and client id redux thunk
+        dispatch(setCreator())
         dispatch(storeName(document.getElementById('name').value))
-        dispatch(createGame("helloroom"))
+        dispatch(createGame())
             .then(path => {
                 if (path != '') {
-                    // if we got a valid room id
-                    dispatch(wsConnect('ws://localhost:9091/'))
-                    console.log(path)
+                    dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
                     history.push(path)
                 }
             })
@@ -48,12 +46,11 @@ function LandingPage() {
     const joinButtonHandler = async () => {
 
         dispatch(storeName(document.getElementById('name').value))
-        // api to check if the gameid exists
         let gameId = document.getElementById('gameId').value
         let headers = {
             "gameId": gameId
         }
-        let resp = await axios.get("http://localhost:9000/isValidGame?a=123", { headers })
+        let resp = await axios.get("https://drawasarus.herokuapp.com/isValidGame", { headers })
         console.log(resp.data)
         if (!resp || !resp.data || !resp.data['valid']) {
             alert("Game id is Invalid. Please check again")
@@ -61,7 +58,7 @@ function LandingPage() {
         }
 
         dispatch(storeGameId(gameId))
-        dispatch(wsConnect('ws://localhost:9091/'))
+        dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
         history.push('game/' + gameId)
     }
 
@@ -78,14 +75,14 @@ function LandingPage() {
                 {join ?
                     <div className="row joinCell">
                         <div className="input-container">
-                         
-                                <input type="text" id="name" placeholder="Enter Your Name" />
-                            
-                            
-                                <input type="text" id="game" placeholder="Enter Game Id" />
-                          
+
+                            <input type="text" id="name" placeholder="Enter Your Name" />
+
+
+                            <input type="text" id="game" placeholder="Enter Game Id" />
+
                         </div>
-                       
+
                         <div>
                             <input type="button" value="Join" onClick={joinButtonHandler} />
                         </div>

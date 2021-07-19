@@ -1,9 +1,9 @@
-import { CLIENT_ID, CONNECT, CREATE_GAME, GAME_ID, JOIN_GAME, NAME, SOCKET, CLIENT_CREATE, GAME_CREATE } from '../../utilities/constants';
+import { CLIENT_ID, CONNECT, GAME_ID, JOIN_GAME, NAME, SOCKET, } from '../../utilities/constants';
 import axios from 'axios'
 
 
-export const createGame = (roomName) => (dispatch) => {
-    return axios.post("http://localhost:9000/create-game")
+export const createGame = () => (dispatch) => {
+    return axios.post("https://drawasarus.herokuapp.com/create-game")
         .then(response => {
             console.log(response.data)
             response = response.data
@@ -12,7 +12,7 @@ export const createGame = (roomName) => (dispatch) => {
         })
         .catch(error => {
             return ''
-            // need to dispatch game create failed action
+            alert('Unable to start Game. Please try later')
         })
 
 }
@@ -60,7 +60,7 @@ export const storeGameId = (gameId) => {
 }
 
 export const storeName = (name) => {
-    console.log('dispatching storename')
+    //console.log('dispatching storename')
     return {
         type: NAME,
         payload: {
@@ -69,20 +69,9 @@ export const storeName = (name) => {
     }
 }
 
-export const setClientCreation = (flag) => {
+export const setCreator = () => {
+    //console.log('dispatching storename')
     return {
-        type: CLIENT_CREATE,
-        payload: {
-            'isClientCreated': flag
-        }
-    }
-}
-
-export const setGameCreation = (flag) => {
-    return {
-        type: GAME_CREATE,
-        payload: {
-            'isGameCreated': flag
-        }
+        type: 'set_create'
     }
 }

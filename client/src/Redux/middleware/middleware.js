@@ -6,15 +6,10 @@ const { wsConnect, wsDisconnect } = require("../actions/socketActions")
 
 const socketMiddleware = () => {
 
-    // scope ?
     let socket = null
     let host = ''
 
-
-    // the below three returns the callbacks
-
     const onMessage = (store) => (event) => {
-        console.log("on message")
         eventHandler(event, store.dispatch, store.getState())
 
     }
@@ -27,10 +22,7 @@ const socketMiddleware = () => {
         console.log("web socket connection closed")
     }
 
-
-
-
-    // middle ware
+    // middleware
     return store => next => action => {
 
         switch (action.type) {
@@ -65,7 +57,7 @@ const socketMiddleware = () => {
                 socket.send(JSON.stringify(action.payload))
                 break;
             default:
-                console.log("action type", action.type, " not found")
+                console.log("default action", action.type, " not found")
         }
 
 
