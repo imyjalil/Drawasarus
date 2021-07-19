@@ -13,11 +13,17 @@
 
 .joinCell{
     margin:10px;
+    text-align: center;
 }
 
 input{
     margin:10px;
 }
+
+ input:focus
+  {
+     outline: none;
+  }
 
 input[type=button]{
     background-color: #5b4caf;

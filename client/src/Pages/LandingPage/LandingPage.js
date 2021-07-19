@@ -12,6 +12,8 @@ function LandingPage() {
 
     console.log("render landing")
 
+    const [join, setJoin] = React.useState(false)
+
 
     const dispatch = useDispatch()
     const history = useHistory()
@@ -67,18 +69,37 @@ function LandingPage() {
     return (
         <div className="LandingPage" >
             <div className="well">
-                <div className="row selectors">
-                    <input type="text" className="create" defaultValue="Create" readOnly></input>
-                    <input type="text" className="join" defaultValue="Join" readOnly></input>
+
+                <div className="row selectors ">
+                    <input type="text" className="create" defaultValue="Create" readOnly onClick={() => { setJoin(false) }}></input>
+                    <input type="text" className="join" defaultValue="Join" readOnly onClick={() => { setJoin(true) }}></input>
                 </div>
-                <div className="row createCell">
-                    <input type="text" id="name" defaultValue="abc" />
-                    <input type="button" value="Create" onClick={createButtonHandler} />
-                </div>
-                <div className="row joinCell">
-                    <input type="text" id="gameId" />
-                    <input type="button" value="Join" onClick={joinButtonHandler} />
-                </div>
+
+                {join ?
+                    <div className="row joinCell">
+                        <div>
+                            <input type="text" id="name" placeholder="Enter Your Name" />
+                        </div>
+                        <div>
+                            <input type="text" id="game" placeholder="Enter Game Id" />
+                        </div>
+                        <div>
+                            <input type="button" value="Join" onClick={joinButtonHandler} />
+                        </div>
+                    </div>
+
+                    :
+                    <div className="row createCell">
+                        <input type="text" id="name" placeholder="Enter Your Name" />
+                        <input type="button" value="Create" onClick={createButtonHandler} />
+                    </div>
+
+                }
+
+
+
+
+
             </div>
         </div >
     )
