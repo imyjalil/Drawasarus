@@ -76,7 +76,7 @@ function LandingPage() {
                             <input type="text" id="name" placeholder="Enter Your Name" />
 
 
-                            <input type="text" id="game" placeholder="Enter Game Id" />
+                            <input type="text" id="gameId" placeholder="Enter Game Id" />
 
                         </div>
 
