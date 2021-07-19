@@ -77,12 +77,15 @@ function LandingPage() {
 
                 {join ?
                     <div className="row joinCell">
-                        <div>
-                            <input type="text" id="name" placeholder="Enter Your Name" />
+                        <div className="input-container">
+                         
+                                <input type="text" id="name" placeholder="Enter Your Name" />
+                            
+                            
+                                <input type="text" id="game" placeholder="Enter Game Id" />
+                          
                         </div>
-                        <div>
-                            <input type="text" id="game" placeholder="Enter Game Id" />
-                        </div>
+                       
                         <div>
                             <input type="button" value="Join" onClick={joinButtonHandler} />
                         </div>
