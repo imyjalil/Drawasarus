@@ -4,10 +4,16 @@ import { useHistory } from 'react-router-dom';
 import { wsConnect } from '../../Redux/actions/socketActions';
 import { createGame, storeName, storeGameId, setCreator } from '../../Redux/actions/userActions';
 import axios from 'axios';
+import './LandingPage.css'
 
 function LandingPage() {
 
-    //console.log("render landing")
+
+    console.log("render landing")
+
+    const [join, setJoin] = React.useState(false)
+
+
     const dispatch = useDispatch()
     const history = useHistory()
 
@@ -38,7 +44,6 @@ function LandingPage() {
     }
 
     const joinButtonHandler = async () => {
-
         dispatch(storeName(document.getElementById('name').value))
         let gameId = document.getElementById('gameId').value
         let headers = {
@@ -56,13 +61,38 @@ function LandingPage() {
         history.push('game/' + gameId)
     }
 
-
     return (
         <div className="LandingPage" >
-            <input type="text" id="name" defaultValue="abc" /><br></br>
-            <input type="button" value="Create" onClick={createButtonHandler} /><br></br>
-            <input type="text" id="gameId" /><br></br>
-            <input type="button" value="Join" onClick={joinButtonHandler} />
+            <div className="well">
+                <div className="row selectors ">
+                    <input type="text" className="create" defaultValue="Create" readOnly onClick={() => { setJoin(false) }}></input>
+                    <input type="text" className="join" defaultValue="Join" readOnly onClick={() => { setJoin(true) }}></input>
+                </div>
+
+                {join ?
+                    <div className="row joinCell">
+                        <div className="input-container">
+
+                            <input type="text" id="name" placeholder="Enter Your Name" />
+
+
+                            <input type="text" id="game" placeholder="Enter Game Id" />
+
+                        </div>
+
+                        <div>
+                            <input type="button" value="Join" onClick={joinButtonHandler} />
+                        </div>
+                    </div>
+
+                    :
+                    <div className="row createCell">
+                        <input type="text" id="name" placeholder="Enter Your Name" />
+                        <input type="button" value="Create" onClick={createButtonHandler} />
+                    </div>
+
+                }
+            </div>
         </div >
     )
 }
