@@ -75,7 +75,7 @@ const Canvas = (props) => {
                 const [oldx, oldy, newx, newy] = cord
                 drawLine(oldx, oldy, newx, newy)
             })
-            sessionStorage.removeItem("curentState")
+            sessionStorage.removeItem("currentState")
         }
 
         drawLine(oldx, oldy, newx, newy)
