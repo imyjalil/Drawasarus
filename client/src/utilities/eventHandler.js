@@ -77,7 +77,7 @@ const eventHandler = async (event, dispatch, state) => {
                 
                 case events.DRAW_LINES:
                     
-                    sessionStorage.setItem("currentState", JSON.stringify(array))
+                    sessionStorage.setItem("currentState", JSON.stringify(data.lines))
                     console.log("---> storing lines")
                     break;
 

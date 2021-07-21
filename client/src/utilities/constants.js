@@ -1,4 +1,3 @@
-const { DRAW_LINES } = require("../../../server/constants");
 
 module.exports = {
     JOIN_GAME: 'join',
@@ -23,5 +22,5 @@ module.exports = {
     SET_REMOTE_CORDS: 'cords',
     START_GAME: 'start_game',
     UPDATE_POINTS: 'update_points',
-    DRAW_LINES:'draw_lines'
+    DRAW_LINES: 'draw_lines'
 }
