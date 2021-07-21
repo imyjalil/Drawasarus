@@ -218,7 +218,7 @@ wsServer.on('request', req => {
 
 
                 console.log("-----------", games[gameId]['canvasEvents'])
-                
+
                 if (games[gameId]['canvasEvents'].length != 0) {
                     const canvasPayload = {
                         'method': events.DRAW_LINES,
@@ -259,7 +259,6 @@ wsServer.on('request', req => {
                 // add canvas event to the list
 
                 // in case of clear the also we need to clean the canvasevents array
-                games[gameId]['canvasEvents'].push(canvasEvent)
 
                 console.log(games[gameId]['canvasEvents'])
 
@@ -277,6 +276,9 @@ wsServer.on('request', req => {
                 gameId = body.gameId
                 clientId = body.clientId
                 let cords = body.cords
+
+                games[gameId]['canvasEvents'].push(cords)
+
 
                 payLoad = {
                     'method': events.CORDS,
