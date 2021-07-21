@@ -63,11 +63,14 @@ const Canvas = (props) => {
 
         const lines = JSON.parse(sessionStorage.getItem("currentState"))
 
+        console.log("old cords", lines)
+
         if (lines != null) {
 
             console.log(lines)
             lines.map((cord) => {
-                const [oldx, oldy, newx, newy] = state.remoteCords;
+                console.log("cord", cord)
+                const [oldx, oldy, newx, newy] = cord
                 drawLine(oldx, oldy, newx, newy)
             })
             sessionStorage.removeItem("curentState")
