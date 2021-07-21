@@ -72,6 +72,9 @@ let startTurn = (gameId) => {
     console.log(games[gameId]['current_player'])
     games[gameId]['current_player']++;
 
+    // cleart the canvas event at the beginning of the turn
+    games[gameId]['canvasEvents'] = []
+
     const count = games[gameId]['clients'].length
 
     if (games[gameId]['current_player'] >= count) {
@@ -202,6 +205,25 @@ wsServer.on('request', req => {
                     'playerlist': players
                 }
 
+                // if game already started
+                if (games[gameId]['current_player'] != -1) {
+
+                    // TODO
+                    // need to keep track  len at this point there may be other events get filled
+                    // when broadcasting send canvas from that index
+                    // const size = games[gameId]['canvasEvents'].length;
+
+                    if (games[gameId]['canvasEvents'].length != 0) {
+                        const canvasPayload = {
+                            'method': events.DRAW_LINES,
+                            'lines': games[gameId]['canvasEvents']
+                        }
+                        sendMessageTo(clientId, canvasPayload);
+                    }
+
+                }
+
+
                 console.log("payload", players)
 
                 broadcastAll(gameId, payload)
@@ -228,6 +250,11 @@ wsServer.on('request', req => {
                 gameId = body.gameId
                 clientId = body.clientId
                 let canvasEvent = body.canvasEvent
+
+                // add canvas event to the list
+
+                // in case of clear the also we need to clean the canvasevents array
+                games[gameId]['canvasEvents'].push(canvasEvent)
 
                 payload = {
                     'method': events.DRAW,

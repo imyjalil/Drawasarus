@@ -44,6 +44,8 @@ function LandingPage() {
     }
 
     const joinButtonHandler = async () => {
+
+        console.log("joinButtonHandler")
         dispatch(storeName(document.getElementById('name').value))
         let gameId = document.getElementById('gameId').value
         let headers = {
