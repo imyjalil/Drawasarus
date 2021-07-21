@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An Attempt to create a multiplayer drawing game",
   "scripts": {
-    "start": "cd server && npm install && npm start"
+    "start": "set REACT_APP_STAGE=production && cd client && npm install && npm run build && cd .. && cd server && npm install && npm start"
   },
   "repository": {
     "type": "git",
