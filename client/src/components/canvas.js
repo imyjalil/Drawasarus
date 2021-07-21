@@ -62,10 +62,27 @@ const Canvas = (props) => {
 
         console.log("received new cords", state.remoteCords)
         const [oldx, oldy, newx, newy] = state.remoteCords;
+
+        const lines = JSON.parse(sessionStorage.getItem("currentState"))
+
+        console.log("old cords", lines)
+
+        if (lines != null) {
+
+            console.log(lines)
+            lines.map((cord) => {
+                console.log("cord", cord)
+                const [oldx, oldy, newx, newy] = cord
+                drawLine(oldx, oldy, newx, newy)
+            })
+            sessionStorage.removeItem("curentState")
+        }
+
         drawLine(oldx, oldy, newx, newy)
     }, [state.receivedDrawEvent])
 
     const drawLine = (x1, y1, x2, y2) => {
+
 
         contextRef.current.beginPath();
         contextRef.current.moveTo(x1, y1);

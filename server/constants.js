@@ -8,5 +8,6 @@ module.exports = {
     REMOVE_PLAYER: 'remove_player',
     CORDS: 'cords',
     START_GAME: 'start_game',
-    END_GAME:'end_game'
+    END_GAME: 'end_game',
+    DRAW_LINES:'draw_lines'
 }
