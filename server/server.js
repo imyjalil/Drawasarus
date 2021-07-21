@@ -216,6 +216,9 @@ wsServer.on('request', req => {
 
                 // }
 
+
+                console.log("-----------", games[gameId]['canvasEvents'])
+                
                 if (games[gameId]['canvasEvents'].length != 0) {
                     const canvasPayload = {
                         'method': events.DRAW_LINES,
@@ -257,6 +260,8 @@ wsServer.on('request', req => {
 
                 // in case of clear the also we need to clean the canvasevents array
                 games[gameId]['canvasEvents'].push(canvasEvent)
+
+                console.log(games[gameId]['canvasEvents'])
 
                 payload = {
                     'method': events.DRAW,
