@@ -205,23 +205,25 @@ wsServer.on('request', req => {
                     'playerlist': players
                 }
 
-                // if game already started
-                if (games[gameId]['current_player'] != -1) {
+                // // if game already started
+                // if (games[gameId]['current_player'] != -1) {
 
-                    // TODO
-                    // need to keep track  len at this point there may be other events get filled
-                    // when broadcasting send canvas from that index
-                    // const size = games[gameId]['canvasEvents'].length;
+                //     // TODO
+                //     // need to keep track  len at this point there may be other events get filled
+                //     // when broadcasting send canvas from that index
+                //     // const size = games[gameId]['canvasEvents'].length;
 
-                    if (games[gameId]['canvasEvents'].length != 0) {
-                        const canvasPayload = {
-                            'method': events.DRAW_LINES,
-                            'lines': games[gameId]['canvasEvents']
-                        }
-                        sendMessageTo(clientId, canvasPayload);
+
+                // }
+
+                if (games[gameId]['canvasEvents'].length != 0) {
+                    const canvasPayload = {
+                        'method': events.DRAW_LINES,
+                        'lines': games[gameId]['canvasEvents']
                     }
-
+                    sendMessageTo(clientId, canvasPayload);
                 }
+
 
 
                 console.log("payload", players)
