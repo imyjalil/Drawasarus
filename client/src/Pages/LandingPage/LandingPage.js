@@ -4,10 +4,17 @@ import { useHistory } from 'react-router-dom';
 import { wsConnect } from '../../Redux/actions/socketActions';
 import { createGame, storeName, storeGameId, setCreator } from '../../Redux/actions/userActions';
 import axios from 'axios';
+import './LandingPage.css'
+import config from '../../config'
 
 function LandingPage() {
 
-    //console.log("render landing")
+
+    console.log("render landing")
+
+    const [join, setJoin] = React.useState(false)
+
+
     const dispatch = useDispatch()
     const history = useHistory()
 
@@ -31,7 +38,10 @@ function LandingPage() {
         dispatch(createGame())
             .then(path => {
                 if (path != '') {
-                    dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
+                    console.log('config.url:')
+                    console.log(config)
+                    //dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
+                    dispatch(wsConnect(config.WS_URL))
                     history.push(path)
                 }
             })
@@ -39,12 +49,13 @@ function LandingPage() {
 
     const joinButtonHandler = async () => {
 
+        console.log("joinButtonHandler")
         dispatch(storeName(document.getElementById('name').value))
         let gameId = document.getElementById('gameId').value
         let headers = {
             "gameId": gameId
         }
-        let resp = await axios.get("https://drawasarus.herokuapp.com/isValidGame", { headers })
+        let resp = await axios.get(config.URL + "isValidGame", { headers })
         console.log(resp.data)
         if (!resp || !resp.data || !resp.data['valid']) {
             alert("Game id is Invalid. Please check again")
@@ -52,17 +63,40 @@ function LandingPage() {
         }
 
         dispatch(storeGameId(gameId))
-        dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
+        dispatch(wsConnect(config.WS_URL))
         history.push('game/' + gameId)
     }
 
-
     return (
         <div className="LandingPage" >
-            <input type="text" id="name" defaultValue="abc" /><br></br>
-            <input type="button" value="Create" onClick={createButtonHandler} /><br></br>
-            <input type="text" id="gameId" /><br></br>
-            <input type="button" value="Join" onClick={joinButtonHandler} />
+            <div className="well">
+                <div className="row selectors ">
+                    <input type="text" className="create" defaultValue="Create" readOnly onClick={() => { setJoin(false) }}></input>
+                    <input type="text" className="join" defaultValue="Join" readOnly onClick={() => { setJoin(true) }}></input>
+                </div>
+
+                {join ?
+                    <div className="row joinCell">
+                        <div className="input-container">
+
+                            <input type="text" id="name" placeholder="Enter Your Name" />
+                            <input type="text" id="gameId" placeholder="Enter Game Id" />
+
+                        </div>
+
+                        <div>
+                            <input type="button" value="Join" onClick={joinButtonHandler} />
+                        </div>
+                    </div>
+
+                    :
+                    <div className="row createCell">
+                        <input type="text" id="name" placeholder="Enter Your Name" />
+                        <input type="button" value="Create" onClick={createButtonHandler} />
+                    </div>
+
+                }
+            </div>
         </div >
     )
 }

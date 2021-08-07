@@ -1,12 +1,14 @@
 import { CLIENT_ID, CONNECT, GAME_ID, JOIN_GAME, NAME, SOCKET, } from '../../utilities/constants';
 import axios from 'axios'
-
+import config from '../../config'
 
 export const createGame = () => (dispatch) => {
-    return axios.post("https://drawasarus.herokuapp.com/create-game")
+    console.log(config)
+    return axios.post(config.URL + "create-game")
         .then(response => {
             console.log(response.data)
             response = response.data
+
             dispatch(storeGameId(response.gameId))
             return `game/${response.gameId}`
         })

@@ -59,6 +59,8 @@ const eventHandler = async (event, dispatch, state) => {
                     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
                     console.log('localStream fetched:')
                     dispatch(setLocalStream(localStream))
+                    
+                    
 
                     break;
 
@@ -71,6 +73,12 @@ const eventHandler = async (event, dispatch, state) => {
                 case events.JOIN_GAME:
                     let otherUser = data.name
                     console.log(otherUser, "Joined")
+                    break;
+                
+                case events.DRAW_LINES:
+                    
+                    sessionStorage.setItem("currentState", JSON.stringify(data.lines))
+                    console.log("---> storing lines")
                     break;
 
                 case 'TURN':

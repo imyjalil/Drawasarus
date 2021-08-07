@@ -1,3 +1,71 @@
 .LandingPage{
     height:100%;
+    background-color:#fff;
+    align-items: center;
+    display: flex;
+    flex-direction:column;
+    justify-content: center;
+}
+
+.createCell{
+    margin:10px;
+}
+
+.joinCell{
+    margin:10px;
+    text-align: center;
+}
+
+input{
+    margin:10px;
+}
+
+ input:focus
+  {
+     outline: none;
+  }
+
+input[type=button]{
+    background-color: #5b4caf;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius:10px;
+}
+
+input[type=text]{
+    border-radius:10px;
+}
+
+.selectors input[type=text]{
+    border:none;
+    width:50%;
+    border-radius:0px;
+    cursor:pointer;
+    text-align:center;
+}
+
+.selectors input[type=text]:focus{
+    outline:none;
+}
+
+.selectors input[type=text]:hover{
+    background-color: greenyellow;
+}
+
+.selectors input{
+    margin:0px;
+}
+
+.joinCell {
+    width: 100%;
+}
+
+.input-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }

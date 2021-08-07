@@ -25,7 +25,9 @@ const Canvas = (props) => {
             gameId: state.user.gameId,
             remoteCords: state.game.remoteCords,
             image: state.game.image,
-            receivedDrawEvent: state.game.receivedDrawEvent
+            receivedDrawEvent: state.game.receivedDrawEvent,
+            choice: state.game.choice,
+            selector: state.game.selector
         }
     })
 
@@ -60,10 +62,27 @@ const Canvas = (props) => {
 
         console.log("received new cords", state.remoteCords)
         const [oldx, oldy, newx, newy] = state.remoteCords;
+
+        const lines = JSON.parse(sessionStorage.getItem("currentState"))
+
+        console.log("old cords", lines)
+
+        if (lines != null) {
+
+            console.log(lines)
+            lines.map((cord) => {
+                console.log("cord", cord)
+                const [oldx, oldy, newx, newy] = cord
+                drawLine(oldx, oldy, newx, newy)
+            })
+            sessionStorage.removeItem("currentState")
+        }
+
         drawLine(oldx, oldy, newx, newy)
     }, [state.receivedDrawEvent])
 
     const drawLine = (x1, y1, x2, y2) => {
+
 
         contextRef.current.beginPath();
         contextRef.current.moveTo(x1, y1);
@@ -72,9 +91,17 @@ const Canvas = (props) => {
         contextRef.current.closePath();
     }
 
+    useEffect(() => {
+        if (state.choice !== null) {
+            clearCanvas()
+        }
+    }, [state.choice])
 
-
-
+    useEffect(() => {
+        if (state.selector !== null) {
+            clearCanvas()
+        }
+    }, [state.selector])
 
     useEffect(() => {
 
@@ -88,7 +115,10 @@ const Canvas = (props) => {
 
     }, [state.image])
 
-
+    function clearCanvas() {
+        const canvas = canvasRef.current
+        contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
+    }
 
     //https://stackoverflow.com/questions/43955925/html5-responsive-canvas-mouse-position-and-resize
     const getMousePosition = (e) => {
