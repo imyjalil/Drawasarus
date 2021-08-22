@@ -76,14 +76,22 @@ function Player(props) {
 
 
     return (
-        <div className="player" style={{ color: props.id == state.clientId ? 'red' : '' }}>
-            <div>{props.name}</div>
-            <div>{props.points}</div>
+        <div className="player" style={{ color: props.id == state.clientId ? 'black' : '#6a4c93' }}>
+            <div>
+                {props.name}
+            </div>
+            <div>
+                <span>{props.points}</span>
+            </div>
 
-            {mute ?
+            
+            <div>
+                {mute ?
                 <span className="material-icons" onClick={inverse}>volume_off</span> :
                 <span className="material-icons" onClick={inverse}>volume_up</span>
-            }
+                }  
+            </div>
+
 
 
         </div>

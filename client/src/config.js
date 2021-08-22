@@ -8,7 +8,7 @@ const prod = {
     WS_URL: "wss://drawasarus.herokuapp.com/"
 }
 
-const config = prod
+const config = dev
 
 export default {
     ...config

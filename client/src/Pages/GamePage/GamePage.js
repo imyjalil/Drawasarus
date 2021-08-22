@@ -136,20 +136,24 @@ function GamePage() {
 
 
     return (
-        <div className='gamePageContainer'>
-            <div className="col-sm-2 leaderBoard" >
-                <LeaderBoard />
+        <div className="gamePageContainer">
+
+
+            <div className="leaderBoard">
+                <LeaderBoard  copyCode = {copyGameCode} />
             </div>
-            <div className="col-sm-8 canvas">
+            <div className ="canvas">
                 <Canvas canDraw={canDraw} />
             </div>
-            <div className="col-sm-2 chat" >
+            <div className = "chatBox">
                 <Chat />
             </div>
-            <div id="audioEvents">
 
+            <div id="audioEvents">
             </div>
+
             <Modal id="modal" show={showModal} children={childrenContent} />
+
         </div>
     )
 }

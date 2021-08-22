@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import Player from './Player'
 import "./LeaderBoard.css"
 
-function LeaderBoard() {
-
-
+function LeaderBoard(props) {
 
 
 
@@ -18,8 +16,16 @@ function LeaderBoard() {
 
     return (
         <div className="leader-board-container">
-            {listItems}
+
+            <div className="player-details-container">
+                {listItems}
+            </div>
+
+            <div className="copyCode">
+                <input type="button" value="Copy GameCode" onClick={props.copyCode} /> 
+            </div>
         </div>
+        
     )
 }
 

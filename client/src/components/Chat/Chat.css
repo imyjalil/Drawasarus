@@ -27,7 +27,7 @@
 .sendButton{
     background-color:transparent;
     color:rgb(3,107,252);
-    padding:2px;
+    padding-top:8px;
     margin:5px;
     align-items: center;
 }
@@ -39,7 +39,7 @@
 .micButton{
     background-color:transparent;
     color:rgb(3,107,252);
-    padding:2px;
+    padding-top:8px;
     margin:5px;
     align-items: center;
 }
