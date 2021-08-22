@@ -31,19 +31,31 @@ function GamePage() {
     })
 
     const [showModal, setModal] = useState(state.isCreator)
-
+    const [wordTimer, setWordTime] = useState(0)
+    const [drawTimer, setDrawTime] = useState(0)
+    
 
     useEffect(() => {
         if (state.choice !== null) {
             setModal(true)
             console.log(state.choice)
-
+            let time = wordTimer
             setChildrenContent(<div>
                 <p>choose a word</p>
+                <p id="time">{time}</p>
                 {state.choice.map((word) => {
                     return <button key={word} onClick={() => { handleChoiceSelection(word) }}>{word}</button>
                 })}
             </div>)
+            let timer = setInterval(function(){
+                if(time<=1){
+                    clearTimeout(timer)
+                }
+                else{
+                    time--;
+                document.getElementById("time").innerHTML=time
+                }
+            },1000)
         }
     }, [state.choice])
 
@@ -65,7 +77,34 @@ function GamePage() {
     }, [state.gameId])
 
     useEffect(() => {
-        setChildrenContent(<div>Click here to copy the game code
+        setChildrenContent(<div>
+            <div>
+                Set Timeout for Drawing:
+                <select id="turnTimer">
+                    <option value="40">40</option>
+                    <option value="45">45</option>
+                    <option value="50">50</option>
+                    <option value="55">55</option>
+                    <option value="60">60</option>
+                    <option value="65">65</option>
+                    <option value="70">70</option>
+                    <option value="75">75</option>
+                    <option value="80">80</option>
+                    <option value="85">85</option>
+                </select>
+            </div>
+            <div>
+                Set Timeout for Word Selection:
+                <select id="selectionTimer">
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="35">35</option>
+                    <option value="40">40</option>
+                </select>
+            </div>
+            Click here to copy the game code
             <span className="material-icons copyButton" onClick={copyGameCode}>content_copy</span>
             <button onClick={handleStartGameClose}>Start Game!</button></div>)
     }, [])
@@ -117,10 +156,18 @@ function GamePage() {
     }
 
     function handleStartGameClose() {
+        var selectionTimerSelected=document.getElementById('selectionTimer')
+        var turnTimerSelected=document.getElementById('turnTimer')
+        let wordTime = selectionTimerSelected.options[selectionTimerSelected.selectedIndex].value
+        let drawTime = turnTimerSelected.options[turnTimerSelected.selectedIndex].value
         let startGamePayload = {
             'method': events.START_GAME,
+            'gameTimer':drawTime,
+            'turnTimer':wordTime,
             gameId: state.gameId
         }
+        setWordTime(wordTime)
+        setDrawTime(drawTime)
         setModal(false)
         dispatch(wsSendMessage(startGamePayload))
 

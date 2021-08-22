@@ -113,7 +113,7 @@ let startTurn = (gameId) => {
 
     games[gameId]['turnTimer'] = setTimeout(() => {
         startTurn(gameId)
-    }, 10000)
+    }, games[gameId]['turnTime']*1000)
 
 }
 
@@ -122,7 +122,7 @@ let startGameSession = (gameId) => {
     games[currGameId]['gameTimer'] = setTimeout(() => {
         //endGameSession()
         startTurn(currGameId)
-    }, 20000)
+    }, games[currGameId]['gameTime']*1000)
 }
 
 
@@ -237,12 +237,14 @@ wsServer.on('request', req => {
             case events.START_GAME:
 
                 gameId = body.gameId
-
+                let gameTime = body.gameTimer
+                let turnTime = body.turnTimer
                 // pick current player
                 games[gameId]['current_player'] = -1;
                 games[gameId]['gameTimer'] = null
                 games[gameId]['turnTimer'] = null
-
+                games[gameId]['gameTime'] = gameTime
+                games[gameId]['turnTime'] = turnTime
 
                 // only admin
                 startTurn(gameId)
