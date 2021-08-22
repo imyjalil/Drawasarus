@@ -53,7 +53,7 @@ const Chat = () => {
         console.log(message)
         var messageDiv = createMessage(message)
         document.getElementById("chatMessages").innerHTML += messageDiv
-        let containerElement = document.getElementById('chatContainer')
+        let containerElement = document.getElementById('outerContainer')
         containerElement.scrollTop = containerElement.scrollHeight
     }
 
@@ -92,7 +92,7 @@ const Chat = () => {
 
     return (
         <div className="outerContainer" id="outerContainer">
-            <div className="chatContainer" id="chatContainer">
+            <div className="chatContainer">
                 <div id="chatMessages" className="chatMessages">
                 </div>
             </div>
