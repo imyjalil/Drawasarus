@@ -130,8 +130,10 @@ const Canvas = (props) => {
                 }
                 else{
                     timeLeft=timeLeft-1
-                    context.fillStyle = '#000000'
-                    context.fillText(state.hint+"   "+timeLeft,canvas.width - 75, 25)
+                    var newText=state.hint+"   "+timeLeft
+                    var metrics=context.measureText(newText)
+                    context.clearRect(canvas.width-75-metrics.width,0,canvas.width,25)
+                    context.fillText(newText,canvas.width - 75, 25)                   
                 }
             },1000)
         }
