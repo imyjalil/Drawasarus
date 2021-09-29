@@ -13,6 +13,7 @@ const intialState = {
     selector: null,
     hint: null,
     gameTime:0,
+    turnTime:0,
     playerlist: null//will be populated on end_game event
 }
 
@@ -81,13 +82,15 @@ export default function gameReducer(state = intialState, action) {
         case 'CHOICE':
             return {
                 ...state,
-                choice: action.payload.words
+                choice: action.payload.words,
+                turnTime: action.payload.time
             }
 
         case 'SELECTOR':
             return {
                 ...state,
-                selector: action.payload.name
+                selector: action.payload.name,
+                turnTime: action.payload.time
             }
 
         case 'HINT':

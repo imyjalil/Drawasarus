@@ -99,14 +99,16 @@ let startTurn = (gameId) => {
 
     const payload = {
         'method': 'TURN',
-        'words': ['abc', 'def', 'fgh']
+        'words': ['abc', 'def', 'fgh'],
+        'time':games[gameId]['turnTime']
     }
 
     sendMessageTo(clientId, payload)
 
     let othersPayload = {
         'method': 'WAIT',
-        'name': name
+        'name': name,
+        'time':games[gameId]['turnTime']
     }
 
     broadcastExceptSelf(clientId, gameId, othersPayload);
@@ -302,8 +304,6 @@ wsServer.on('request', req => {
                 let currentPlayer = games[gameId]['current_player']
                 let currentPlayerId = games[gameId]['clients'][currentPlayer]
 
-
-
                 //validation
                 let match = false
                 console.log(games)
@@ -311,7 +311,6 @@ wsServer.on('request', req => {
                 //  Note: set the gameTimer to null when the gamesessions ends
                 if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
                     match = true
-
 
                     const gotPoints = clients[clientId]['reward']
                     let points = 0;

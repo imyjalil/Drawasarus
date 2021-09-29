@@ -25,6 +25,7 @@ function GamePage() {
             isCreator: state.user.isCreator,
             choice: state.game.choice,
             selector: state.game.selector,
+            turnTime: parseInt(state.game.turnTime),
             hint: state.game.hint,
             playerlist: state.game.playerlist
         }
@@ -39,7 +40,7 @@ function GamePage() {
         if (state.choice !== null) {
             setModal(true)
             console.log(state.choice)
-            let time = wordTimer
+            let time = state.turnTime
             setChildrenContent(<div>
                 <div className="headerContainer">
                     <span id="wordSelectionText">Choose a Word</span>
@@ -67,9 +68,20 @@ function GamePage() {
         if (state.selector !== null) {
             flipDrawState(false)
             setModal(true)
-            setChildrenContent(<div>
-                <p>Please wait {state.selector} is choosing a word</p>
+            let time=state.turnTime
+            setChildrenContent(<div className="headerContainer">
+                <span id="wordSelectionText">Please wait {state.selector} is choosing a word</span>
+                <span id="time"></span>
             </div>)
+            let timer = setInterval(function(){
+                if(time<=1){
+                    clearTimeout(timer)
+                }
+                else{
+                    time--;
+                    document.getElementById("time").innerHTML=time
+                }
+            },1000)
         }
     }, [state.selector])
 

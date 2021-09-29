@@ -83,6 +83,13 @@ const Canvas = (props) => {
         drawLine(oldx, oldy, newx, newy)
     }, [state.receivedDrawEvent])
 
+    useEffect(()=>{
+        console.log("canDraw: "+props.canDraw)
+        if(props.canDraw){
+            //use this in future incase anything is needed for current drawing user
+        }
+    },[props.canDraw])
+
     const drawLine = (x1, y1, x2, y2) => {
 
 
