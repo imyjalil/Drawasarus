@@ -124,7 +124,7 @@ const Canvas = (props) => {
             let timeLeft=state.gameTime
             
             let gameTimer = setInterval(()=>{
-                if(state.gameTime<1)
+                if(timeLeft<1)
                 {
                     clearInterval(gameTimer)
                 }
@@ -155,8 +155,6 @@ const Canvas = (props) => {
     const startDrawing = ({ nativeEvent }) => {
         if (!canDraw) return
         contextRef.current.beginPath();
-
-
 
         x1 = getMousePosition(nativeEvent).x
         y1 = getMousePosition(nativeEvent).y
