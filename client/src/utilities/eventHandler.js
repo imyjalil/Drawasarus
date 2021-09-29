@@ -90,7 +90,7 @@ const eventHandler = async (event, dispatch, state) => {
                     break
 
                 case 'wordselect':
-                    dispatch(setWordHint(data.hint))
+                    dispatch(setWordHint(data))
                     break
 
                 case events.GUESS:

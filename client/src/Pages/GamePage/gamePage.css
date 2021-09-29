@@ -41,6 +41,41 @@
     background-color: rgb(240,240,240);
 }
 
+#audioEvents{
+    display:none;
+}
 
+.headerContainer{
+    display:flex;
+    flex-direction:row;
+}
 
+#wordSelectionText{
+    flex:1;
+    padding: 2px;
+    margin:5px;
+    color:#100000;
+}
 
+#time{
+    background-color:rgb(3,107,252);
+    border-radius:50%;
+    color:white;
+    width: 34px;
+    height: 34px;
+    padding: 10px;
+    text-align: center;
+    margin:5px;
+}
+
+.buttonContainer{
+    display:flex;
+    justify-content:center;
+}
+
+.selectionButton{
+    margin:5px;
+    background-color: rgb(3,107,252);
+    color:white;
+    border-radius:10px;
+}

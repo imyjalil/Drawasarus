@@ -12,6 +12,7 @@ const intialState = {
     choice: null,
     selector: null,
     hint: null,
+    gameTime:0,
     playerlist: null//will be populated on end_game event
 }
 
@@ -92,7 +93,8 @@ export default function gameReducer(state = intialState, action) {
         case 'HINT':
             return {
                 ...state,
-                hint: JSON.parse(JSON.stringify(action.payload.hint))
+                hint: JSON.parse(JSON.stringify(action.payload.hint)),
+                gameTime:action.payload.time
             }
 
         case 'end_game':

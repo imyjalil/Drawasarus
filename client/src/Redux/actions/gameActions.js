@@ -93,11 +93,14 @@ export const setSelector = (name) => {
     }
 }
 
-export const setWordHint = (hint) => {
+export const setWordHint = (data) => {
+    var hint=data.hint
+    var time=data.time
     return {
         type: 'HINT',
         payload: {
-            'hint': hint
+            'hint': hint,
+            'time': time
         }
     }
 }

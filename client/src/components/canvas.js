@@ -27,7 +27,9 @@ const Canvas = (props) => {
             image: state.game.image,
             receivedDrawEvent: state.game.receivedDrawEvent,
             choice: state.game.choice,
-            selector: state.game.selector
+            selector: state.game.selector,
+            hint:state.game.hint,
+            gameTime:parseInt(state.game.gameTime)
         }
     })
 
@@ -114,6 +116,26 @@ const Canvas = (props) => {
 
 
     }, [state.image])
+
+    useEffect(()=>{
+        if(state.hint!=null){
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            let timeLeft=state.gameTime
+            
+            let gameTimer = setInterval(()=>{
+                if(state.gameTime<1)
+                {
+                    clearInterval(gameTimer)
+                }
+                else{
+                    timeLeft=timeLeft-1
+                    context.fillStyle = '#000000'
+                    context.fillText(state.hint+"   "+timeLeft,canvas.width - 75, 25)
+                }
+            },1000)
+        }
+    },[state.hint])
 
     function clearCanvas() {
         const canvas = canvasRef.current

@@ -41,11 +41,15 @@ function GamePage() {
             console.log(state.choice)
             let time = wordTimer
             setChildrenContent(<div>
-                <p>choose a word</p>
-                <p id="time">{time}</p>
-                {state.choice.map((word) => {
-                    return <button key={word} onClick={() => { handleChoiceSelection(word) }}>{word}</button>
-                })}
+                <div className="headerContainer">
+                    <span id="wordSelectionText">Choose a Word</span>
+                    <span id="time">{time}</span>
+                </div>
+                <div className="buttonContainer">
+                    {state.choice.map((word) => {
+                        return <button key={word} className="selectionButton" onClick={() => { handleChoiceSelection(word) }}>{word}</button>
+                    })}
+                </div>
             </div>)
             let timer = setInterval(function(){
                 if(time<=1){
@@ -61,7 +65,6 @@ function GamePage() {
 
     useEffect(() => {
         if (state.selector !== null) {
-            dispatch(setWordHint(null))
             flipDrawState(false)
             setModal(true)
             setChildrenContent(<div>

@@ -370,7 +370,8 @@ wsServer.on('request', req => {
 
                 payload = {
                     'method': 'wordselect',
-                    'hint': hint
+                    'hint': hint,
+                    'time':games[gameId]['gameTime']
                 }
                 broadcastExceptSelf(clientId, gameId, payload)
                 startGameSession(gameId);
