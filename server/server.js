@@ -4,6 +4,7 @@ const http = require("http")
 const express = require('express')
 const { v4: uuid4 } = require('uuid')
 const cors = require('cors')
+const randomWords = require('random-words');
 
 const app = express()
 app.use(cors())
@@ -97,9 +98,11 @@ let startTurn = (gameId) => {
     const name = clients[clientId]['name']
     console.log('name:', name)
 
+
+    const randomWordsList = randomWords(3);
     const payload = {
         'method': 'TURN',
-        'words': ['abc', 'def', 'fgh']
+        'words': randomWordsList
     }
 
     sendMessageTo(clientId, payload)
