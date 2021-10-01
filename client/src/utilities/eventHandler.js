@@ -82,15 +82,15 @@ const eventHandler = async (event, dispatch, state) => {
                     break;
 
                 case 'TURN':
-                    dispatch(setChoice(data.words))
+                    dispatch(setChoice(data))
                     break
 
                 case 'WAIT':
-                    dispatch(setSelector(data.name))
+                    dispatch(setSelector(data))
                     break
 
                 case 'wordselect':
-                    dispatch(setWordHint(data.hint))
+                    dispatch(setWordHint(data))
                     break
 
                 case events.GUESS:

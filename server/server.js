@@ -109,14 +109,15 @@ let startTurn = (gameId) => {
 
     let othersPayload = {
         'method': 'WAIT',
-        'name': name
+        'name': name,
+        'time':games[gameId]['turnTime']
     }
 
     broadcastExceptSelf(clientId, gameId, othersPayload);
 
     games[gameId]['turnTimer'] = setTimeout(() => {
         startTurn(gameId)
-    }, 10000)
+    }, games[gameId]['turnTime']*1000)
 
 }
 
@@ -125,7 +126,7 @@ let startGameSession = (gameId) => {
     games[currGameId]['gameTimer'] = setTimeout(() => {
         //endGameSession()
         startTurn(currGameId)
-    }, 20000)
+    }, games[currGameId]['gameTime']*1000)
 }
 
 
@@ -240,12 +241,14 @@ wsServer.on('request', req => {
             case events.START_GAME:
 
                 gameId = body.gameId
-
+                let gameTime = body.gameTimer
+                let turnTime = body.turnTimer
                 // pick current player
                 games[gameId]['current_player'] = -1;
                 games[gameId]['gameTimer'] = null
                 games[gameId]['turnTimer'] = null
-
+                games[gameId]['gameTime'] = gameTime
+                games[gameId]['turnTime'] = turnTime
 
                 // only admin
                 startTurn(gameId)
@@ -303,8 +306,6 @@ wsServer.on('request', req => {
                 let currentPlayer = games[gameId]['current_player']
                 let currentPlayerId = games[gameId]['clients'][currentPlayer]
 
-
-
                 //validation
                 let match = false
                 console.log(games)
@@ -312,7 +313,6 @@ wsServer.on('request', req => {
                 //  Note: set the gameTimer to null when the gamesessions ends
                 if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
                     match = true
-
 
                     const gotPoints = clients[clientId]['reward']
                     let points = 0;
@@ -371,7 +371,8 @@ wsServer.on('request', req => {
 
                 payload = {
                     'method': 'wordselect',
-                    'hint': hint
+                    'hint': hint,
+                    'time':games[gameId]['gameTime']
                 }
                 broadcastExceptSelf(clientId, gameId, payload)
                 startGameSession(gameId);

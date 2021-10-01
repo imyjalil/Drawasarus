@@ -75,29 +75,38 @@ export const setRemoteStream = (stream, id) => {
     }
 }
 
-export const setChoice = (words) => {
+export const setChoice = (data) => {
+    var words=data.words
+    var time=data.time
     return {
         type: 'CHOICE',
         payload: {
-            'words': words
+            'words': words,
+            'time':time
         }
     }
 }
 
-export const setSelector = (name) => {
+export const setSelector = (data) => {
+    var name=data.name
+    var time=data.time
     return {
         type: 'SELECTOR',
         payload: {
-            'name': name
+            'name': name,
+            'time': time
         }
     }
 }
 
-export const setWordHint = (hint) => {
+export const setWordHint = (data) => {
+    var hint=data.hint
+    var time=data.time
     return {
         type: 'HINT',
         payload: {
-            'hint': hint
+            'hint': hint,
+            'time': time
         }
     }
 }

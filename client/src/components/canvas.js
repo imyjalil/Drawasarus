@@ -27,7 +27,9 @@ const Canvas = (props) => {
             image: state.game.image,
             receivedDrawEvent: state.game.receivedDrawEvent,
             choice: state.game.choice,
-            selector: state.game.selector
+            selector: state.game.selector,
+            hint:state.game.hint,
+            gameTime:parseInt(state.game.gameTime)
         }
     })
 
@@ -81,6 +83,13 @@ const Canvas = (props) => {
         drawLine(oldx, oldy, newx, newy)
     }, [state.receivedDrawEvent])
 
+    useEffect(()=>{
+        console.log("canDraw: "+props.canDraw)
+        if(props.canDraw){
+            //use this in future incase anything is needed for current drawing user
+        }
+    },[props.canDraw])
+
     const drawLine = (x1, y1, x2, y2) => {
 
 
@@ -115,6 +124,28 @@ const Canvas = (props) => {
 
     }, [state.image])
 
+    useEffect(()=>{
+        if(state.hint!=null){
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            let timeLeft=state.gameTime
+            
+            let gameTimer = setInterval(()=>{
+                if(timeLeft<1)
+                {
+                    clearInterval(gameTimer)
+                }
+                else{
+                    timeLeft=timeLeft-1
+                    var newText=state.hint+"   "+timeLeft
+                    var metrics=context.measureText(newText)
+                    context.clearRect(canvas.width-75-metrics.width,0,canvas.width,25)
+                    context.fillText(newText,canvas.width - 75, 25)                   
+                }
+            },1000)
+        }
+    },[state.hint])
+
     function clearCanvas() {
         const canvas = canvasRef.current
         contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
@@ -131,8 +162,6 @@ const Canvas = (props) => {
     const startDrawing = ({ nativeEvent }) => {
         if (!canDraw) return
         contextRef.current.beginPath();
-
-
 
         x1 = getMousePosition(nativeEvent).x
         y1 = getMousePosition(nativeEvent).y
