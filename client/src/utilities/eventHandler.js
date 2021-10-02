@@ -1,5 +1,5 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
-import { remoteCords,removePlayer, signalChatEvent, updatePoints, updatePlayerList, draw, setChoice, setSelector, setWordHint, endGame, setLocalStream } from '../Redux/actions/gameActions';
+import { resetScores,remoteCords,removePlayer, signalChatEvent, updatePoints, updatePlayerList, draw, setChoice, setSelector, setWordHint, endGame, setLocalStream } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
 import events from './constants';
 
@@ -101,7 +101,9 @@ const eventHandler = async (event, dispatch, state) => {
                     }
                     dispatch(signalChatEvent(data))
                     break;
-
+                case 'RESET':
+                    dispatch(resetScores(true))
+                    break;
                 case events.DRAW:
                     dispatch(draw(data))
                     break;

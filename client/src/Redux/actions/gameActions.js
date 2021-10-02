@@ -38,6 +38,15 @@ export const updatePoints = (points, id) => {
     }
 }
 
+export const resetScores = (val) => {
+    return {
+        type : 'RESET_GAME',
+        payload: {
+            'val':val
+        }
+    }
+}
+
 export const removePlayer = (id) => {
     return {
         type: REMOVE_PLAYER,
@@ -90,6 +99,7 @@ export const setChoice = (data) => {
 export const setSelector = (data) => {
     var name=data.name
     var time=data.time
+    console.log("changing selector to",name);
     return {
         type: 'SELECTOR',
         payload: {

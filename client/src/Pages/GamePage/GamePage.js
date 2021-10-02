@@ -8,7 +8,8 @@ import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import events from '../../utilities/constants'
 import { wsSendMessage } from '../../Redux/actions/socketActions'
-import { setWordHint } from '../../Redux/actions/gameActions'
+import { resetScores, setSelector, setWordHint } from '../../Redux/actions/gameActions'
+
 
 function GamePage() {
 
@@ -23,8 +24,10 @@ function GamePage() {
             gameId: state.user.gameId,
             clientId: state.user.clientId,
             isCreator: state.user.isCreator,
+            name : state.user.name,
             choice: state.game.choice,
             selector: state.game.selector,
+            resetGame: state.game.resetGame,
             turnTime: parseInt(state.game.turnTime),
             hint: state.game.hint,
             playerlist: state.game.playerlist
@@ -34,11 +37,12 @@ function GamePage() {
     const [showModal, setModal] = useState(state.isCreator)
     const [wordTimer, setWordTime] = useState(0)
     const [drawTimer, setDrawTime] = useState(0)
-    
+    // 
 
     useEffect(() => {
         if (state.choice !== null) {
             setModal(true)
+            dispatch(setSelector({'name':state.name,'time':0}))
             console.log(state.choice)
             let time = state.turnTime
             setChildrenContent(<div>
@@ -58,14 +62,16 @@ function GamePage() {
                 }
                 else{
                     time--;
-                document.getElementById("time").innerHTML=time
+               //document.getElementById("time").innerHTML=time
                 }
             },1000)
         }
     }, [state.choice])
 
+    // wait trigger
     useEffect(() => {
-        if (state.selector !== null) {
+
+        if (state.selector !== null && state.selector != state.name) {
             flipDrawState(false)
             setModal(true)
             let time=state.turnTime
@@ -79,7 +85,8 @@ function GamePage() {
                 }
                 else{
                     time--;
-                    document.getElementById("time").innerHTML=time
+                    console.log("In timer",showModal);
+                  //  document.getElementById("time").innerHTML=time
                 }
             },1000)
         }
@@ -90,6 +97,18 @@ function GamePage() {
             moveToHomePage()
         }
     }, [state.gameId])
+
+    useEffect(() => {
+
+        if(state.resetGame == true)
+        {
+            dispatch(resetScores(false));
+            setModal(false);
+
+            console.log()
+        }
+    }, [state.resetGame])
+
 
     useEffect(() => {
         setChildrenContent(<div>
@@ -132,6 +151,16 @@ function GamePage() {
         }
     }, [state.hint])
 
+    const restart = () => {
+        console.log("restart");
+        setModal(false);
+        var payload = {
+            'method':events.START_GAME,
+            'gameId':state.gameId
+        }
+        dispatch(wsSendMessage(payload))
+    }
+
     useEffect(() => {
         if (state.playerlist !== null) {
             let playerlist = state.playerlist
@@ -149,6 +178,7 @@ function GamePage() {
                     </div>)
                 })}
                 <p>Game Ended!!!</p>
+                {state.isCreator && <button onClick = {() => {restart()}}>Play again</button>}
             </div>)
 
         }
