@@ -240,15 +240,52 @@ wsServer.on('request', req => {
 
             case events.START_GAME:
 
+                console.log("start game");
+
                 gameId = body.gameId
-                let gameTime = body.gameTimer
-                let turnTime = body.turnTimer
+                
+                console.log(gameId);
+                // let gameTime = body.gameTimer
+                // let turnTime = body.turnTimer
+
                 // pick current player
                 games[gameId]['current_player'] = -1;
                 games[gameId]['gameTimer'] = null
                 games[gameId]['turnTimer'] = null
-                games[gameId]['gameTime'] = gameTime
-                games[gameId]['turnTime'] = turnTime
+
+
+                console.log(games[gameId]);
+
+
+                
+                if('gameTimer' in body && 'turnTimer' in body)
+                {
+                    games[gameId]['gameTime'] = body.gameTimer
+                    games[gameId]['turnTime'] = body.turnTimer
+                }
+                else
+                {
+                    // restart 
+
+                    games[gameId]['clients'].forEach((client) => {
+                        clients[client]['points'] = 0;
+                    })
+
+                    // for(let i = 0;i < games[gameId]['clients'].length;i++)
+                    // {
+                    //     const id = games[gameId]['clients'][i];
+                    //     clients[id]['points'] = 0;
+                    // }
+
+                    console.log(clients);
+
+                    payload = {
+                        'method':'RESET'
+                    }
+                    
+                    broadcastAll(gameId,payload);
+      
+                }
 
                 // only admin
                 startTurn(gameId)

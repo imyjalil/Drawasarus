@@ -14,7 +14,8 @@ const intialState = {
     hint: null,
     gameTime:0,
     turnTime:0,
-    playerlist: null//will be populated on end_game event
+    playerlist: null,//will be populated on end_game event
+    resetGame:false
 }
 
 export default function gameReducer(state = intialState, action) {
@@ -38,6 +39,19 @@ export default function gameReducer(state = intialState, action) {
 
                     return player
                 })
+            }
+        
+        case 'RESET_GAME':
+            return{
+                ...state,
+                players: state.players.map(player => {
+                    if(action.payload.val == true)
+                    {
+                        player.points = 0;
+                    }
+                    return player
+                }),
+                resetGame:action.payload.val
             }
 
         case REMOVE_PLAYER:
