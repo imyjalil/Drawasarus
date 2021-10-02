@@ -71,7 +71,6 @@ function GamePage() {
     // wait trigger
     useEffect(() => {
 
-        console.log("selector -> ",state.selector)
         if (state.selector !== null && state.selector != state.name) {
             flipDrawState(false)
             setModal(true)
@@ -101,10 +100,8 @@ function GamePage() {
 
     useEffect(() => {
 
-        console.log("try to reset ")
         if(state.resetGame == true)
         {
-            console.log("reset is true")
             dispatch(resetScores(false));
             setModal(false);
 
