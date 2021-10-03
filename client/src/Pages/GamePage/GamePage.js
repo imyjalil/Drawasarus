@@ -42,8 +42,7 @@ function GamePage() {
     useEffect(() => {
         if (state.choice !== null) {
             setModal(true)
-            dispatch(setSelector({'name':state.name,'time':0}))
-            console.log(state.choice)
+            dispatch(setSelector({'name':state.name}))
             let time = state.turnTime
             setChildrenContent(<div>
                 <div className="headerContainer">
@@ -62,7 +61,7 @@ function GamePage() {
                 }
                 else{
                     time--;
-               //document.getElementById("time").innerHTML=time
+                    document.getElementById("time").innerHTML=time
                 }
             },1000)
         }
@@ -85,8 +84,7 @@ function GamePage() {
                 }
                 else{
                     time--;
-                    console.log("In timer",showModal);
-                  //  document.getElementById("time").innerHTML=time
+                    document.getElementById("time").innerHTML=time
                 }
             },1000)
         }
@@ -104,8 +102,6 @@ function GamePage() {
         {
             dispatch(resetScores(false));
             setModal(false);
-
-            console.log()
         }
     }, [state.resetGame])
 
@@ -144,15 +140,12 @@ function GamePage() {
     }, [])
 
     useEffect(() => {
-        console.log('hint useeffect')
         if (state.hint !== null) {
-            console.log('hint:', state.hint)
             setModal(false)
         }
     }, [state.hint])
 
     const restart = () => {
-        console.log("restart");
         setModal(false);
         var payload = {
             'method':events.START_GAME,
@@ -165,9 +158,6 @@ function GamePage() {
         if (state.playerlist !== null) {
             let playerlist = state.playerlist
             playerlist.sort((a, b) => (a.points > b.points) ? -1 : 1)
-            console.log('playlist')
-            console.log(playerlist)
-            console.log(typeof playerlist)
             setModal(true)
             setChildrenContent(<div>
                 <p>Leader Board</p>
@@ -221,7 +211,6 @@ function GamePage() {
 
     function copyGameCode() {
         const gameCode = window.location.pathname.split("/")[2]
-        console.log(gameCode)
         navigator.clipboard.writeText(gameCode)
     }
 

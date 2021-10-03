@@ -3,12 +3,9 @@ import axios from 'axios'
 import config from '../../config'
 
 export const createGame = () => (dispatch) => {
-    console.log(config)
     return axios.post(config.URL + "create-game")
         .then(response => {
-            console.log(response.data)
             response = response.data
-
             dispatch(storeGameId(response.gameId))
             return `game/${response.gameId}`
         })
@@ -62,7 +59,6 @@ export const storeGameId = (gameId) => {
 }
 
 export const storeName = (name) => {
-    //console.log('dispatching storename')
     return {
         type: NAME,
         payload: {
@@ -72,7 +68,6 @@ export const storeName = (name) => {
 }
 
 export const setCreator = () => {
-    //console.log('dispatching storename')
     return {
         type: 'set_create'
     }

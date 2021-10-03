@@ -38,7 +38,6 @@ export default function userReducer(state = initalState, action) {
             }
 
         case GUESS:
-            console.log(action)
             return {
                 ...state,
                 chatEvent: action.payload['chatEvent']

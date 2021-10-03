@@ -1,5 +1,4 @@
 
-
 import { UPDATE_POINTS, DRAW, GUESS, REMOVE_PLAYER, UPDATE_PLAYER_LIST, SET_LOCAL_STREAM, SET_REMOTE_STREAM, SET_REMOTE_CORDS } from "../../utilities/constants"
 
 export const draw = (image) => {
@@ -86,27 +85,38 @@ export const setRemoteStream = (stream, id) => {
 
 export const setChoice = (data) => {
     var words=data.words
-    var time=data.time
+    var turnTime=data.turnTime
+    var gameTime=data.gameTime
     return {
         type: 'CHOICE',
         payload: {
             'words': words,
-            'time':time
+            'turnTime':turnTime,
+            'gameTime':gameTime
         }
     }
 }
 
 export const setSelector = (data) => {
     var name=data.name
-    var time=data.time
-    console.log("changing selector to",name);
+    if("time" in data)
+    {
+        var time=data.time
+        return {
+            type: 'SELECTOR',
+            payload: {
+                'name': name,
+                'time': time
+            }
+        }
+    }
     return {
         type: 'SELECTOR',
         payload: {
             'name': name,
             'time': time
         }
-    }
+    }    
 }
 
 export const setWordHint = (data) => {

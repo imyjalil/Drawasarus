@@ -9,12 +9,7 @@ import config from '../../config'
 
 function LandingPage() {
 
-
-    console.log("render landing")
-
     const [join, setJoin] = React.useState(false)
-
-
     const dispatch = useDispatch()
     const history = useHistory()
 
@@ -38,9 +33,6 @@ function LandingPage() {
         dispatch(createGame())
             .then(path => {
                 if (path != '') {
-                    console.log('config.url:')
-                    console.log(config)
-                    //dispatch(wsConnect('wss://drawasarus.herokuapp.com/'))
                     dispatch(wsConnect(config.WS_URL))
                     history.push(path)
                 }
@@ -48,15 +40,13 @@ function LandingPage() {
     }
 
     const joinButtonHandler = async () => {
-
-        console.log("joinButtonHandler")
         dispatch(storeName(document.getElementById('name').value))
         let gameId = document.getElementById('gameId').value
         let headers = {
             "gameId": gameId
         }
         let resp = await axios.get(config.URL + "isValidGame", { headers })
-        console.log(resp.data)
+        
         if (!resp || !resp.data || !resp.data['valid']) {
             alert("Game id is Invalid. Please check again")
             return

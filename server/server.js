@@ -52,8 +52,6 @@ const showResults = (gameId) => {
 
     lobbyPlayers = games[gameId]['clients']
 
-    console.log("end game")
-
     lobbyPlayers.forEach((id) => {
         let name = clients[id].name
         players.push({ 'name': name, 'id': id, 'points': clients[id]['points'] })
@@ -70,7 +68,6 @@ const showResults = (gameId) => {
 
 let startTurn = (gameId) => {
 
-    console.log(games[gameId]['current_player'])
     games[gameId]['current_player']++;
 
     // cleart the canvas event at the beginning of the turn
@@ -92,23 +89,21 @@ let startTurn = (gameId) => {
     }
 
     const current_index = games[gameId]['current_player'];
-    console.log('current_index:', current_index)
     const clientId = games[gameId]['clients'][current_index]
-    console.log('clientId:', clientId)
     const name = clients[clientId]['name']
-    console.log('name:', name)
-
 
     const randomWordsList = randomWords(3);
     const payload = {
-        'method': 'TURN',
-        'words': randomWordsList
+        'method': events.TURN,
+        'words': randomWordsList,
+        'turnTime':games[gameId]['turnTime'],
+        'gameTime':games[gameId]['gameTime']
     }
 
     sendMessageTo(clientId, payload)
 
     let othersPayload = {
-        'method': 'WAIT',
+        'method': events.WAIT,
         'name': name,
         'time':games[gameId]['turnTime']
     }
@@ -124,7 +119,6 @@ let startTurn = (gameId) => {
 let startGameSession = (gameId) => {
     const currGameId = gameId
     games[currGameId]['gameTimer'] = setTimeout(() => {
-        //endGameSession()
         startTurn(currGameId)
     }, games[currGameId]['gameTime']*1000)
 }
@@ -141,11 +135,10 @@ wsServer.on('request', req => {
     clients[clientId]['connection'] = connection
 
     payLoad = {
-        "method": "connect",
+        "method": events.CONNECT,
         "clientId": clientId
     }
     connection.send(JSON.stringify(payLoad))
-    // console.log("--->", connection)
     connection.on('open', () => console.log("connect"))
     connection.on('close', () => {
         let gameId = clients[connection.clientId]['gameId']
@@ -166,9 +159,6 @@ wsServer.on('request', req => {
         switch (body.method) {
 
             case events.JOIN_GAME:
-
-                console.log("JOIN")
-
                 clientId = body.clientId
                 name = body.name
                 gameId = body.gameId
@@ -177,27 +167,16 @@ wsServer.on('request', req => {
                 clients[clientId]['name'] = name;
                 clients[clientId]['gameId'] = gameId
 
-                console.log("adding the ", clientId, "to game ", gameId)
-
                 prevClientsPayload = {
-                    'method': 'prevClients',
+                    'method': events.PREV_CLIENTS,
                     'clients': games[gameId]['clients']
                 }
                 sendMessageTo(clientId, prevClientsPayload)
                 games[gameId]['clients'].push(clientId)
-                console.log(games)
-
-
-                // payload = {
-                //     'method': events.JOIN_GAME,
-                //     'name': clients[clientId]['name']
-                // }
 
                 players = []
 
                 lobbyPlayers = games[gameId]['clients']
-
-                console.log(lobbyPlayers)
 
                 lobbyPlayers.forEach((id) => {
                     let name = clients[id].name
@@ -220,9 +199,6 @@ wsServer.on('request', req => {
 
                 // }
 
-
-                console.log("-----------", games[gameId]['canvasEvents'])
-
                 if (games[gameId]['canvasEvents'].length != 0) {
                     const canvasPayload = {
                         'method': events.DRAW_LINES,
@@ -231,33 +207,18 @@ wsServer.on('request', req => {
                     sendMessageTo(clientId, canvasPayload);
                 }
 
-
-
-                console.log("payload", players)
-
                 broadcastAll(gameId, payload)
                 break;
 
             case events.START_GAME:
 
-                console.log("start game");
-
                 gameId = body.gameId
                 
-                console.log(gameId);
-                // let gameTime = body.gameTimer
-                // let turnTime = body.turnTimer
-
                 // pick current player
                 games[gameId]['current_player'] = -1;
                 games[gameId]['gameTimer'] = null
                 games[gameId]['turnTimer'] = null
 
-
-                console.log(games[gameId]);
-
-
-                
                 if('gameTimer' in body && 'turnTimer' in body)
                 {
                     games[gameId]['gameTime'] = body.gameTimer
@@ -271,16 +232,8 @@ wsServer.on('request', req => {
                         clients[client]['points'] = 0;
                     })
 
-                    // for(let i = 0;i < games[gameId]['clients'].length;i++)
-                    // {
-                    //     const id = games[gameId]['clients'][i];
-                    //     clients[id]['points'] = 0;
-                    // }
-
-                    console.log(clients);
-
                     payload = {
-                        'method':'RESET'
+                        'method':events.RESET
                     }
                     
                     broadcastAll(gameId,payload);
@@ -294,7 +247,6 @@ wsServer.on('request', req => {
 
             case events.DRAW:
 
-                console.log('DRAW')
                 gameId = body.gameId
                 clientId = body.clientId
                 let canvasEvent = body.canvasEvent
@@ -302,8 +254,6 @@ wsServer.on('request', req => {
                 // add canvas event to the list
 
                 // in case of clear the also we need to clean the canvasevents array
-
-                console.log(games[gameId]['canvasEvents'])
 
                 payload = {
                     'method': events.DRAW,
@@ -322,7 +272,6 @@ wsServer.on('request', req => {
 
                 games[gameId]['canvasEvents'].push(cords)
 
-
                 payLoad = {
                     'method': events.CORDS,
                     'cords': cords
@@ -332,8 +281,6 @@ wsServer.on('request', req => {
                 break;
 
             case events.GUESS:
-
-                console.log('GUESS')
                 gameId = body.gameId
                 clientId = body.clientId
                 let guessWord = body.guessWord
@@ -345,7 +292,6 @@ wsServer.on('request', req => {
 
                 //validation
                 let match = false
-                console.log(games)
 
                 //  Note: set the gameTimer to null when the gamesessions ends
                 if (games[gameId]['gameTimer'] != null && guessWord == games[gameId]['currWord']) {
@@ -388,15 +334,12 @@ wsServer.on('request', req => {
 
             case 'choice':
 
-
                 gameId = body.gameId
 
                 // set the reward to false for the players in the game
                 games[gameId]['clients'].forEach((id) => {
                     clients[id]['reward'] = false
                 })
-
-                console.log('choice event gameId:', gameId)
 
                 clearTimeout(games[gameId]['turnTimer'])
                 games[gameId]['turnTimer'] = null;
@@ -407,7 +350,7 @@ wsServer.on('request', req => {
                 hint = "_ ".repeat(word.length)
 
                 payload = {
-                    'method': 'wordselect',
+                    'method': events.WORD_SELECT,
                     'hint': hint,
                     'time':games[gameId]['gameTime']
                 }
@@ -440,7 +383,6 @@ app.post("/create-game", (req, res) => {
         'gameId': gameId
     }
     res.send(payload)
-    console.log("creating a game with code", gameId)
 
     games[gameId] = {}
     games[gameId]['clients'] = []
@@ -451,24 +393,22 @@ app.post("/create-game", (req, res) => {
 });
 
 app.get("/isValidGame", (req, res) => {
-    console.log(req.headers.gameid)
-    console.log(req.params)
     let payload = {
         'valid': false,
         'isAdmin': true
     }
-    console.log('abc')
+    
     if (!req || !req.headers || !req.headers.gameid) {
         return res.send(JSON.stringify(payload))
     }
-    console.log('def')
+    
     let gameId = req.headers.gameid
     if (gameId in games) {
         payload = {
             'valid': true
         }
     }
-    console.log('ghi')
+    
     return res.send(JSON.stringify(payload))
 })
 

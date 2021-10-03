@@ -9,5 +9,10 @@ module.exports = {
     CORDS: 'cords',
     START_GAME: 'start_game',
     END_GAME: 'end_game',
-    DRAW_LINES:'draw_lines'
+    DRAW_LINES:'draw_lines',
+    TURN:'TURN',
+    WAIT:'WAIT',
+    CONNECT:'connect',
+    PREV_CLIENTS:'prevClients',
+    RESET:'RESET'
 }

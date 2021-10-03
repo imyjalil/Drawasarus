@@ -2,12 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { wsSendMessage } from "../Redux/actions/socketActions";
 import events from '../utilities/constants'
 import { useDispatch, useSelector } from 'react-redux'
-import { remoteCords } from "../Redux/actions/gameActions";
-
-
 
 let x1, y1, x2, y2;
-
 
 const Canvas = (props) => {
 
@@ -32,8 +28,6 @@ const Canvas = (props) => {
             gameTime:parseInt(state.game.gameTime)
         }
     })
-
-    console.log("remote", state.remoteCords)
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -62,18 +56,12 @@ const Canvas = (props) => {
 
     useEffect(() => {
 
-        console.log("received new cords", state.remoteCords)
         const [oldx, oldy, newx, newy] = state.remoteCords;
 
         const lines = JSON.parse(sessionStorage.getItem("currentState"))
 
-        console.log("old cords", lines)
-
         if (lines != null) {
-
-            console.log(lines)
             lines.map((cord) => {
-                console.log("cord", cord)
                 const [oldx, oldy, newx, newy] = cord
                 drawLine(oldx, oldy, newx, newy)
             })
@@ -84,14 +72,28 @@ const Canvas = (props) => {
     }, [state.receivedDrawEvent])
 
     useEffect(()=>{
-        console.log("canDraw: "+props.canDraw)
         if(props.canDraw){
-            //use this in future incase anything is needed for current drawing user
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            let timeLeft=state.gameTime
+            
+            let gameTimer = setInterval(()=>{
+                if(timeLeft<1)
+                {
+                    clearInterval(gameTimer)
+                }
+                else{
+                    timeLeft=timeLeft-1
+                    var newText=""+timeLeft
+                    var metrics=context.measureText(newText)
+                    context.clearRect(canvas.width-75-metrics.width,0,canvas.width,25)
+                    context.fillText(newText,canvas.width - 75, 25)                   
+                }
+            },1000)
         }
     },[props.canDraw])
 
     const drawLine = (x1, y1, x2, y2) => {
-
 
         contextRef.current.beginPath();
         contextRef.current.moveTo(x1, y1);
@@ -113,14 +115,11 @@ const Canvas = (props) => {
     }, [state.selector])
 
     useEffect(() => {
-
-
         if (state.image != null) {
             // var image = new Image();
             // image.src = state.image;
             // contextRef.current.drawImage(image, 0, 0)
         }
-
 
     }, [state.image])
 
@@ -167,7 +166,6 @@ const Canvas = (props) => {
         y1 = getMousePosition(nativeEvent).y
 
         contextRef.current.moveTo(x1, y1);
-        console.log('moved to ' + x1 + ", " + y1)
         setIsDrawing(true);
     };
 
@@ -185,8 +183,6 @@ const Canvas = (props) => {
         x2 = getMousePosition(nativeEvent).x
         y2 = getMousePosition(nativeEvent).y
 
-        console.log(x1, y1, x2, y2)
-
         const payload = {
             'method': events.SET_REMOTE_CORDS,
             'gameId': state.gameId,
@@ -200,10 +196,7 @@ const Canvas = (props) => {
         //     dispatch(wsSendMessage(payload))
         // }, 150)
 
-
-
         contextRef.current.lineTo(x2, y2);
-        //console.log('line to ' + offsetX + ", " + offsetY)
         contextRef.current.stroke();
         x1 = x2;
         y1 = y2;

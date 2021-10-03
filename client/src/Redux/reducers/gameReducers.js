@@ -1,7 +1,5 @@
+
 import { DRAW, UPDATE_POINTS, ADD_PLAYER, SET_REMOTE_CORDS, REMOVE_PLAYER, SET_LOCAL_STREAM, SET_REMOTE_STREAM, UPDATE_PLAYER_LIST } from "../../utilities/constants"
-
-
-
 
 const intialState = {
     players: [],
@@ -81,8 +79,6 @@ export default function gameReducer(state = intialState, action) {
 
         case SET_REMOTE_STREAM:
             var modifiedPlayers = JSON.parse(JSON.stringify(state.players))
-            console.log('setremotestream game reducer')
-            console.log(modifiedPlayers)
             modifiedPlayers.forEach((player) => {
                 if (player.id == action.payload.id) {
                     player.remoteStream = action.payload.stream
@@ -97,14 +93,22 @@ export default function gameReducer(state = intialState, action) {
             return {
                 ...state,
                 choice: action.payload.words,
-                turnTime: action.payload.time
+                turnTime: action.payload.turnTime,
+                gameTime: action.payload.gameTime
             }
 
         case 'SELECTOR':
+            if("time" in action.payload)
+            {
+                return {
+                    ...state,
+                    selector: action.payload.name,
+                    turnTime: action.payload.time
+                }
+            }
             return {
                 ...state,
-                selector: action.payload.name,
-                turnTime: action.payload.time
+                selector:action.payload.name
             }
 
         case 'HINT':
