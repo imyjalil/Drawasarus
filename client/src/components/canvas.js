@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { wsSendMessage } from "../Redux/actions/socketActions";
-import events from '../utilities/constants'
 import { useDispatch, useSelector } from 'react-redux'
+const events = require("../utilities/constants")
 
 let x1, y1, x2, y2;
 

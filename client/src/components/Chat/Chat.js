@@ -1,9 +1,8 @@
 import React, { Component, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { wsSendMessage } from '../../Redux/actions/socketActions'
-import events from '../../utilities/constants'
 import './Chat.css'
-
+const events = require("../../utilities/constants")
 
 const Chat = () => {
     let [mic, flipMic] = useState(false);

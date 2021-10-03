@@ -6,10 +6,9 @@ import Modal from '../../components/modal'
 import './gamePage.css'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import events from '../../utilities/constants'
 import { wsSendMessage } from '../../Redux/actions/socketActions'
 import { resetScores, setSelector, setWordHint } from '../../Redux/actions/gameActions'
-
+const events = require("../../utilities/constants")
 
 function GamePage() {
 

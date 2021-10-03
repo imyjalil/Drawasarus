@@ -1,6 +1,6 @@
-import { CLIENT_ID, CONNECT, GAME_ID, JOIN_GAME, NAME, SOCKET, } from '../../utilities/constants';
 import axios from 'axios'
 import config from '../../config'
+const constants = require("../../utilities/constants")
 
 export const createGame = () => (dispatch) => {
     return axios.post(config.URL + "create-game")
@@ -16,24 +16,20 @@ export const createGame = () => (dispatch) => {
 
 }
 
-
-
-
-
 export const joinGame = () => {
     return {
-        type: JOIN_GAME
+        type: constants.JOIN_GAME
     }
 }
 export const connect = () => {
     return {
-        type: CONNECT
+        type: constants.CONNECT
     }
 }
 
 export const createSocket = (ws) => {
     return {
-        type: SOCKET,
+        type: constants.SOCKET,
         payload: {
             'ws': ws
         }
@@ -42,7 +38,7 @@ export const createSocket = (ws) => {
 
 export const storeClientId = (clientId) => {
     return {
-        type: CLIENT_ID,
+        type: constants.CLIENT_ID,
         payload: {
             'clientId': clientId
         }
@@ -51,7 +47,7 @@ export const storeClientId = (clientId) => {
 
 export const storeGameId = (gameId) => {
     return {
-        type: GAME_ID,
+        type: constants.GAME_ID,
         payload: {
             'gameId': gameId
         }
@@ -60,7 +56,7 @@ export const storeGameId = (gameId) => {
 
 export const storeName = (name) => {
     return {
-        type: NAME,
+        type: constants.NAME,
         payload: {
             'name': name
         }

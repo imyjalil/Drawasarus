@@ -1,7 +1,7 @@
 import { storeClientId, storeGameId } from '../Redux/actions/userActions';
 import { resetScores,remoteCords,removePlayer, signalChatEvent, updatePoints, updatePlayerList, draw, setChoice, setSelector, setWordHint, endGame, setLocalStream } from '../Redux/actions/gameActions';
 import { wsSendMessage } from '../Redux/actions/socketActions';
-import events from './constants';
+const events = require("./constants")
 
 let localStream;
 let connections = {};
