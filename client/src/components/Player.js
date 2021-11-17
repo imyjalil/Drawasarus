@@ -1,11 +1,9 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-
+import { useSelector } from 'react-redux'
 import { useState } from 'react'
 import "./Player.css"
 
 function Player(props) {
-
 
     const [mute, setmute] = useState(false)
 
@@ -18,23 +16,15 @@ function Player(props) {
         }
     })
 
-
-
-
     const inverse = () => {
-
 
         // need to get access to the audioEvents in the dom
         // so we can change the volume
         // this is a hack
         const audioEvents = document.getElementById('audioEvents')
-        console.log(audioEvents)
         let childNodes = audioEvents.childNodes;
 
-        console.log("clicked element id", props.id)
-
         if (state.clientId == props.id && state.localStream != null) {
-            console.log("self mute")
             if (mute) {
                 state.localStream.getAudioTracks().forEach(track => track.enabled = true)
             }
@@ -45,18 +35,12 @@ function Player(props) {
             return;
         }
 
-
         // iterate over the child nodes
         childNodes.forEach((child) => {
 
             // setmute only if the child is the one we are looking for
             if (child.getAttribute("id") == props.id) {
-
-                console.log("action on", props.name)
                 const remoteStream = child.srcObject
-
-
-
                 if (remoteStream != null) {
                     // console.log("tracks", child.srcObject.getAudioTracks())
                     if (mute) {
@@ -65,15 +49,11 @@ function Player(props) {
                     else {
                         child.srcObject.getAudioTracks().forEach(track => track.enabled = false)
                     }
-                    
                     setmute(!mute)
                 }
             }
         })
-
-
     }
-
 
     return (
         <div className="player" style={{ color: props.id == state.clientId ? 'black' : '#6a4c93' }}>
@@ -83,17 +63,12 @@ function Player(props) {
             <div>
                 <span>{props.points}</span>
             </div>
-
-            
             <div>
                 {mute ?
                 <span className="material-icons" onClick={inverse}>volume_off</span> :
                 <span className="material-icons" onClick={inverse}>volume_up</span>
                 }  
             </div>
-
-
-
         </div>
     )
 }

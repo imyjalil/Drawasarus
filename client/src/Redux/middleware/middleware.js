@@ -28,8 +28,6 @@ const socketMiddleware = () => {
         switch (action.type) {
 
             case WS_CONNECT:
-
-                console.log('middle ware', WS_CONNECT)
                 if (socket != null) {
                     socket.close()
                     host = ''
@@ -43,8 +41,6 @@ const socketMiddleware = () => {
                 break;
 
             case WS_DISCONNECT:
-
-                console.log('reducer', WS_DISCONNECT)
                 if (socket != null) {
                     socket.close()
                 }
@@ -52,12 +48,10 @@ const socketMiddleware = () => {
                 host = ''
                 break;
             case WS_SEND_MESSAGE:
-
-                console.log("sending the message", action.payload)
                 socket.send(JSON.stringify(action.payload))
                 break;
             default:
-                console.log("default action", action.type, " not found")
+                break;
         }
 
 

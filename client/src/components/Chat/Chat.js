@@ -1,9 +1,8 @@
 import React, { Component, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { wsSendMessage } from '../../Redux/actions/socketActions'
-import events from '../../utilities/constants'
 import './Chat.css'
-
+const events = require("../../utilities/constants")
 
 const Chat = () => {
     let [mic, flipMic] = useState(false);
@@ -19,8 +18,6 @@ const Chat = () => {
     })
 
     useEffect(() => {
-        console.log('chatEvent:')
-        console.log(state.chatEvent)
         addChatMessage(state.chatEvent)
     }, [state.chatEvent])
 
@@ -31,7 +28,6 @@ const Chat = () => {
 
         message = message.trim()
         if (message === '') return
-        console.log('id:' + state.clientId + " name:" + state.name + 'gameId:' + state.gameId)
         message = {
             'method': events.GUESS,
             'guessWord': message,
@@ -46,11 +42,8 @@ const Chat = () => {
 
     const addChatMessage = (message) => {
         if (!message) {
-            console.log("Invalid message")
             return
         }
-        console.log('addChatMessage message:')
-        console.log(message)
         var messageDiv = createMessage(message)
         document.getElementById("chatMessages").innerHTML += messageDiv
         let containerElement = document.getElementById('outerContainer')
@@ -59,7 +52,7 @@ const Chat = () => {
 
     const createMessage = (message) => {
         var isMine = message.clientId === state.clientId
-        console.log(message)
+        
         if (message.points) {
             let str = (isMine ? 'You' : message.name) + ' got it right'
             return (`<li class=notif>${str}</li>`)

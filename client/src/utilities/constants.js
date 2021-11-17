@@ -22,5 +22,14 @@ module.exports = {
     SET_REMOTE_CORDS: 'cords',
     START_GAME: 'start_game',
     UPDATE_POINTS: 'update_points',
-    DRAW_LINES: 'draw_lines'
+    DRAW_LINES: 'draw_lines',
+    RESET:'reset',
+    WORD_SELECT:'wordselect',
+    PREV_CLIENTS:'prevClients',
+    SEND_ICE_CANDIDATE:'sendIceCandidate',
+    WEBRTC_OFFER:'webRTCOffer',
+    END_GAME:'end_game',
+    WEBRTC_ANSWER:'webRTCAnswer',
+    TURN:'TURN',
+    WAIT:'WAIT'
 }

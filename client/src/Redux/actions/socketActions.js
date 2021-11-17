@@ -1,24 +1,22 @@
-import { WS_CONNECT, WS_DISCONNECT, WS_SEND_MESSAGE } from "../../utilities/constants"
-
+const constants = require("../../utilities/constants")
 
 export const wsConnect = (host) => {
     return {
-        type: WS_CONNECT,
+        type: constants.WS_CONNECT,
         host: host
     }
 }
 
 export const wsDisconnect = (host) => {
     return {
-        type: WS_DISCONNECT,
+        type: constants.WS_DISCONNECT,
         host: host
     }
 }
 
 export const wsSendMessage = (payload) => {
-    console.log('dispatching sendmessage')
     return {
-        type: WS_SEND_MESSAGE,
+        type: constants.WS_SEND_MESSAGE,
         payload: payload
     }
 }

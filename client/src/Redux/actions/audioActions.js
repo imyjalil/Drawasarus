@@ -1,8 +1,8 @@
-import { MUTE, UNMUTE } from "../../utilities/constants"
+const constants = require("../../utilities/constants")
 
 export const muteAudio = (userId) => {
     return {
-        type: MUTE,
+        type: constants.MUTE,
         payload: {
             'id': userId
         }
@@ -11,7 +11,7 @@ export const muteAudio = (userId) => {
 
 export const unmuteAudio = (userId) => {
     return {
-        type: UNMUTE,
+        type: constants.UNMUTE,
         payload: {
             'id': userId
         }

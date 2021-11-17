@@ -1,7 +1,4 @@
-import { DRAW, UPDATE_POINTS, ADD_PLAYER, SET_REMOTE_CORDS, REMOVE_PLAYER, SET_LOCAL_STREAM, SET_REMOTE_STREAM, UPDATE_PLAYER_LIST } from "../../utilities/constants"
-
-
-
+const constants = require("../../utilities/constants")
 
 const intialState = {
     players: [],
@@ -22,13 +19,13 @@ export default function gameReducer(state = intialState, action) {
 
     switch (action.type) {
 
-        case UPDATE_PLAYER_LIST:
+        case constants.UPDATE_PLAYER_LIST:
             return {
                 ...state,
                 players: action.payload.playerlist
             }
 
-        case UPDATE_POINTS:
+        case constants.UPDATE_POINTS:
             return {
                 ...state,
                 players: state.players.map(player => {
@@ -54,35 +51,33 @@ export default function gameReducer(state = intialState, action) {
                 resetGame:action.payload.val
             }
 
-        case REMOVE_PLAYER:
+        case constants.REMOVE_PLAYER:
             return {
                 ...state,
                 players: state.players.filter(player => player.id != action.payload.id)
             }
 
-        case DRAW:
+        case constants.DRAW:
             return {
                 ...state,
                 image: action.payload.image
             }
 
-        case SET_REMOTE_CORDS:
+        case constants.SET_REMOTE_CORDS:
             return {
                 ...state,
                 remoteCords: action.payload.cords,
                 receivedDrawEvent: !state.receivedDrawEvent
             }
 
-        case SET_LOCAL_STREAM:
+        case constants.SET_LOCAL_STREAM:
             return {
                 ...state,
                 localStream: action.payload.stream
             }
 
-        case SET_REMOTE_STREAM:
+        case constants.SET_REMOTE_STREAM:
             var modifiedPlayers = JSON.parse(JSON.stringify(state.players))
-            console.log('setremotestream game reducer')
-            console.log(modifiedPlayers)
             modifiedPlayers.forEach((player) => {
                 if (player.id == action.payload.id) {
                     player.remoteStream = action.payload.stream
@@ -97,14 +92,22 @@ export default function gameReducer(state = intialState, action) {
             return {
                 ...state,
                 choice: action.payload.words,
-                turnTime: action.payload.time
+                turnTime: action.payload.turnTime,
+                gameTime: action.payload.gameTime
             }
 
         case 'SELECTOR':
+            if("time" in action.payload)
+            {
+                return {
+                    ...state,
+                    selector: action.payload.name,
+                    turnTime: action.payload.time
+                }
+            }
             return {
                 ...state,
-                selector: action.payload.name,
-                turnTime: action.payload.time
+                selector:action.payload.name
             }
 
         case 'HINT':
